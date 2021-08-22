@@ -1,0 +1,615 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Nunito", "Segoe UI", Helvetica, Tahoma, Geneva, Verdana,
+    sans-serif;
+}
+
+html {
+  font-size: 0.9em !important;
+}
+
+th {
+  font-weight: 400 !important;
+}
+
+body {
+  width: calc(100vw - (100vw - 100%));
+  max-width: calc(100vw - (100vw - 100%));
+  background-color: #a1eafb0c !important;
+  /* background-color: #e2f5fa; */
+  /* overflow: hidden !important; */
+}
+
+.appbar-title {
+  padding-left: 0.5em;
+  color: #333;
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-items: center;
+  grid-auto-columns: 1fr 50px;
+}
+
+.appbar-title .app-name {
+  font-weight: 500;
+  font-size: 1.3em;
+  justify-self: start;
+}
+
+.appbar-title .btn-collapse .icon {
+  font-size: 1.2em !important;
+}
+
+*:focus {
+  outline: none;
+}
+
+.disableCursor {
+  cursor: not-allowed !important;
+}
+
+.disablePointerEvents {
+  pointer-events: none !important;
+}
+
+/* .MuiSelect-root {
+  font-size: 0.87em !important;
+} */
+
+.MuiChip-label {
+  text-transform: capitalize !important;
+  font-size: 0.8em !important;
+  font-weight: 900 !important;
+  padding: 0 3px !important;
+  letter-spacing: 0.3pt !important;
+  word-spacing: 0.3pt !important;
+}
+
+.uncaps .MuiChip-label {
+  text-transform: unset !important;
+}
+
+.MuiChip-root {
+  border-radius: 5px !important;
+  padding: 1px 3px !important;
+  max-height: 20px !important;
+  min-height: 20px !important;
+}
+
+.MuiBadge-badge {
+  font-weight: 900 !important;
+  font-size: 0.69em !important;
+  letter-spacing: 0.3pt !important;
+  word-spacing: 0.3pt !important;
+}
+
+.checkbox-label {
+  font-size: 0.75em !important;
+  font-weight: 500 !important;
+}
+
+.data-group {
+  display: grid !important;
+  grid-gap: 0.2em !important;
+  align-items: start;
+  align-content: start;
+}
+
+.data-group-label {
+  font-size: 0.75em !important;
+  font-weight: 600 !important;
+}
+
+/* .MuiTypography-root.MuiFormControlLabel-label.MuiTypography-body1 {
+  font-size: 0.8em !important;
+  line-height: unset !important;
+  font-family: Nunito !important;
+  letter-spacing: 0.3pt;
+  word-spacing: 0.3pt;
+} */
+
+.PrivateSwitchBase-root-1 {
+  padding: 3px !important;
+}
+
+.user-pages-table .MuiTableCell-root {
+  background-color: #fff !important;
+}
+
+a,
+.link {
+  color: blue !important;
+  text-decoration: none !important;
+}
+
+tr th {
+  background-color: #fff !important;
+}
+
+.empty-rows {
+  color: orangered;
+  font-size: 1.3em;
+  padding: 0.3em;
+  font-weight: 500;
+  word-spacing: 0.3pt;
+  letter-spacing: 0.3pt;
+}
+
+.clinic-adding-form {
+  display: grid !important;
+  grid-gap: 2em !important;
+}
+
+.box-ctnr {
+  display: grid;
+  align-content: start;
+  align-items: start;
+  grid-gap: 1em;
+}
+
+.box-ctnr .box-header {
+  align-self: start;
+  padding: 0.5em;
+  border-bottom: 0.2em solid rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+.box-ctnr .box-header .box-body {
+  align-self: start;
+}
+
+.vertical-radio-button {
+  display: grid !important;
+  grid-auto-flow: column !important;
+  grid-gap: 1em !important;
+  justify-items: start !important;
+  justify-content: start !important;
+}
+
+.form-label {
+  padding: 0.7em 0;
+  border-bottom: 0.15em solid rgba(0, 0, 0, 0.1);
+  width: 100%;
+  /* margin-bottom: 1em; */
+}
+
+/* ::placeholder {
+  font-size: 0.87em !important;
+  font-weight: 400 !important;
+} */
+
+.table-actions {
+  display: grid;
+  grid-auto-flow: column;
+  grid-gap: 1em;
+  justify-content: end;
+  justify-items: end;
+  align-content: center;
+  align-items: center;
+  padding-bottom: 0.5em;
+}
+
+.table-paragraph {
+  font-size: 0.8em;
+  background-color: #fafafa;
+  border-radius: 5px;
+  padding: 0.67em;
+  display: grid;
+  justify-content: start;
+  justify-items: start;
+}
+
+.table-header {
+  width: 100%;
+  display: grid;
+  align-items: center;
+  align-content: center;
+  justify-items: end;
+  justify-content: end;
+  grid-auto-flow: column;
+  grid-gap: 1em;
+  padding: 1em 0;
+}
+
+/* .MuiFormLabel-root:not(.Mui-focused) {
+  color: black !important;
+  opacity: 1 !important;
+} */
+
+/* .Mui-focused.MuiFormLabel-root {
+  color: #0d47a1 !important;
+} */
+
+/* .PrivateSwitchBase-input-8 {
+  height: 10px !important;
+  width: 10px !important;
+} */
+
+.form-group-label {
+  transform: translate(14px, -6px) scale(0.75);
+  transform-origin: top left;
+  color: black !important;
+  opacity: 1 !important;
+  font-weight: 600 !important;
+}
+
+/* .MuiFormLabel-root {
+  font-family: Nunito !important;
+  font-weight: 600 !important;
+} */
+
+.selected-color {
+  transform: scale(1.4);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  padding-bottom: 0.5em;
+  /* margin: 0.5em 0; */
+  font-weight: 900;
+  font-size: 0.9em;
+  opacity: 0.5;
+  /* border-bottom: 0.1em solid rgba(0, 0, 0, 0.1); */
+}
+
+/* .info-title {
+  font-size: 1.5em;
+  font-weight: 600;
+  padding: 0.3em 0;
+} */
+
+.info-group {
+  display: grid;
+  align-items: center;
+  align-content: center;
+  padding: 0.2em;
+  grid-auto-columns: auto 1fr;
+  /* font-size: 0.87em !important; */
+  width: 100%;
+}
+
+.info-group.bordered {
+  border-bottom: 0.1em solid rgba(0, 0, 0, 0.1);
+}
+
+.info-group .label {
+  font-weight: 400;
+  font-size: 0.67em;
+  opacity: 0.77;
+}
+
+.info-group .value {
+  font-weight: 400 !important;
+  min-height: 30px;
+  padding: 0.3em 0;
+  color: black;
+  font-size: 0.93em !important;
+  border-bottom: 0.05em solid rgba(0, 0, 0, 0.1);
+  display: grid;
+  align-content: center;
+  align-items: center;
+  justify-items: start;
+}
+
+.info-group-title {
+  font-weight: 600;
+  font-size: 0.87em;
+  padding: 0 0.5em;
+  padding-top: 1em;
+}
+
+.total-group {
+  display: grid;
+  justify-content: end;
+  justify-items: end;
+  align-items: center;
+  align-content: center;
+  grid-auto-flow: column;
+  grid-gap: 2em;
+  padding: 0.5em 0;
+  margin: 0.33em 0;
+  font-size: 0.9em;
+  grid-auto-columns: 1fr auto !important;
+  border-bottom: 0.1em solid rgba(0, 0, 0, 0.1);
+}
+
+.total-group .label {
+  opacity: 0.5;
+  font-size: 0.83em;
+  font-weight: 700;
+}
+
+.total-group .value {
+  font-size: 900 !important;
+}
+
+.form-title {
+  padding: 0.5em 0;
+  border-bottom: 0.1em solid rgba(0, 0, 0, 0.2);
+  font-weight: 800;
+}
+
+.PrivateTabIndicator-root-1 {
+  transition: none !important;
+}
+
+.table-cell-small {
+  font-size: 0.8em;
+}
+
+.table-cell-profile {
+  display: grid;
+  grid-template-areas: "img title" "img sub";
+  justify-content: start !important;
+  justify-items: start !important;
+  align-items: center;
+  align-content: center;
+}
+
+.table-cell-profile .image {
+  grid-area: img !important;
+  margin-right: 0.5em !important;
+}
+
+.table-cell-profile .title {
+  all: none !important;
+  grid-area: title !important;
+  font-size: 1em !important;
+  font-weight: 500 !important;
+  border: none !important;
+  padding: 0;
+  align-self: end !important;
+}
+.table-cell-profile .sub-title {
+  grid-area: sub !important;
+  align-self: start !important;
+  font-size: 0.8;
+  padding: 0;
+}
+
+.table-cell-profile.no-sub {
+  grid-template-areas: "img title" !important;
+}
+
+.autocomplete-picture {
+  display: grid;
+  grid-auto-flow: column;
+  grid-gap: 1em;
+  justify-items: flex-start;
+  align-items: center;
+  font-size: 0.9em;
+}
+
+.error {
+  color: red;
+  font-size: 0.7em;
+  font-weight: 700;
+}
+
+.info-group-column {
+  display: grid;
+  align-items: center;
+  align-content: center;
+  justify-content: start;
+  justify-items: start;
+  grid-gap: 1em;
+  grid-auto-flow: column;
+  padding: 2px 3px;
+  /* border-bottom: 0.1em solid rgba(0, 0, 0, 0.1); */
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.1);
+
+  height: 100%;
+}
+
+.info-group-column .label {
+  font-weight: 600;
+  font-size: 0.7em;
+  opacity: 0.7;
+}
+
+.info-group-column .value {
+  width: 100%;
+  font-size: 0.9em;
+  display: grid;
+  align-content: center;
+  align-items: center;
+
+  grid-auto-flow: column;
+}
+
+.info-group-column .value button {
+  margin-left: 0.5em;
+}
+
+canvas {
+  background-color: #fff;
+}
+
+.panel-container {
+  background-color: #fff !important;
+  border-radius: 5px !important;
+  height: 100% !important;
+  width: 100% !important;
+  padding: 1em !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.001) !important;
+}
+
+#ResumeContainer {
+  margin: auto;
+  width: 65%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.PDFDocument {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.PDFPage {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.PDFPageOne {
+  margin-bottom: 25px;
+  transition: 1s all ease-in;
+}
+
+.PDFPage > canvas {
+  max-width: 100%;
+  height: auto !important;
+}
+
+/* icons */
+
+.MuiIconButton-colorPrimary {
+  /* background-color: #e3f2fd !important; */
+}
+
+.MuiIconButton-colorSecondary {
+  /* background-color: #ffebee !important; */
+}
+
+.qr-reader {
+  border-radius: 10px !important;
+}
+
+.form-main-title {
+  font-size: 0.9em;
+  font-weight: 900;
+  opacity: 0.8;
+}
+
+.nowrap {
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+}
+
+.error-page {
+  display: grid;
+  text-align: center;
+  justify-content: center;
+  justify-items: center;
+  color: red;
+  font-weight: 400;
+  font-size: 1.5em;
+  padding: 1.5em;
+}
+
+.list-container {
+  display: grid;
+  grid-gap: 1em;
+}
+
+.list-container .list-item {
+  padding: 0.5em;
+  padding: 0.5em;
+  /* background-color: #fafafa; */
+  border-bottom: 0.02em solid rgba(0, 0, 0, 0.2);
+  display: grid;
+  grid-gap: 0.5em;
+  grid-auto-columns: auto 1fr;
+  grid-template-areas: "icon title" "icon date";
+  align-items: center;
+
+  word-break: break-all;
+}
+
+.list-container .list-item-icon {
+  grid-area: icon;
+}
+
+.list-container .list-item-title {
+  grid-area: title;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.list-container .list-item-title.link {
+  cursor: pointer;
+}
+
+.list-container .list-item-date {
+  grid-area: date;
+  font-size: 0.63em;
+  opacity: 0.9;
+}
+
+.MuiFormControl-root.MuiTextField-root.display.MuiFormControl-fullWidth * {
+  cursor: unset !important;
+}
+
+.centered-item {
+  display: grid;
+  justify-content: center;
+  justify-items: center;
+  align-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 300px !important;
+}
+
+.MuiTab-root {
+  min-height: 0 !important;
+  /* padding-top: 3px !important; */
+  /* padding-bottom: 3px !important; */
+}
+
+.MuiAutocomplete-listbox {
+  font-size: 0.8em !important;
+  text-transform: capitalize;
+}
+
+.Mui-disabled {
+  opacity: 1 !important;
+  color: #333 !important;
+}
+
+.MuiMenuItem-root {
+  font-size: 0.8em !important;
+  text-transform: capitalize;
+}
+
+::placeholder {
+  font-size: 0.8em !important;
+}
+
+.separator {
+  box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.2) !important;
+  margin: 1em 0 !important;
+  min-height: 10px !important;
+}
+
+.cntr-title {
+  box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.1) !important;
+  padding: 0.2em 0;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  display: grid;
+  grid-gap: 3px;
+}
+
+.cntr-title .main {
+  font-weight: 600;
+}
+.cntr-title .sub {
+  font-size: 0.67em;
+  color: #2196f3;
+}
+
+.btn-pdf-preview {
+  background-color: #fafafa46 !important;
+  color: #2196f3 !important;
+}
+
+.tbd {
+  font-style: italic !important;
+  font-size: 0.83em !important;
+  opacity: 0.9 !important;
+}

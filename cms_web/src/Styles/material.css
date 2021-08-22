@@ -1,0 +1,34 @@
+.MuiAlert-message {
+  font-weight: 600 !important;
+}
+
+.MuiButtonBase-root {
+  border-radius: 25px !important;
+}
+
+.MuiOutlinedInput-root {
+  /* border-radius: 30px !important; */
+}
+
+/* .MuiButton-label {
+  font-weight: 900 !important;
+  font-size: 0.9em !important;
+  padding-top: 0.2em !important;
+  padding-bottom: 0.2em !important;
+} */
+/* .MuiBackdrop-root {
+  z-index: 2000 !important;
+} */
+
+/* */
+
+.textfield-small .MuiInputBase-inputMultiline {
+  font-size: 0.8em !important;
+  font-weight: 400;
+  overflow-x: hidden !important;
+  border-radius: 5px !important;
+}
+
+.textfield-small .MuiOutlinedInput-root {
+  border-radius: 7px !important;
+}
