@@ -1,0 +1,31 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/cms_web/node_modules
+/cms_web/build
+/cms_web/.pnp
+/cms_web.pnp.js
+
+# testing
+/cms_web/coverage
+
+# production
+/cms_web/build
+
+# misc
+/cms_web/.DS_Store
+/cms_web/.env.local
+/cms_web/.env.development.local
+/cms_web/.env.test.local
+/cms_web/.env.production.local
+
+/cms_web/npm-debug.log*
+/cms_web/yarn-debug.log*
+/cms_web/yarn-error.log*
+
+
+# SERVER
+/cms_server/appsettings.json
+/cms_web/uploads
+
+

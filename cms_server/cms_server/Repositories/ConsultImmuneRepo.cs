@@ -1,0 +1,251 @@
+﻿using cms_server.Entities;
+using Dapper;
+using ddt_server.Models;
+using DeliveryRoomWatcher.Config;
+using DeliveryRoomWatcher.Hooks;
+using DeliveryRoomWatcher.Models.Common;
+using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using static cms_server.Payloads.ConsultImmunePayloads;
+
+namespace cms_server.Repositories
+{
+    public class ConsultImmuneRepo
+    {
+
+        public ResponseModel InsertConsultImmune(ConsultImmuneEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                int add_dept = con.Execute(@"
+                        INSERT INTO `consult_req_immune` SET
+                        consult_req_pk=@consult_req_pk,
+                        vac_pk=@vac_pk,
+                        vac_desc=@vac_desc,
+                        vac_type=@vac_type,
+                        date_given=@date_given,
+                        next_dose=@next_dose,
+                        administered_by=@administered_by,
+                        is_valid=@is_valid,
+                        encoded_at=NOW(),
+                        encoder_pk=@encoder_pk;
+                        ", payload, transaction: tran);
+
+                if (add_dept > 0)
+                {
+                    tran.Commit();
+                    return new ResponseModel
+                    {
+                        success = true,
+                        message = $"The item has been added successfully!"
+                    };
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = $"There are no rows affected when trying to add the item!"
+                    };
+                }
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel UpdateConsultImmune(ConsultImmuneEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                int edit_dept = con.Execute(@"
+                        UPDATE `consult_req_immune` SET
+                        vac_pk=@vac_pk,
+                        vac_desc=@vac_desc,
+                        vac_type=@vac_type,
+                        date_given=@date_given,
+                        next_dose=@next_dose,
+                        administered_by=@administered_by,
+                        is_valid=@is_valid,
+                        encoded_at=NOW(),
+                        encoder_pk=@encoder_pk
+                        WHERE cr_immune_pk=@cr_immune_pk;
+                        ", payload, transaction: tran);
+
+
+                if (edit_dept > 0)
+                {
+
+                    LogModel log_payload = new LogModel
+                    {
+                        activity = $"The vital sign with ID {payload.cr_immune_pk} has been updated!",
+                        encoded_by = payload.encoder_pk,
+                        ref_pk = payload.cr_immune_pk.ToString(),
+                        ref_table = "consult_req_immune"
+                    };
+
+                    int inserted_log = con.Execute($@"
+                                         insert into logs set
+                                         ref_pk=@ref_pk,
+                                         ref_table=@ref_table,
+                                         activity=@activity,
+                                         encoded_at = now(),
+                                         encoded_by=@encoded_by;
+                                        "
+                                , log_payload, transaction: tran);
+
+
+                    if (inserted_log > 0)
+                    {
+                        tran.Commit();
+                        return new ResponseModel
+                        {
+                            success = true,
+                            message = $"The item has been updated successfully!"
+                        };
+                    }
+                    else
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = $"There are no rows affected when audit the action!"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = $"There are no rows affected when trying to update the item!"
+                    };
+                }
+
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel GetTableConsultImmune(ConsultImmuneTablePayload payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+                List<ConsultImmuneEntity> table_data = con.Query<ConsultImmuneEntity>($@"
+                                       SELECT * FROM (
+                                        SELECT * FROM `consult_req_immune`
+                                        ) AS view_tmp
+                                       WHERE
+                                       `consult_req_pk` = @consult_req_pk
+                                       AND COALESCE(vac_desc,'') LIKE CONCAT('%',@vac_desc,'%')
+                                       AND COALESCE(vac_type,'') LIKE CONCAT('%',@vac_type,'%')
+                                       AND is_valid IN @is_valid
+                                       {UseFilter.GenWhereDateClause("date_given", ">=", payload.filters.date_given_from)} 
+                                       {UseFilter.GenWhereDateClause("date_given", "<=", payload.filters.date_given_to)} 
+                                       {UseFilter.GenWhereDateClause("encoded_at", ">=", payload.filters.date_from)} 
+                                       {UseFilter.GenWhereDateClause("encoded_at", "<=", payload.filters.date_to)} 
+                                       {UseFilter.GenTablePagination(payload.sort, payload.page)}
+                            ", payload.filters, transaction: tran).ToList();
+
+                bool has_more = table_data.Count > payload.page.limit;
+
+                if (has_more)
+                {
+                    table_data.RemoveAt(table_data.Count - 1);
+                }
+
+                int count = has_more ? -1 : payload.page.begin * payload.page.limit + table_data.Count;
+
+                return new ResponseModel
+                {
+                    success = true,
+                    data =
+                    new
+                    {
+                        table = table_data,
+                        payload.page.begin,
+                        count,
+                        payload.page.limit
+                    }
+                };
+
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel GetConsultImmuneByPk(string id)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                List<ConsultImmuneEntity> table_data = con.Query<ConsultImmuneEntity>(
+                    $@"SELECT * FROM consult_req_immune where cr_immune_pk=@id limit 1;",
+                    new { id }, transaction: tran).ToList();
+
+                if (table_data.Count > 0)
+                {
+                    ConsultImmuneEntity selected_admin = table_data[0];
+
+                    tran.Commit();
+                    return new ResponseModel
+                    {
+                        success = true,
+                        data = selected_admin
+                    };
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "The item that you are trying to retrieve does not exist!"
+                    };
+                }
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+    }
+}

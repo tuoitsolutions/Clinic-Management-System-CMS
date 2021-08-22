@@ -1,0 +1,163 @@
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\appsettings.Development.json
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\appsettings.json
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\cms_web_api.exe
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\cms_web_api.deps.json
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\cms_web_api.runtimeconfig.json
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\cms_web_api.runtimeconfig.dev.json
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\cms_web_api.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\cms_web_api.pdb
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\BouncyCastle.Crypto.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Dapper.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Google.Protobuf.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.Streams.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\K4os.Hash.xxHash.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Logging.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Protocols.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Tokens.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Microsoft.OpenApi.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\MySql.Data.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Ubiety.Dns.Core.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Zstandard.Net.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Renci.SshNet.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\SshNet.Security.Cryptography.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\System.Configuration.ConfigurationManager.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\System.Security.Cryptography.ProtectedData.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\System.Xml.XPath.XmlDocument.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\obj\Debug\netcoreapp3.1\cms_web_api.csprojAssemblyReference.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\obj\Debug\netcoreapp3.1\cms_web_api.AssemblyInfoInputs.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\obj\Debug\netcoreapp3.1\cms_web_api.AssemblyInfo.cs
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\obj\Debug\netcoreapp3.1\cms_web_api.csproj.CoreCompileInputs.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\obj\Debug\netcoreapp3.1\cms_web_api.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\obj\Debug\netcoreapp3.1\cms_web_api.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\obj\Debug\netcoreapp3.1\cms_web_api.RazorTargetAssemblyInfo.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\obj\Debug\netcoreapp3.1\cms_web_api.csproj.CopyComplete
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\obj\Debug\netcoreapp3.1\staticwebassets\cms_web_api.StaticWebAssets.Manifest.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\obj\Debug\netcoreapp3.1\staticwebassets\cms_web_api.StaticWebAssets.xml
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\obj\Debug\netcoreapp3.1\cms_web_api.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\obj\Debug\netcoreapp3.1\cms_web_api.pdb
+C:\Users\mrmon\Work\Projects\Clinic Management System\DeliveryRoomWatcher\DeliveryRoomWatcher\obj\Debug\netcoreapp3.1\cms_web_api.genruntimeconfig.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\appsettings.Development.json
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\appsettings.json
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\cms_web_api.exe
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\cms_web_api.deps.json
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\cms_web_api.runtimeconfig.json
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\cms_web_api.runtimeconfig.dev.json
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\cms_web_api.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\cms_web_api.pdb
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\BouncyCastle.Crypto.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Dapper.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Google.Protobuf.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.Streams.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\K4os.Hash.xxHash.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Logging.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Protocols.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Tokens.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.OpenApi.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\MySql.Data.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Ubiety.Dns.Core.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Zstandard.Net.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Renci.SshNet.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\SshNet.Security.Cryptography.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\System.Configuration.ConfigurationManager.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\System.Security.Cryptography.ProtectedData.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\System.Xml.XPath.XmlDocument.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.AssemblyInfoInputs.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.AssemblyInfo.cs
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.RazorTargetAssemblyInfo.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.csproj.CopyComplete
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\staticwebassets\cms_web_api.StaticWebAssets.Manifest.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\staticwebassets\cms_web_api.StaticWebAssets.xml
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.pdb
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.genruntimeconfig.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.Properties.Resources.resources
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.csproj.GenerateResource.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.csprojAssemblyReference.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.Win32.SystemEvents.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\System.Drawing.Common.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.csproj.CoreCompileInputs.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\mrmon\Work\Projects\Clinic Management System\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\TypeMerger.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\appsettings.Development.json
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\appsettings.json
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\cms_web_api.exe
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\cms_web_api.deps.json
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\cms_web_api.runtimeconfig.json
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\cms_web_api.runtimeconfig.dev.json
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\cms_web_api.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\cms_web_api.pdb
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\BouncyCastle.Crypto.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Dapper.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Google.Protobuf.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\K4os.Compression.LZ4.Streams.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\K4os.Hash.xxHash.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Logging.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Protocols.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Tokens.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.OpenApi.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Microsoft.Win32.SystemEvents.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\MySql.Data.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Ubiety.Dns.Core.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Zstandard.Net.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Renci.SshNet.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\SshNet.Security.Cryptography.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\System.Configuration.ConfigurationManager.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\System.Drawing.Common.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\System.Security.Cryptography.ProtectedData.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\System.Xml.XPath.XmlDocument.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\TypeMerger.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.csprojAssemblyReference.cache
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.Properties.Resources.resources
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.csproj.GenerateResource.cache
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.AssemblyInfoInputs.cache
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.AssemblyInfo.cs
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.csproj.CoreCompileInputs.cache
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.RazorTargetAssemblyInfo.cache
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.csproj.CopyComplete
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\staticwebassets\cms_web_api.StaticWebAssets.Manifest.cache
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\staticwebassets\cms_web_api.StaticWebAssets.xml
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.dll
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.pdb
+C:\Users\Public\Software Development\Clinic Magement System (CMS)\cms_web_api\cms_web_api\obj\Debug\netcoreapp3.1\cms_web_api.genruntimeconfig.cache
