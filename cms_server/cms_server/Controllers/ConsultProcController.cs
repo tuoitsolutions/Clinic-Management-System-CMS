@@ -33,9 +33,23 @@ namespace cms_server.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetConsultProcByConsultProcPk(SingleValuePayload payload)
+        public IActionResult GetConsultProcByPk(SingleValuePayload payload)
         {
             return Ok(dept_res_repo.GetConsultProcByPk(payload.value));
+        }
+
+
+        [HttpPost]
+        public IActionResult PreviewProcPrescrip(SingleValuePayload payload)
+        {
+            return Ok(dept_res_repo.PreviewProcPrescrip(payload.value));
+        }
+
+
+        [HttpPost]
+        public IActionResult EmailProcPrescrip(ConsultProcEntity payload)
+        {
+            return Ok(dept_res_repo.EmailProcPrescrip(payload, User.Identity.Name));
         }
 
     }

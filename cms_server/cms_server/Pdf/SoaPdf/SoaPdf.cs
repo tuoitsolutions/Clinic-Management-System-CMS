@@ -14,7 +14,7 @@ namespace cms_server.Pdf
 {
     public class SoaPdf
     {
-        public static Byte[] GerateSoaPdf(string brand_name, string brand_logo, string brand_address, string brand_phone, string brand_email, ConsultRequestEntity consult_request, string qr_code)
+        public static Byte[] GenerateSoaPdf(string brand_name, string brand_logo, string brand_address, string brand_phone, string brand_email, ConsultRequestEntity consult_request, string qr_code)
         {
 
             Byte[] res = null;

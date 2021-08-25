@@ -146,7 +146,7 @@ const initial_filter = {
   email: "",
   chief_complaint: "",
   symptoms: "",
-  sts_pk: ["x", "fa", "a", "pd"],
+  sts_pk: ["x", "fa", "a", "pd", "s", "e"],
   request_to: null,
   request_from: null,
 };
@@ -351,6 +351,14 @@ export const ConsultReqRecordView: FC<ConsultReqRecordViewProps> = memo(() => {
                                   {
                                     id: "pd",
                                     label: "Paid",
+                                  },
+                                  {
+                                    id: "s",
+                                    label: "Started",
+                                  },
+                                  {
+                                    id: "f",
+                                    label: "Finished",
                                   },
                                 ]}
                                 name="sts_pk"

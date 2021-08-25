@@ -224,7 +224,7 @@ export const TabAllergyRecord: FC<ITabAllergyRecord> = memo(
                   variant="contained"
                   onClick={handleOpenAddDialog}
                 >
-                  Add Allery
+                  Add Allergy
                 </Button>
               </Grid>
             </Grid>

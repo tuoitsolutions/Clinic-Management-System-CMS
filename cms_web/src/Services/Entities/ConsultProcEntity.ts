@@ -8,6 +8,9 @@ interface ConsultProcEntity {
   is_active?: "y" | "n";
   encoded_at?: string | Date;
   encoder_pk?: string;
+
+  //
+  attach_file?: string;
 }
 
 export interface ConsultProcTableModel {

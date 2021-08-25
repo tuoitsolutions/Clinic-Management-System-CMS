@@ -1,4 +1,5 @@
 using claim_form_server.Hubs;
+using cms_server.Hubs;
 using ddt_server.Config;
 using DeliveryRoomWatcher.Config;
 using DeliveryRoomWatcher.Services;
@@ -64,7 +65,8 @@ namespace DeliveryRoomWatcher
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<TimerHub>("/api/hubs/timer");
+                //endpoints.MapHub<TimerHub>("/api/hubs/timer");
+                endpoints.MapHub<ChatHub>("/api/hubs/chat");
             });
 
         }

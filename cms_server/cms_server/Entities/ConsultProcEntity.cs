@@ -13,5 +13,7 @@ namespace cms_server.Entities
         public string is_active { get; set; }
         public DateTime? encoded_at { get; set; }
         public string encoder_pk { get; set; }
+        //ext
+        public string attach_file { get; set; }
     }
 }

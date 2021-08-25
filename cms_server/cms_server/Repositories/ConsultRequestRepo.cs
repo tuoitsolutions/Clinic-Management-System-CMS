@@ -11,7 +11,6 @@ using DeliveryRoomWatcher.Hooks;
 using DeliveryRoomWatcher.Models.Common;
 using DeliveryRoomWatcher.Repositories;
 using MySql.Data.MySqlClient;
-using QRCoder;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -208,7 +207,7 @@ namespace cms_server.Repositories
 
                         string otp_code = UseOtp.create();
 
-                        string full_body = $@"This is {def_val_repo.GetHospitalName().data}. Dear {selected_row.last_name}, {selected_row.finish_at}, your Consultation Request Payment Link OTP is: {otp_code}. This is only valid within 24 hours.";
+                        string full_body = $@"This is {def_val_repo.GetHospitalName().data}. Dear {selected_row.last_name}, {selected_row.ended_at}, your Consultation Request Payment Link OTP is: {otp_code}. This is only valid within 24 hours.";
 
                         int message_affected_rows = con.Execute($@"INSERT INTO messageout SET
                                                                 messageto='${selected_row.mob_no}',
@@ -241,7 +240,7 @@ namespace cms_server.Repositories
 
                                 string brand_name = def_val_repo.GetHospitalName().data.ToString();
 
-                                string email_message = $@"This is {brand_name}. Dear {selected_row.email},  kindly pay your Consultation Request at " + DefaultConfig._clientBaseUrl + selected_row.hash_key +
+                                string email_message = $@"This is {brand_name}. Dear {selected_row.email},  kindly pay your Consultation Request at " + DefaultConfig._clientBaseUrl + "consultation-payment/" + selected_row.hash_key +
                                                                                                         " . Please do not share this link to prevent outside sources from accessing your data.";
                                 ResponseModel email_response = UseEmail.SendEmail(brand_name, selected_row.email, email_message, "Online Consultation Payment Page");
 
@@ -437,8 +436,8 @@ namespace cms_server.Repositories
                                        AND COALESCE(symptoms,'') LIKE CONCAT('%',@symptoms,'%')
                                        {UseFilter.GenerateSearchEqualOrDefault("AND", "consult_req_pk", "@consult_req_pk")}
                                        AND sts_pk IN @sts_pk
-                                       {UseFilter.GenWhereDateClause("encoded_at", ">=", payload.filters.request_from)} 
-                                       {UseFilter.GenWhereDateClause("encoded_at", "<=", payload.filters.request_to)} 
+                                       {UseFilter.GenWhereDateClause("request_at", ">=", payload.filters.request_from)} 
+                                       {UseFilter.GenWhereDateClause("request_at", "<=", payload.filters.request_to)} 
                                        {UseFilter.GenTablePagination(payload.sort, payload.page)}
                                     ";
                 }
@@ -448,7 +447,8 @@ namespace cms_server.Repositories
 
                     tbl_sql_query = $@"
                                        SELECT * FROM (
-                                       SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgaddress FROM `consult_request` cr
+                                       SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgaddress
+                                       ,calc_age(birth_date) AS age FROM `consult_request` cr
                                        LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
                                        LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
                                        LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
@@ -464,8 +464,8 @@ namespace cms_server.Repositories
                                        AND sts_pk IN @sts_pk
                                        AND assign_dept_pk IN @res_depts
                                        AND sts_pk NOT IN ('x','fa')
-                                       {UseFilter.GenWhereDateClause("encoded_at", ">=", payload.filters.request_from)} 
-                                       {UseFilter.GenWhereDateClause("encoded_at", "<=", payload.filters.request_to)} 
+                                       {UseFilter.GenWhereDateClause("request_at", ">=", payload.filters.request_from)} 
+                                       {UseFilter.GenWhereDateClause("request_at", "<=", payload.filters.request_to)} 
                                        {UseFilter.GenTablePagination(payload.sort, payload.page)}
                                     ";
                 }
@@ -480,7 +480,6 @@ namespace cms_server.Repositories
                 }
 
                 int count = has_more ? -1 : payload.page.begin * payload.page.limit + table_data.Count;
-
 
                 foreach (var row in table_data)
                 {
@@ -514,6 +513,113 @@ namespace cms_server.Repositories
             }
         }
 
+
+        public ResponseModel GetTablePatConsultHistory(ConsultRequestTablePayload payload, string user_pk, string user_type)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                string tbl_sql_query = "";
+
+                if (user_type.Equals("admin"))
+                {
+                    tbl_sql_query = $@"
+                                       SELECT * FROM (
+                                       SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgaddress FROM `consult_request` cr
+                                       LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                       LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                       LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                       LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`
+                                       WHERE hospital_no = @hospital_no 
+                                       ) AS tmp
+                                       WHERE
+                                       COALESCE(last_name,'') LIKE CONCAT('%',@last_name,'%')
+                                       AND COALESCE(last_name,'') LIKE CONCAT('%',@last_name,'%')
+                                       AND COALESCE(first_name,'') LIKE CONCAT('%',@first_name,'%')
+                                       AND COALESCE(email,'') LIKE CONCAT('%',@email,'%')
+                                       AND COALESCE(chief_complaint,'') LIKE CONCAT('%',@chief_complaint,'%')
+                                       AND COALESCE(symptoms,'') LIKE CONCAT('%',@symptoms,'%')
+                                       AND sts_pk = 'e'
+                                       {UseFilter.GenWhereDateClause("request_at", ">=", payload.filters.request_from)} 
+                                       {UseFilter.GenWhereDateClause("request_at", "<=", payload.filters.request_to)} 
+                                       {UseFilter.GenTablePagination(payload.sort, payload.page)}
+                                    ";
+                }
+                else if (user_type.Equals("hosp_resident"))
+                {
+                    payload.filters.res_depts = user_repo.HospResidentDepts(user_pk);
+
+                    tbl_sql_query = $@"
+                                       SELECT * FROM (
+                                       SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgaddress
+                                       ,calc_age(birth_date) AS age FROM `consult_request` cr
+                                       LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                       LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                       LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                       LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`
+                                       WHERE hospital_no = @hospital_no) AS tmp
+                                       WHERE
+                                       COALESCE(last_name,'') LIKE CONCAT('%',@last_name,'%')
+                                       AND COALESCE(last_name,'') LIKE CONCAT('%',@last_name,'%')
+                                       AND COALESCE(first_name,'') LIKE CONCAT('%',@first_name,'%')
+                                       AND COALESCE(email,'') LIKE CONCAT('%',@email,'%')
+                                       AND COALESCE(chief_complaint,'') LIKE CONCAT('%',@chief_complaint,'%')
+                                       AND COALESCE(symptoms,'') LIKE CONCAT('%',@symptoms,'%')
+                                       AND sts_pk = 'e'
+                                       AND assign_dept_pk IN @res_depts
+                                       {UseFilter.GenWhereDateClause("request_at", ">=", payload.filters.request_from)} 
+                                       {UseFilter.GenWhereDateClause("request_at", "<=", payload.filters.request_to)} 
+                                       {UseFilter.GenTablePagination(payload.sort, payload.page)}
+                                    ";
+                }
+
+                List<ConsultRequestEntity> table_data = con.Query<ConsultRequestEntity>(tbl_sql_query, payload.filters, transaction: tran).ToList();
+
+                bool has_more = table_data.Count > payload.page.limit;
+
+                if (has_more)
+                {
+                    table_data.RemoveAt(table_data.Count - 1);
+                }
+
+                int count = has_more ? -1 : payload.page.begin * payload.page.limit + table_data.Count;
+
+                foreach (var row in table_data)
+                {
+                    row.status = con.QuerySingleOrDefault<StatusMasterEntity>(
+                        "select * from status_master where sts_pk=@sts_pk"
+                        , new { row.sts_pk }
+                        , transaction: tran);
+                }
+
+                return new ResponseModel
+                {
+                    success = true,
+                    data =
+                    new
+                    {
+                        table = table_data,
+                        begin = payload.page.begin,
+                        count = count,
+                        limit = payload.page.limit
+                    }
+                };
+
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+
         public ResponseModel GetConsultReqByPk(string hash_key, string user_pk, string user_type)
         {
             try
@@ -542,7 +648,7 @@ namespace cms_server.Repositories
                       LEFT JOIN `department` d ON d.`dept_pk` = cr.`assign_dept_pk`
                       LEFT JOIN `hosp_resident` hr ON hr.`res_pk` = cr.`assign_res_pk`
                       ) AS tmp
-                      WHERE hash_key=@hash_key limit 1 ;";
+                      WHERE hash_key=@hash_key LIMIT 1 ;";
 
                     table_data = con.Query<ConsultRequestEntity>(sql_query
                                 , new { hash_key }, transaction: tran).ToList();
@@ -565,7 +671,7 @@ namespace cms_server.Repositories
                       LEFT JOIN `department` d ON d.`dept_pk` = cr.`assign_dept_pk`
                       LEFT JOIN `hosp_resident` hr ON hr.`res_pk` = cr.`assign_res_pk`
                       ) AS tmp
-                      WHERE hash_key=@hash_key AND assign_dept_pk IN @user_resident_dept  limit 1;";
+                      WHERE hash_key=@hash_key AND assign_dept_pk IN @user_resident_dept LIMIT 1;";
 
                     table_data = con.Query<ConsultRequestEntity>(sql_query
                                , new { hash_key, user_resident_dept }, transaction: tran).ToList();
@@ -578,6 +684,27 @@ namespace cms_server.Repositories
                             message = $@"The consultation that you are trying to manage cannot be found: it could be that you are not allowed to manage this request or it does not exist.",
                         };
                     }
+                }
+                else
+                {
+                    //sql_query = $@"SELECT * FROM (
+                    //  SELECT cr.*,MD5(cr.consult_req_pk) hash_key
+                    //  ,r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc
+                    //  ,psg.`citymundesc`,psg.`provincedesc`,psg.`barangaydesc`,psg.`regiondesc`,psg.`completeaddress` psgcaddress
+                    //  ,CONCAT(d.dept_code,'-',d.dept_name) AS `assign_dept_desc`
+                    //  ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
+                    //  FROM `consult_request` cr
+                    //  LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                    //  LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                    //  LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                    //  LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`
+                    //  LEFT JOIN `department` d ON d.`dept_pk` = cr.`assign_dept_pk`
+                    //  LEFT JOIN `hosp_resident` hr ON hr.`res_pk` = cr.`assign_res_pk`
+                    //  ) AS tmp
+                    //  WHERE hash_key=@hash_key LIMIT 1 ;";
+
+                    //table_data = con.Query<ConsultRequestEntity>(sql_query
+                    //            , new { hash_key }, transaction: tran).ToList();
                 }
 
                 if (table_data.Count > 0)
@@ -807,7 +934,7 @@ namespace cms_server.Repositories
 
                 string otp_code = UseOtp.create();
 
-                string full_body = $@"This is {def_val_repo.GetHospitalName().data}. Dear {selected_row.last_name}, {selected_row.finish_at}, your Consultation Request Payment Link OTP is: {otp_code}. This is only valid within 10 minutes.";
+                string full_body = $@"This is {def_val_repo.GetHospitalName().data}. Dear {selected_row.last_name}, {selected_row.ended_at}, your Consultation Request Payment Link OTP is: {otp_code}. This is only valid within 10 minutes.";
 
                 int message_affected_rows = con.Execute($@"INSERT INTO messageout SET
                                                                 messageto='${selected_row.mob_no}',
@@ -981,7 +1108,7 @@ namespace cms_server.Repositories
 
                 string soa_qr = UseQr.CreateConsultSoaQr(selected_row.hash_key, brand_logo);
 
-                byte[] soa_pdf = SoaPdf.GerateSoaPdf(brand_name, brand_logo, brand_address, brand_phone, brand_email, selected_row, soa_qr);
+                byte[] soa_pdf = SoaPdf.GenerateSoaPdf(brand_name, brand_logo, brand_address, brand_phone, brand_email, selected_row, soa_qr);
 
                 string pdf_file = Convert.ToBase64String(soa_pdf);
 
@@ -1199,7 +1326,636 @@ namespace cms_server.Repositories
             }
         }
 
-        //MapHospitalNo
+        public ResponseModel StartConsultation(HospPatientEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                ConsultRequestEntity selected_row = con.QuerySingle<ConsultRequestEntity>(
+                                             $@"SELECT * FROM (
+                                                   SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgcaddress
+                                                   FROM `consult_request` cr
+                                                   LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                                   LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                                   LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                                   LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
+                                                   WHERE consult_req_pk=@consult_req_pk limit 1 ;",
+                                             new { payload.consult_req_pk }, transaction: tran);
+
+                int patient_success = 0;
+
+                string consult_link_pass = UseOtp.create();
+                string consult_link_hash = UseHash.Sha256(consult_link_pass);
+
+                int update_consult = con.Execute($@"
+                        UPDATE `consult_request` SET
+                        sts_pk='s',
+                        consult_link_pass='{consult_link_pass}',
+                        consult_link_hash='{consult_link_hash}',
+                        consult_at=NOW()
+                        WHERE consult_req_pk = @consult_req_pk;
+                        ", payload, transaction: tran);
+
+                if (selected_row.hospital_no != null)
+                {
+                    patient_success = con.Execute(@"
+                        UPDATE `hosp_patient` SET
+                        prefix=@prefix,
+                        first_name=@first_name,
+                        middle_name=@middle_name,
+                        last_name=@last_name,
+                        suffix=@suffix,
+                        birth_date=@birth_date,
+                        birth_place=@birth_place,
+                        cs_pk=@cs_pk,
+                        nat_pk=@nat_pk,
+                        rel_pk=@rel_pk,
+                        email=@email,
+                        mob_no=@mob_no,
+                        line1=@line1,
+                        line2=@line2,
+                        brgy_pk=@brgy_pk,
+                        citymun_pk=@citymun_pk,
+                        prov_pk=@prov_pk,
+                        region_pk=@region_pk,
+                        zip_code=@zip_code,
+                        consult_count=(consult_count+1),
+                        last_consult_at=NOW(),
+                        last_updated_at=NOW(),
+                        last_updated_by=@last_updated_by
+                        WHERE hospital_no=@hospital_no;
+                        ", payload, transaction: tran);
+                }
+                else
+                {
+                    payload.hospital_no = con.QuerySingle<string>($@"
+                                    SELECT next_hospital_no(NULL);
+                                    ", null, transaction: tran);
+
+                    patient_success = con.Execute(@"
+                        INSERT INTO `hosp_patient` SET
+                        hospital_no=@hospital_no,
+                        prefix=@prefix,
+                        first_name=@first_name,
+                        middle_name=@middle_name,
+                        last_name=@last_name,
+                        birth_date=@birth_date,
+                        birth_place=@birth_place,
+                        cs_pk=@cs_pk,
+                        nat_pk=@nat_pk,
+                        rel_pk=@rel_pk,
+                        email=@email,
+                        mob_no=@mob_no,
+                        line1=@line1,
+                        line2=@line2,
+                        brgy_pk=@brgy_pk,
+                        citymun_pk=@citymun_pk,
+                        prov_pk=@prov_pk,
+                        region_pk=@region_pk,
+                        zip_code=@zip_code,
+                        consult_count=1,
+                        last_consult_at=NOW(),
+                        last_updated_at=NOW(),
+                        last_updated_by=@last_updated_by;
+                        ", payload, transaction: tran);
+                }
+
+
+                if (update_consult > 0 && patient_success > 0)
+                {
+                    string brand_name = def_val_repo.GetHospitalName().data.ToString();
+                    string msg_body = $@"This is {brand_name}. Dear {selected_row.last_name}, {selected_row.first_name}, 
+                                         kindly attend your online consultation at {DefaultConfig._clientBaseUrl}online-consultation/{selected_row.hash_key} using the password {consult_link_pass}.";
+
+                    int message_sent = con.Execute($@"INSERT INTO messageout SET
+                                                              messageto='${selected_row.mob_no}',
+                                                              messagetext=@messagetext;",
+                                                      new { messageto = selected_row.mob_no, messagetext = msg_body }, transaction: tran);
+
+                    if (message_sent < 1)
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "An error has occured when trying to send the message. Please try again!"
+                        };
+                    }
+
+                    ResponseModel email_response = UseEmail.SendEmail(brand_name, selected_row.email, msg_body, "Online Consultation Link");
+
+                    if (!email_response.success)
+                    {
+                        return email_response;
+
+                    }
+
+                    LogModel log_payload = new LogModel
+                    {
+                        activity = $"the consultation {selected_row.consult_req_pk} has been started",
+                        encoded_by = payload.last_updated_by,
+                        ref_pk = selected_row.consult_req_pk,
+                        ref_table = "consult_request"
+                    };
+
+                    int insert_log = con.Execute(
+                            $@"INSERT into logs set
+                                 ref_pk=@ref_pk,
+                                 ref_table=@ref_table,
+                                 activity=@activity,
+                                 encoded_at = NOW(),
+                                 encoded_by=@encoded_by;
+                            ", log_payload, transaction: tran);
+
+                    if (insert_log > 0)
+                    {
+                        tran.Commit();
+                        return new ResponseModel
+                        {
+                            success = true,
+                            message = "The consultation has been started. The online consultation link has been sent to the patient. "
+                        };
+                    }
+                    else
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "There were no rows affected when trying log the event."
+                        };
+                    }
+                }
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. The consultation has not been started."
+                };
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel EndConsult(ConsultRequestEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                ConsultRequestEntity selected_row = con.QuerySingle<ConsultRequestEntity>(
+                                             $@"SELECT * FROM (
+                                                   SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgcaddress
+                                                   FROM `consult_request` cr
+                                                   LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                                   LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                                   LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                                   LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
+                                                   WHERE consult_req_pk=@consult_req_pk limit 1 ;",
+                                             new { payload.consult_req_pk }, transaction: tran);
+
+
+                if (selected_row.sts_pk.Equals("s"))
+                {
+                    int update_consult = con.Execute($@"
+                        UPDATE `consult_request` SET
+                        sts_pk='e',
+                        ended_at=NOW()
+                        WHERE consult_req_pk = @consult_req_pk;
+                        ", payload, transaction: tran);
+
+                    if (update_consult > 0)
+                    {
+                        LogModel log_payload = new LogModel
+                        {
+                            activity = $"the consultation {selected_row.consult_req_pk} has ended.",
+                            encoded_by = payload.last_updated_by,
+                            ref_pk = selected_row.consult_req_pk,
+                            ref_table = "consult_request"
+                        };
+
+                        int insert_log = con.Execute(
+                                $@"INSERT into logs set
+                                 ref_pk=@ref_pk,
+                                 ref_table=@ref_table,
+                                 activity=@activity,
+                                 encoded_at = NOW(),
+                                 encoded_by=@encoded_by;
+                            ", log_payload, transaction: tran);
+
+                        if (insert_log > 0)
+                        {
+                            tran.Commit();
+                            return new ResponseModel
+                            {
+                                success = true,
+                                message = "The consultation has ended."
+                            };
+                        }
+                        else
+                        {
+                            return new ResponseModel
+                            {
+                                success = false,
+                                message = "There were no rows affected when trying log the event."
+                            };
+                        }
+                    }
+                    else
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "There were no rows affected when trying to end the consultation"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "You can't end consultations that are not currently started!"
+                    };
+                }
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel TakeOverConsult(ConsultRequestEntity payload, string user_type)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                ConsultRequestEntity selected_row = con.QuerySingle<ConsultRequestEntity>(
+                                             $@"SELECT * FROM (
+                                                   SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgcaddress
+                                                   FROM `consult_request` cr
+                                                   LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                                   LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                                   LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                                   LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
+                                                   WHERE consult_req_pk=@consult_req_pk limit 1 ;",
+                                             new { payload.consult_req_pk }, transaction: tran);
+
+                if (user_type.Equals("hosp_resident"))
+                {
+                    if (selected_row.sts_pk.Equals("pd") && selected_row.assign_res_pk == null)
+                    {
+                        int update_consult = con.Execute($@"
+                        UPDATE `consult_request` SET
+                        assign_res_pk=(SELECT res_pk FROM `hosp_resident` WHERE user_pk = @last_updated_by LIMIT 1)
+                        WHERE consult_req_pk = @consult_req_pk;
+                        ", payload, transaction: tran);
+
+                        var resident_info = con.QuerySingle<HospResidentEntity>(
+                            $@"SELECT * FROM `hosp_resident` WHERE res_pk=(SELECT res_pk FROM `hosp_resident` WHERE user_pk = @last_updated_by LIMIT 1);",
+                            payload,
+                            transaction: tran);
+
+                        if (update_consult > 0)
+                        {
+                            LogModel log_payload = new LogModel
+                            {
+                                activity = $"the resident {resident_info.last_name}, {resident_info.first_name} has taken over the consulation {selected_row.consult_req_pk}.",
+                                encoded_by = payload.last_updated_by,
+                                ref_pk = selected_row.consult_req_pk,
+                                ref_table = "consult_request"
+                            };
+
+                            int insert_log = con.Execute(
+                                    $@"INSERT into logs set
+                                       ref_pk=@ref_pk,
+                                       ref_table=@ref_table,
+                                       activity=@activity,
+                                       encoded_at = NOW(),
+                                       encoded_by=@encoded_by;
+                            ", log_payload, transaction: tran);
+
+                            if (insert_log > 0)
+                            {
+                                tran.Commit();
+                                return new ResponseModel
+                                {
+                                    success = true,
+                                    message = $@"The resident {resident_info.last_name}, {resident_info.first_name} has taken over the consulation {selected_row.consult_req_pk}."
+                                };
+                            }
+                            else
+                            {
+                                return new ResponseModel
+                                {
+                                    success = false,
+                                    message = "There were no rows affected when trying log the event."
+                                };
+                            }
+                        }
+                        else
+                        {
+                            return new ResponseModel
+                            {
+                                success = false,
+                                message = "There were no rows affected when trying to end the consultation"
+                            };
+                        }
+                    }
+                    else
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "You can't take over this consultation!"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "You are not allowed to take over this consultation."
+                    };
+                }
+
+
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel MapConsultationToPatient(HospPatientEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                ConsultRequestEntity selected_row = con.QuerySingle<ConsultRequestEntity>(
+                                             $@"SELECT * FROM (
+                                                   SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgcaddress
+                                                   FROM `consult_request` cr
+                                                   LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                                   LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                                   LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                                   LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
+                                                   WHERE consult_req_pk=@consult_req_pk limit 1 ;",
+                                             new { payload.consult_req_pk }, transaction: tran);
+
+
+                int update_consult = con.Execute(@"
+                        UPDATE `consult_request` SET
+                        hospital_no=@hospital_no
+                        WHERE consult_req_pk = @consult_req_pk;
+                        ", payload, transaction: tran);
+
+                int patient_success = con.Execute(@"
+                        UPDATE `hosp_patient` SET
+                        prefix=@prefix,
+                        first_name=@first_name,
+                        middle_name=@middle_name,
+                        last_name=@last_name,
+                        suffix=@suffix,
+                        birth_date=@birth_date,
+                        birth_place=@birth_place,
+                        cs_pk=@cs_pk,
+                        nat_pk=@nat_pk,
+                        rel_pk=@rel_pk,
+                        email=@email,
+                        mob_no=@mob_no,
+                        line1=@line1,
+                        line2=@line2,
+                        brgy_pk=@brgy_pk,
+                        citymun_pk=@citymun_pk,
+                        prov_pk=@prov_pk,
+                        region_pk=@region_pk,
+                        zip_code=@zip_code,
+                        consult_count=(consult_count+1),
+                        last_consult_at=NOW(),
+                        last_updated_at=NOW(),
+                        last_updated_by=@last_updated_by
+                        WHERE hospital_no=@hospital_no;
+                        ", payload, transaction: tran);
+
+                if (update_consult > 0 && patient_success > 0)
+                {
+                    LogModel log_payload = new LogModel
+                    {
+                        activity = $"the consultation request {selected_row.consult_req_pk} has been mapped to the the hospital records",
+                        encoded_by = payload.last_updated_by,
+                        ref_pk = selected_row.consult_req_pk,
+                        ref_table = "consult_request"
+                    };
+
+                    int insert_logs_affected_rows = con.Execute(
+                            $@"INSERT into logs set
+                                 ref_pk=@ref_pk,
+                                 ref_table=@ref_table,
+                                 activity=@activity,
+                                 encoded_at = NOW(),
+                                 encoded_by=@encoded_by;
+                            ", log_payload, transaction: tran);
+
+                    if (insert_logs_affected_rows > 0)
+                    {
+                        tran.Commit();
+                        return new ResponseModel
+                        {
+                            message = $"The consultation request {selected_row.consult_req_pk} has been mapped to the the hospital records!",
+                            success = true
+                        };
+                    }
+                }
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. The consultation has not been started."
+                };
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel AuthenticateConsultLink(ConsultRequestEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                ConsultRequestEntity selected_row = con.QuerySingle<ConsultRequestEntity>(
+                                             $@"SELECT * FROM (
+                                                   SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgcaddress
+                                                   FROM `consult_request` cr
+                                                   LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                                   LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                                   LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                                   LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
+                                                   WHERE MD5(consult_req_pk)=@hash_key limit 1 ;",
+                                             new { payload.hash_key }, transaction: tran);
+
+                payload.consult_link_hash = UseHash.Sha256(payload.consult_link_pass);
+
+                if (payload.consult_link_hash.Equals(selected_row.consult_link_hash))
+                {
+                    tran.Commit();
+                    return new ResponseModel
+                    {
+                        success = true,
+                        data = payload.consult_link_hash,
+                        message = "You have been authenticated successfully."
+                    };
+                }
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The consultation link password that you have entered is not correct!"
+                };
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel IsConsultLinkAuthenticated(ConsultRequestEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                ConsultRequestEntity selected_row = con.QuerySingle<ConsultRequestEntity>(
+                                             $@"SELECT * FROM (
+                                                   SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgcaddress
+                                                   FROM `consult_request` cr
+                                                   LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                                   LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                                   LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                                   LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
+                                                   WHERE MD5(consult_req_pk)=@hash_key limit 1 ;",
+                                             new { payload.hash_key }, transaction: tran);
+
+                if (payload.consult_link_hash.Equals(selected_row.consult_link_hash))
+                {
+                    return new ResponseModel
+                    {
+                        success = true,
+                    };
+                }
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. The consultation has not been started."
+                };
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel GetCosultLinkInfo(string hash_key)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                List<ConsultRequestEntity> table_data = con.Query<ConsultRequestEntity>($@"
+                      SELECT * FROM (
+                      SELECT cr.consult_req_pk,cr.consult_at,cr.prefix,cr.first_name,cr.middle_name,cr.last_name,cr.suffix,cr.sts_pk,cr.consult_link_hash
+                      ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
+                      FROM `consult_request` cr
+                      LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                      LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                      LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                      LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`
+                      LEFT JOIN `department` d ON d.`dept_pk` = cr.`assign_dept_pk`
+                      LEFT JOIN `hosp_resident` hr ON hr.`res_pk` = cr.`assign_res_pk`
+                      ) AS tmp
+                      WHERE MD5(consult_req_pk)=@hash_key LIMIT 1;"
+                      , new { hash_key }, transaction: tran).ToList();
+
+                if (table_data.Count > 0)
+                {
+                    ConsultRequestEntity selected_row = table_data[0];
+                    selected_row.status = con.QuerySingleOrDefault<StatusMasterEntity>(
+                        "select * from status_master where sts_pk=@sts_pk"
+                        , new { selected_row.sts_pk }
+                        , transaction: tran);
+
+                    tran.Commit();
+                    return new ResponseModel
+                    {
+                        success = true,
+                        data = selected_row
+                    };
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "The record that you are trying to retrieve does not exist!"
+                    };
+                }
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
 
     }
 }

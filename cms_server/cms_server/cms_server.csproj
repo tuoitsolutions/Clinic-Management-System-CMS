@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <Folder Include="Resources\Logo\" />
     <Folder Include="Uploads\client_profile\" />
   </ItemGroup>
 

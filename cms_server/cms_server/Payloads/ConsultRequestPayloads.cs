@@ -9,6 +9,7 @@ namespace pos_server.Payloads
         public class ConsultRequestFilterPayload
         {
             public string consult_req_pk { get; set; }
+            public string hospital_no { get; set; }
             public string email { get; set; }
             public string last_name { get; set; }
             public string first_name { get; set; }

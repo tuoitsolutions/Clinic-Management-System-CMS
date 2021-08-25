@@ -47,8 +47,7 @@ export const PaymentView: FC<PaymentViewProps> = memo(() => {
 
   const [selected_consult_req, set_selected_consult_req] =
     useState<null | ConsultRequestEntity>(null);
-  const [selected_consult_req_counter, set_selected_consult_req_counter] =
-    useState(0);
+
   const [fetch_selected_consult_req, set_fetch_selected_consult_req] =
     useState(true);
 

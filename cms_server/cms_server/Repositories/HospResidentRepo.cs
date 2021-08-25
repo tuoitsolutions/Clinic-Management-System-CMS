@@ -288,8 +288,8 @@ namespace cms_server.Repositories
                                        AND is_active IN @is_active
                                        {UseFilter.GenWhereDateClause("encoded_at", ">=", payload.filters.date_from)} 
                                        {UseFilter.GenWhereDateClause("encoded_at", "<=", payload.filters.date_to)} 
-                                       {UseFilter.GenTablePagination(payload.sort, payload.page)}
-                            ", payload.filters, transaction: tran).ToList();
+                                       {UseFilter.GenTablePagination(payload.sort, payload.page)}",
+                                       payload.filters, transaction: tran).ToList();
 
                 bool has_more = table_data.Count > payload.page.limit;
 

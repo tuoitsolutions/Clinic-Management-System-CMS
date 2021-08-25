@@ -17,6 +17,7 @@ namespace DeliveryRoomWatcher.Services
 
             var jwtTokenConfig = configuration.GetSection("jwtTokenConfig").Get<JwtTokenConfig>();
             services.AddSingleton(jwtTokenConfig);
+
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -32,14 +33,23 @@ namespace DeliveryRoomWatcher.Services
                     {
                         var accessToken = context.Request.Query["access_token"];
 
-                        // If the request is for our hub...
                         var path = context.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(accessToken) &&
-                            (path.StartsWithSegments("/api/hubs/timer")))
+
+                        if (path.StartsWithSegments("/api/hubs/timer"))
                         {
-                            // Read the token out of the query string
-                            context.Token = accessToken;
+                            if (!string.IsNullOrEmpty(accessToken))
+                            {
+                                context.Token = accessToken;
+                            }
                         }
+                        //else if (path.StartsWithSegments("/api/hubs/chat"))
+                        //{
+                        //    if (!string.IsNullOrEmpty(accessToken))
+                        //    {
+                        //        context.Token = accessToken;
+                        //    }
+                        //}
+
                         return Task.CompletedTask;
                     }
                 };
@@ -56,6 +66,8 @@ namespace DeliveryRoomWatcher.Services
                     ClockSkew = TimeSpan.Zero
                 };
             });
+
+
             services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
             services.AddHostedService<JwtRefreshTokenCache>();
             services.AddCors(options =>

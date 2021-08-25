@@ -7,6 +7,7 @@ import PageSuccessPrompt from "../Component/PageSuccessPrompt";
 import RefreshTokenPrompt from "../Component/RefreshTokenPrompt";
 import ConsultRequestView from "../Views/ConsultRequestView";
 import LoginPortal from "../Views/LoginPortal/LoginPortal";
+import OnlineConsultLinkView from "../Views/OnlineConsulLinkView/OnlineConsulLinkView";
 import PaymentView from "../Views/PaymentView";
 import PaymentFeedback from "../Views/PaymentView/PaymentFeedback";
 import AdminRoutes from "./AdminRoutes";
@@ -34,6 +35,12 @@ const Routes = memo(() => {
             exact
             strict
             component={PaymentView}
+          />
+          <Route
+            path="/online-consultation/:hash_key"
+            exact
+            strict
+            component={OnlineConsultLinkView}
           />
           <Layout>
             <RefreshTokenPrompt />

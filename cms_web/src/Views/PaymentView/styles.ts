@@ -6,7 +6,6 @@ export const StyledPaymentView = styled(Container)`
   /* background-color: gray; */
   padding: 1em;
   overflow: hidden;
-
   .header-ctnr {
     display: grid;
     grid-template-areas: "logo name" "logo app" "title title";
@@ -16,12 +15,10 @@ export const StyledPaymentView = styled(Container)`
     justify-content: center;
     background-color: ${(p) => p.theme.palette.primary.main};
     color: ${(p) => p.theme.palette.primary.contrastText};
-
     min-height: 60px !important;
     max-height: 60px !important;
     padding: 0.5em 1em;
     grid-gap: 0.3em;
-
     left: 0 !important;
     right: 0 !important;
     margin-left: auto !important;
@@ -51,7 +48,6 @@ export const StyledPaymentView = styled(Container)`
     font-weight: 500;
     font-size: 1em;
   }
-
   .top-margin {
     margin-top: 60px !important;
   }
@@ -67,7 +63,6 @@ export const StyledPaymentView = styled(Container)`
       }
     }
   }
-
   .pay-body-ctnr {
     display: grid;
     grid-auto-flow: column;
@@ -81,13 +76,11 @@ export const StyledPaymentView = styled(Container)`
     }
     .pay-method-ctnr {
     }
-
     .pay-soa {
       .pay-soa-content {
         padding: 1em;
         background-color: #fafafa;
         border-radius: 5px;
-
         .soa-info-group {
           display: grid;
           grid-auto-flow: column;
@@ -98,9 +91,7 @@ export const StyledPaymentView = styled(Container)`
           align-items: center;
           grid-gap: 1em;
           padding: 0.7em 0;
-
           box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.1);
-
           .soa-label {
             opacity: 0.7;
             font-size: 0.9em;

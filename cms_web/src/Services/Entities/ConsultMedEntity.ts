@@ -8,6 +8,9 @@ interface ConsultMedEntity {
   is_active?: string;
   encoded_at?: string | Date;
   encoder_pk?: string;
+
+  //
+  attach_file?: string;
 }
 
 export interface ConsultMedTableModel {

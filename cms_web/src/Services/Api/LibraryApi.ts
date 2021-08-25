@@ -65,6 +65,11 @@ const GetDeptResidentOptions = async (id: string): Promise<ResponseModel> => {
   return response;
 };
 
+const HospitalPatientOptions = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "HospitalPatientOptions", null);
+  return response;
+};
+
 export default {
   DoctorSpecialtyOptions,
   GetHospResidentOptions,
@@ -76,4 +81,5 @@ export default {
   ReligionOptions,
   GetDepartmentOptions,
   GetDeptResidentOptions,
+  HospitalPatientOptions,
 };

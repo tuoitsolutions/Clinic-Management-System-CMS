@@ -4,7 +4,7 @@ import StatusMasterEntity from "./StatusMasterEntity";
 interface ConsultRequestEntity {
   hash_key?: string;
   consult_req_pk?: string;
-  hos_pk?: string;
+  hospital_no?: string;
   prefix?: string;
   first_name?: string;
   middle_name?: string;
@@ -40,7 +40,7 @@ interface ConsultRequestEntity {
   soa_sent_at?: Date;
   pay_at?: Date;
   consult_at?: Date;
-  finish_at?: Date;
+  ended_at?: Date;
   sts_pk?: string;
   pay_sts_pk?: string;
   payment_method?: string;
@@ -52,6 +52,8 @@ interface ConsultRequestEntity {
   consult_req_file?: ConsultRequestFileEntity;
   otp_code?: string;
   pay_link_sent_count?: number;
+  med_pres_sent?: number;
+  proc_pres_sent?: number;
   soa_sent_count?: number;
   paymongo_src_id?: string;
   paymongo_src_id_enc_at?: string | Date;
@@ -61,7 +63,8 @@ interface ConsultRequestEntity {
   assign_res_pk?: string;
   assign_dept_consult_date?: string;
   assign_dept_at?: string;
-
+  consult_link_pass?: string;
+  consult_link_hash?: string;
   //pk
   nat_desc?: string;
   rel_desc?: string;

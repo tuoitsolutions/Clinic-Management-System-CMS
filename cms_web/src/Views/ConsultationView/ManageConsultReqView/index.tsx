@@ -3,28 +3,26 @@ import {
   Button,
   Chip,
   Container,
-  Divider,
   Grid,
   IconButton,
   Tooltip,
 } from "@material-ui/core";
+import EditRoundedIcon from "@material-ui/icons/EditRounded";
+import EmailRoundedIcon from "@material-ui/icons/EmailRounded";
 import { Alert } from "@material-ui/lab";
 import React, { FC, memo, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { useTheme } from "styled-components";
 import BodyLoader from "../../../Component/BodyLoader";
 import ButtonPopper from "../../../Component/ButtonPopper";
-import LinearLoadingProgress from "../../../Component/LinearLoadingProgress";
 import LinkTabs, { ILinkTab } from "../../../Component/LinkTabs";
 import PreviewPDF from "../../../Component/PreviewPDF";
+import HelpNumber from "../../../Helpers/HelpNumber";
 import {
   InvalidDateTimeToDefault,
   InvalidDateToDefault,
 } from "../../../Hooks/UseDateParser";
 import { StringEmptyToDefault } from "../../../Hooks/UseStringFormatter";
-import EmailRoundedIcon from "@material-ui/icons/EmailRounded";
-import EditRoundedIcon from "@material-ui/icons/EditRounded";
 import {
   closePageLoading,
   setGeneralPrompt,
@@ -32,21 +30,26 @@ import {
   setPageSnackbar,
   showPageLoading,
 } from "../../../Services/Actions/PageActions";
+import ConsultMedApi from "../../../Services/Api/ConsultMedApi";
+import ConsultProcApi from "../../../Services/Api/ConsultProcApi";
 import ConsultRequestApi from "../../../Services/Api/ConsultRequestApi";
 import ConsultRequestEntity from "../../../Services/Entities/ConsultRequestEntity";
 import { RootStore } from "../../../Services/Store";
-import DialogDeclineConsultReq from "./DialogDeclineConsultReq";
-import TabDeptResident from "./TabFileRecord";
-import TabPaymentLog from "./TabPaymentLog";
+import ConsultRoom from "./ConsultRoom";
 import DialogAssignConsultDept from "./DialogAssignConsultDept";
-import HelpNumber from "../../../Helpers/HelpNumber";
 import DialogChangeConsultCost from "./DialogChangeConsultCost";
-import TabMedRecord from "./TabMedRecord";
-import VitalSignRecord from "./TabVitalSignRecord";
-import TabProcRecord from "./TabProcRecord";
+import DialogDeclineConsultReq from "./DialogDeclineConsultReq";
+import DialogMapConsultPatient from "./DialogMapConsultPatient";
+import DialogStartConsult from "./DialogStartConsult";
 import TabAllergyRecord from "./TabAllergyRecord";
+import TabDeptResident from "./TabFileRecord";
 import TabImmuneRecord from "./TabImmuneRecord";
 import TabMedProbRecord from "./TabMedProbRecord";
+import TabMedRecord from "./TabMedRecord";
+import TabPatHistoryRecord from "./TabPatHistoryRecord";
+import TabPaymentLog from "./TabPaymentLog";
+import TabProcRecord from "./TabProcRecord";
+import VitalSignRecord from "./TabVitalSignRecord";
 
 interface IManageConsultReqView {}
 
@@ -56,7 +59,6 @@ interface IParams {
 
 const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
   const dispatch = useDispatch();
-  const theme = useTheme();
   const params = useParams<IParams>();
 
   const user_type = useSelector(
@@ -77,11 +79,19 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
   const [open_change_consult_cost_dialog, set_open_change_consult_cost_dialog] =
     useState(false);
 
+  const [open_map_consult_dialog, set_open_map_consult_dialog] =
+    useState(false);
+
+  const [open_start_consult_dialog, set_open_start_consult_dialog] =
+    useState(false);
+
   const handleReloadRecord = useCallback(() => {
     set_reload_record_count((c) => c + 1);
   }, []);
 
   const [preview_soa, set_preview_soa] = useState("");
+  const [preview_med_presc, set_preview_med_presc] = useState("");
+  const [preview_proc_presc, set_preview_proc_presc] = useState("");
 
   const handlePreviewSoa = useCallback(async () => {
     if (!!selected_record?.consult_req_pk) {
@@ -99,6 +109,58 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
 
       if (response.success) {
         set_preview_soa(response.data);
+      }
+      dispatch(
+        setPageSnackbar(
+          response?.message?.toString(),
+          response.success ? "success" : "error"
+        )
+      );
+    }
+  }, [dispatch, selected_record]);
+
+  const handlePreviewMedPrescrip = useCallback(async () => {
+    if (!!selected_record?.consult_req_pk) {
+      dispatch(
+        showPageLoading({
+          show: true,
+          loading_message:
+            "Loading Medical Prescription, thank you for your patience",
+        })
+      );
+      const response = await ConsultMedApi.PreviewMedPrescrip(
+        selected_record.consult_req_pk
+      );
+      dispatch(closePageLoading());
+
+      if (response.success) {
+        set_preview_med_presc(response.data);
+      }
+      dispatch(
+        setPageSnackbar(
+          response?.message?.toString(),
+          response.success ? "success" : "error"
+        )
+      );
+    }
+  }, [dispatch, selected_record]);
+
+  const handlePreviewProcPrescrip = useCallback(async () => {
+    if (!!selected_record?.consult_req_pk) {
+      dispatch(
+        showPageLoading({
+          show: true,
+          loading_message:
+            "Loading Procedure Prescription, thank you for your patience",
+        })
+      );
+      const response = await ConsultProcApi.PreviewProcPrescrip(
+        selected_record.consult_req_pk
+      );
+      dispatch(closePageLoading());
+
+      if (response.success) {
+        set_preview_proc_presc(response.data);
       }
       dispatch(
         setPageSnackbar(
@@ -140,6 +202,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
       })
     );
   }, [dispatch, handleReloadRecord, selected_record]);
+
   const handleEmailSoa = useCallback(async () => {
     if (!!preview_soa && !!selected_record?.consult_req_pk) {
       dispatch(
@@ -175,69 +238,354 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
     }
   }, [dispatch, handleReloadRecord, preview_soa, selected_record]);
 
-  let LinkTabRoutes: Array<ILinkTab> = [
-    {
-      label: "Files",
-      link: `/request/${params.hash_key}/file`,
-      Component: (
-        <TabDeptResident consult_req_pk={selected_record?.consult_req_pk} />
-      ),
-    },
-    {
-      label: "Payment Logs",
-      link: `/request/${params.hash_key}/payment-logs`,
-      Component: (
-        <TabPaymentLog consult_req_pk={selected_record?.consult_req_pk} />
-      ),
-    },
-    {
-      label: "Vital Signs",
-      link: `/request/${params.hash_key}/vital-sign`,
-      Component: (
-        <VitalSignRecord consult_req_pk={selected_record?.consult_req_pk} />
-      ),
-    },
-    {
-      label: "Medications",
-      link: `/request/${params.hash_key}/medication`,
-      Component: (
-        <TabMedRecord consult_req_pk={selected_record?.consult_req_pk} />
-      ),
-    },
-    {
-      label: "Procedures",
-      link: `/request/${params.hash_key}/procedure`,
-      Component: (
-        <TabProcRecord consult_req_pk={selected_record?.consult_req_pk} />
-      ),
-    },
-    {
-      label: "Allergies",
-      link: `/request/${params.hash_key}/allergy`,
-      Component: (
-        <TabAllergyRecord consult_req_pk={selected_record?.consult_req_pk} />
-      ),
-    },
-    {
-      label: "Immunizations",
-      link: `/request/${params.hash_key}/immunization`,
-      Component: (
-        <TabImmuneRecord consult_req_pk={selected_record?.consult_req_pk} />
-      ),
-    },
-    {
-      label: "Medical Problems",
-      link: `/request/${params.hash_key}/medical-problem`,
-      Component: (
-        <TabMedProbRecord consult_req_pk={selected_record?.consult_req_pk} />
-      ),
-    },
-    {
-      label: "Patient History",
-      link: `/request/${params.hash_key}/patient-history`,
-      Component: <div></div>,
-    },
-  ];
+  const handleEmailMedPrescrip = useCallback(async () => {
+    if (!!preview_med_presc && !!selected_record?.consult_req_pk) {
+      dispatch(
+        setGeneralPrompt({
+          open: true,
+          custom_title: `Are you sure that you want to send the Medical Prescription the requestor's email?`,
+          continue_callback: async () => {
+            dispatch(
+              showPageLoading({
+                show: true,
+                loading_message:
+                  "Emailing Medical Prescription, thank you for your patience",
+              })
+            );
+            const response = await ConsultMedApi.EmailMedPrescrip({
+              consult_req_pk: selected_record.consult_req_pk,
+              attach_file: `${preview_med_presc}`,
+            });
+
+            dispatch(closePageLoading());
+            dispatch(
+              setPageSnackbar(
+                response?.message?.toString(),
+                response.success ? "success" : "error"
+              )
+            );
+            if (response.success) {
+              handleReloadRecord();
+            }
+          },
+        })
+      );
+    }
+  }, [dispatch, handleReloadRecord, preview_med_presc, selected_record]);
+
+  const handleEmailProcPrescrip = useCallback(async () => {
+    if (!!preview_proc_presc && !!selected_record?.consult_req_pk) {
+      dispatch(
+        setGeneralPrompt({
+          open: true,
+          custom_title: `Are you sure that you want to send the Procedure Prescription the requestor's email?`,
+          continue_callback: async () => {
+            dispatch(
+              showPageLoading({
+                show: true,
+                loading_message:
+                  "Emailing Procedure Prescription, thank you for your patience",
+              })
+            );
+            const response = await ConsultProcApi.EmailProcPrescrip({
+              consult_req_pk: selected_record.consult_req_pk,
+              attach_file: `${preview_proc_presc}`,
+            });
+
+            dispatch(closePageLoading());
+            dispatch(
+              setPageSnackbar(
+                response?.message?.toString(),
+                response.success ? "success" : "error"
+              )
+            );
+            if (response.success) {
+              handleReloadRecord();
+            }
+          },
+        })
+      );
+    }
+  }, [dispatch, handleReloadRecord, preview_proc_presc, selected_record]);
+
+  const handleEndConsultation = useCallback(async () => {
+    if (!!selected_record?.consult_req_pk) {
+      dispatch(
+        setGeneralPrompt({
+          open: true,
+          custom_title: `Are you sure that you want to end this consultation?`,
+          continue_callback: async () => {
+            dispatch(
+              showPageLoading({
+                show: true,
+                loading_message:
+                  "Ending consultation, thank you for your patience",
+              })
+            );
+            const response = await ConsultRequestApi.EndConsult({
+              consult_req_pk: selected_record.consult_req_pk,
+            });
+
+            dispatch(closePageLoading());
+            dispatch(
+              setPageSnackbar(
+                response?.message?.toString(),
+                response.success ? "success" : "error"
+              )
+            );
+            if (response.success) {
+              handleReloadRecord();
+            }
+          },
+        })
+      );
+    }
+  }, [dispatch, handleReloadRecord, selected_record]);
+
+  const handleTakeOverConsultation = useCallback(async () => {
+    if (!!selected_record?.consult_req_pk) {
+      dispatch(
+        setGeneralPrompt({
+          open: true,
+          custom_title: `Are you sure that you want to end this consultation?`,
+          continue_callback: async () => {
+            dispatch(
+              showPageLoading({
+                show: true,
+                loading_message:
+                  "Ending consultation, thank you for your patience",
+              })
+            );
+            const response = await ConsultRequestApi.TakeOverConsult({
+              consult_req_pk: selected_record.consult_req_pk,
+            });
+
+            dispatch(closePageLoading());
+            dispatch(
+              setPageSnackbar(
+                response?.message?.toString(),
+                response.success ? "success" : "error"
+              )
+            );
+            if (response.success) {
+              handleReloadRecord();
+            }
+          },
+        })
+      );
+    }
+  }, [dispatch, handleReloadRecord, selected_record]);
+
+  const GenerateTabLinks = useCallback(() => {
+    let LinkTabRoutes: Array<ILinkTab> = [];
+
+    if (user_type === "hosp_resident") {
+      LinkTabRoutes = [
+        {
+          label: "Files",
+          link: `/request/${params.hash_key}/file`,
+          Component: (
+            <TabDeptResident consult_req_pk={selected_record?.consult_req_pk} />
+          ),
+        },
+        {
+          label: "Vital Signs",
+          link: `/request/${params.hash_key}/vital-sign`,
+          Component: (
+            <VitalSignRecord consult_req_pk={selected_record?.consult_req_pk} />
+          ),
+        },
+        {
+          label: "Medications",
+          link: `/request/${params.hash_key}/medication`,
+          Component: (
+            <TabMedRecord consult_req_pk={selected_record?.consult_req_pk} />
+          ),
+        },
+        {
+          label: "Procedures",
+          link: `/request/${params.hash_key}/procedure`,
+          Component: (
+            <TabProcRecord consult_req_pk={selected_record?.consult_req_pk} />
+          ),
+        },
+        {
+          label: "Allergies",
+          link: `/request/${params.hash_key}/allergy`,
+          Component: (
+            <TabAllergyRecord
+              consult_req_pk={selected_record?.consult_req_pk}
+            />
+          ),
+        },
+        {
+          label: "Immunizations",
+          link: `/request/${params.hash_key}/immunization`,
+          Component: (
+            <TabImmuneRecord consult_req_pk={selected_record?.consult_req_pk} />
+          ),
+        },
+        {
+          label: "Medical Problems",
+          link: `/request/${params.hash_key}/medical-problem`,
+          Component: (
+            <TabMedProbRecord
+              consult_req_pk={selected_record?.consult_req_pk}
+            />
+          ),
+        },
+        {
+          label: "Chat History",
+          link: `/request/${params.hash_key}/chat-history`,
+          Component: <div></div>,
+        },
+        {
+          label: "Patient History",
+          link: `/request/${params.hash_key}/patient-history`,
+          Component: <TabPatHistoryRecord selected_row={selected_record} />,
+        },
+      ];
+    } else if (user_type === "admin") {
+      LinkTabRoutes = [
+        {
+          label: "Files",
+          link: `/request/${params.hash_key}/file`,
+          Component: (
+            <TabDeptResident consult_req_pk={selected_record?.consult_req_pk} />
+          ),
+        },
+        {
+          label: "Payment Logs",
+          link: `/request/${params.hash_key}/payment-logs`,
+          Component: (
+            <TabPaymentLog consult_req_pk={selected_record?.consult_req_pk} />
+          ),
+        },
+        {
+          label: "Vital Signs",
+          link: `/request/${params.hash_key}/vital-sign`,
+          Component: (
+            <VitalSignRecord consult_req_pk={selected_record?.consult_req_pk} />
+          ),
+        },
+        {
+          label: "Medications",
+          link: `/request/${params.hash_key}/medication`,
+          Component: (
+            <TabMedRecord consult_req_pk={selected_record?.consult_req_pk} />
+          ),
+        },
+        {
+          label: "Procedures",
+          link: `/request/${params.hash_key}/procedure`,
+          Component: (
+            <TabProcRecord consult_req_pk={selected_record?.consult_req_pk} />
+          ),
+        },
+        {
+          label: "Allergies",
+          link: `/request/${params.hash_key}/allergy`,
+          Component: (
+            <TabAllergyRecord
+              consult_req_pk={selected_record?.consult_req_pk}
+            />
+          ),
+        },
+        {
+          label: "Immunizations",
+          link: `/request/${params.hash_key}/immunization`,
+          Component: (
+            <TabImmuneRecord consult_req_pk={selected_record?.consult_req_pk} />
+          ),
+        },
+        {
+          label: "Medical Problems",
+          link: `/request/${params.hash_key}/medical-problem`,
+          Component: (
+            <TabMedProbRecord
+              consult_req_pk={selected_record?.consult_req_pk}
+            />
+          ),
+        },
+        {
+          label: "Patient History",
+          link: `/request/${params.hash_key}/patient-history`,
+          Component: <TabPatHistoryRecord selected_row={selected_record} />,
+        },
+      ];
+    }
+
+    return LinkTabRoutes;
+  }, [selected_record, user_type]);
+
+  // let LinkTabRoutes: Array<ILinkTab> = [
+  //   {
+  //     label: "Files",
+  //     link: `/request/${params.hash_key}/file`,
+  //     Component: (
+  //       <TabDeptResident consult_req_pk={selected_record?.consult_req_pk} />
+  //     ),
+  //   },
+  //   {
+  //     label: "Payment Logs",
+  //     link: `/request/${params.hash_key}/payment-logs`,
+  //     Component: (
+  //       <TabPaymentLog consult_req_pk={selected_record?.consult_req_pk} />
+  //     ),
+  //   },
+  //   {
+  //     label: "Vital Signs",
+  //     link: `/request/${params.hash_key}/vital-sign`,
+  //     Component: (
+  //       <VitalSignRecord consult_req_pk={selected_record?.consult_req_pk} />
+  //     ),
+  //   },
+  //   {
+  //     label: "Medications",
+  //     link: `/request/${params.hash_key}/medication`,
+  //     Component: (
+  //       <TabMedRecord consult_req_pk={selected_record?.consult_req_pk} />
+  //     ),
+  //   },
+  //   {
+  //     label: "Procedures",
+  //     link: `/request/${params.hash_key}/procedure`,
+  //     Component: (
+  //       <TabProcRecord consult_req_pk={selected_record?.consult_req_pk} />
+  //     ),
+  //   },
+  //   {
+  //     label: "Allergies",
+  //     link: `/request/${params.hash_key}/allergy`,
+  //     Component: (
+  //       <TabAllergyRecord consult_req_pk={selected_record?.consult_req_pk} />
+  //     ),
+  //   },
+  //   {
+  //     label: "Immunizations",
+  //     link: `/request/${params.hash_key}/immunization`,
+  //     Component: (
+  //       <TabImmuneRecord consult_req_pk={selected_record?.consult_req_pk} />
+  //     ),
+  //   },
+  //   {
+  //     label: "Medical Problems",
+  //     link: `/request/${params.hash_key}/medical-problem`,
+  //     Component: (
+  //       <TabMedProbRecord consult_req_pk={selected_record?.consult_req_pk} />
+  //     ),
+  //   },
+  //   {
+  //     label: "Chat History",
+  //     link: `/request/${params.hash_key}/chat-history`,
+  //     Component: <div></div>,
+  //   },
+  //   {
+  //     label: "Patient History",
+  //     link: `/request/${params.hash_key}/patient-history`,
+  //     Component: <div></div>,
+  //   },
+  // ];
 
   useEffect(() => {
     let mounted = true;
@@ -297,8 +645,14 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
           !!selected_record && (
             <Container maxWidth="lg">
               <Grid container spacing={3}>
-                <LinearLoadingProgress show={true} />
-
+                {selected_record?.sts_pk === "s" &&
+                  user_type === "hosp_resident" && (
+                    <Grid item xs={12}>
+                      <div className="panel-container">
+                        <ConsultRoom selected_row={selected_record} />
+                      </div>
+                    </Grid>
+                  )}
                 <Grid item xs={12}>
                   <div className="panel-container">
                     <Grid container spacing={6}>
@@ -340,8 +694,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                                     variant="contained"
                                     color="primary"
                                     onClick={() => {
-                                      // handleSendPaymentLink();
-                                      // set_open_assign_dept_dialog(true);
+                                      set_open_start_consult_dialog(true);
                                     }}
                                   >
                                     Start Consultation
@@ -367,9 +720,40 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                             </>
                           )}
 
+                          {selected_record?.sts_pk === "s" &&
+                            user_type === "hosp_resident" && (
+                              <Grid item>
+                                <Button
+                                  variant="contained"
+                                  color="primary"
+                                  onClick={() => {
+                                    handleEndConsultation();
+                                  }}
+                                >
+                                  End Consultation
+                                </Button>
+                              </Grid>
+                            )}
+
+                          {selected_record?.sts_pk === "pd" &&
+                            !selected_record.assign_res_pk &&
+                            user_type === "hosp_resident" && (
+                              <Grid item>
+                                <Button
+                                  variant="contained"
+                                  color="primary"
+                                  onClick={() => {
+                                    handleTakeOverConsultation();
+                                  }}
+                                >
+                                  Take Over Consultation
+                                </Button>
+                              </Grid>
+                            )}
+
                           <Grid item>
                             <ButtonPopper
-                              actionLabel="Actions"
+                              actionLabel="Documents"
                               variant="contained"
                               buttonColor="primary"
                               buttons={[
@@ -386,6 +770,18 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                                   text: "Preview SOA",
                                   handleClick: () => {
                                     handlePreviewSoa();
+                                  },
+                                },
+                                {
+                                  text: "Preview Medical Prescrip.",
+                                  handleClick: () => {
+                                    handlePreviewMedPrescrip();
+                                  },
+                                },
+                                {
+                                  text: "Preview Procedure Prescrip.",
+                                  handleClick: () => {
+                                    handlePreviewProcPrescrip();
                                   },
                                 },
                                 {
@@ -502,7 +898,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                               </div>
                             </div>
                           </Grid>
-                          <Grid item xs={12} sm={4} lg={2}>
+                          <Grid item xs={12} sm={4} lg={3}>
                             <div className="info-group-column">
                               <div className="label">Requested On: </div>
                               <div className="value">
@@ -513,18 +909,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                               </div>
                             </div>
                           </Grid>
-                          <Grid item xs={12} sm={4} lg={2}>
-                            <div className="info-group-column">
-                              <div className="label">Accepted On: </div>
-                              <div className="value">
-                                {InvalidDateTimeToDefault(
-                                  selected_record?.accept_at,
-                                  "TBD"
-                                )}
-                              </div>
-                            </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={2}>
+                          <Grid item xs={12} sm={4} lg={3}>
                             <div className="info-group-column">
                               <div className="label">Paid On: </div>
                               <div className="value">
@@ -535,7 +920,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                               </div>
                             </div>
                           </Grid>
-                          <Grid item xs={12} sm={4} lg={2}>
+                          <Grid item xs={12} sm={4} lg={3}>
                             <div className="info-group-column">
                               <div className="label">Consulted On: </div>
                               <div className="value">
@@ -546,19 +931,19 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                               </div>
                             </div>
                           </Grid>
-                          <Grid item xs={12} sm={4} lg={2}>
+                          <Grid item xs={12} sm={4} lg={3}>
                             <div className="info-group-column">
                               <div className="label">Finished On: </div>
                               <div className="value">
                                 {InvalidDateTimeToDefault(
-                                  selected_record?.finish_at,
+                                  selected_record?.ended_at,
                                   "TBD"
                                 )}
                               </div>
                             </div>
                           </Grid>
 
-                          <Grid item xs={12} md={4} lg={2}>
+                          <Grid item xs={12} md={4} lg={3}>
                             <div className="info-group-column">
                               <div className="label">Consultation Cost: </div>
                               <div className="value">
@@ -573,7 +958,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                                   }
                                 />
                                 {user_type === "admin" &&
-                                  selected_record === "fa" && (
+                                  selected_record.sts_pk === "fa" && (
                                     <Tooltip title="Change the consultation cost">
                                       <IconButton
                                         size="small"
@@ -595,24 +980,33 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                             </div>
                           </Grid>
 
-                          <Grid item xs={12} md={4} lg={2}>
+                          <Grid item xs={12} md={4} lg={3}>
                             <div className="info-group-column">
                               <div className="label">Hospital #: </div>
                               <div className="value">
                                 <div>
                                   {StringEmptyToDefault(
-                                    selected_record?.hos_pk,
+                                    selected_record?.hospital_no,
                                     "To be decided"
                                   )}
                                 </div>
-                                <Tooltip title="Map this consultation to a hospital number (Note: Only for patients that have admitted before)">
-                                  <IconButton size="small" color="primary">
-                                    <EditRoundedIcon
-                                      fontSize="small"
+
+                                {selected_record?.sts_pk === "pd" && (
+                                  <Tooltip title="Map this consultation to a hospital number (Note: Only for patients that have admitted before)">
+                                    <IconButton
+                                      size="small"
                                       color="primary"
-                                    />
-                                  </IconButton>
-                                </Tooltip>
+                                      onClick={() => {
+                                        set_open_map_consult_dialog(true);
+                                      }}
+                                    >
+                                      <EditRoundedIcon
+                                        fontSize="small"
+                                        color="primary"
+                                      />
+                                    </IconButton>
+                                  </Tooltip>
+                                )}
                               </div>
                             </div>
                           </Grid>
@@ -690,10 +1084,16 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                   </div>
                 </Grid>
 
+                {/* <Grid item xs={12}>
+                  <div className="panel-container">
+                    <ConsultRoom selected_row={selected_record} />
+                  </div>
+                </Grid> */}
+
                 <Grid item xs={12}>
                   <div className="panel-container">
-                    {!!selected_record?.consult_req_pk && (
-                      <LinkTabs tabs={LinkTabRoutes} />
+                    {!!selected_record?.consult_req_pk && !!user_type && (
+                      <LinkTabs tabs={GenerateTabLinks()} />
                     )}
                   </div>
                 </Grid>
@@ -739,6 +1139,32 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                   />
                 )}
 
+              {!!selected_record?.consult_req_pk && open_map_consult_dialog && (
+                <DialogMapConsultPatient
+                  open={open_map_consult_dialog}
+                  handleCloseDialog={() => {
+                    set_open_map_consult_dialog(false);
+                  }}
+                  successCallback={() => {
+                    handleReloadRecord();
+                  }}
+                  selected_record={selected_record}
+                />
+              )}
+
+              {!!selected_record?.consult_req_pk && open_start_consult_dialog && (
+                <DialogStartConsult
+                  open={open_start_consult_dialog}
+                  handleCloseDialog={() => {
+                    set_open_start_consult_dialog(false);
+                  }}
+                  successCallback={() => {
+                    handleReloadRecord();
+                  }}
+                  selected_record={selected_record}
+                />
+              )}
+
               {!!preview_soa && (
                 <PreviewPDF
                   file={preview_soa}
@@ -757,6 +1183,64 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                             className="btn-pdf-preview"
                             onClick={() => {
                               handleEmailSoa();
+                            }}
+                          >
+                            <EmailRoundedIcon />
+                          </IconButton>
+                        </Badge>
+                      </Tooltip>
+                    </>
+                  }
+                />
+              )}
+
+              {!!preview_med_presc && (
+                <PreviewPDF
+                  file={preview_med_presc}
+                  doc_title={`Medical-Prescription-${selected_record?.consult_req_pk}.pdf`}
+                  handleClose={() => {
+                    set_preview_med_presc(null);
+                  }}
+                  actions={
+                    <>
+                      <Tooltip title="Email this document to the patient.">
+                        <Badge
+                          badgeContent={selected_record.med_pres_sent}
+                          color="secondary"
+                        >
+                          <IconButton
+                            className="btn-pdf-preview"
+                            onClick={() => {
+                              handleEmailMedPrescrip();
+                            }}
+                          >
+                            <EmailRoundedIcon />
+                          </IconButton>
+                        </Badge>
+                      </Tooltip>
+                    </>
+                  }
+                />
+              )}
+
+              {!!preview_proc_presc && (
+                <PreviewPDF
+                  file={preview_proc_presc}
+                  doc_title={`Procedure-Prescription-${selected_record?.consult_req_pk}.pdf`}
+                  handleClose={() => {
+                    set_preview_proc_presc(null);
+                  }}
+                  actions={
+                    <>
+                      <Tooltip title="Email this document to the patient.">
+                        <Badge
+                          badgeContent={selected_record.proc_pres_sent}
+                          color="secondary"
+                        >
+                          <IconButton
+                            className="btn-pdf-preview"
+                            onClick={() => {
+                              handleEmailProcPrescrip();
                             }}
                           >
                             <EmailRoundedIcon />

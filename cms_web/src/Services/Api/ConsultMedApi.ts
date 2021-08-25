@@ -35,9 +35,25 @@ const GetConsultMedByConsultMedPk = async (
   return response;
 };
 
+const PreviewMedPrescrip = async (id: string): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "PreviewMedPrescrip", {
+    value: id,
+  });
+  return response;
+};
+
+const EmailMedPrescrip = async (
+  payload: ConsultMedEntity
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "EmailMedPrescrip", payload);
+  return response;
+};
+
 export default {
   InsertConsultMed,
   UpdateConsultMed,
   GetTableConsultMed,
   GetConsultMedByConsultMedPk,
+  PreviewMedPrescrip,
+  EmailMedPrescrip,
 };

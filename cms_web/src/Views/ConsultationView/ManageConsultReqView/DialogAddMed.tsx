@@ -28,6 +28,7 @@ const form_schema = yup.object({
   med_desc: yup.string().required().nullable().label("Medicine Description"),
   unit: yup.string().nullable().label("Unit"),
   dosage: yup.string().required().nullable().label("Dosage"),
+  duration: yup.string().required().nullable().label("Duration"),
   is_active: yup.string().required().nullable().label("Active Status"),
 });
 
@@ -137,6 +138,19 @@ const DialogAddMed: FC<IDialogAddMed> = memo((props) => {
                         }}
                         fullWidth
                         placeholder="Enter the dosage"
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextFieldHookForm
+                        name="duration"
+                        label="Duration"
+                        required
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        fullWidth
+                        placeholder="Enter the duration here"
                       />
                     </Grid>
 

@@ -2,8 +2,6 @@
 using claim_form_server.Providers;
 using claim_form_server.Repositories;
 using DeliveryRoomWatcher.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Linq;
@@ -63,7 +61,6 @@ namespace claim_form_server.Hubs
                 await Clients.AllExcept(active_users.GetConnections("pgh").ToList()).SendAsync("Maintenance", maintenance.maintenance_datetime);
             }
         }
-
 
 
         public override async Task OnConnectedAsync()

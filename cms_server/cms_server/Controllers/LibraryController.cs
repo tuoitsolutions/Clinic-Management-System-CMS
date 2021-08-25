@@ -12,6 +12,7 @@ namespace pos_server.Controllers
         HospResidentRepo hosp_res_repo = new HospResidentRepo();
         DeptResidentRepo dept_res_repo = new DeptResidentRepo();
         DepartmentRepo dept_repo = new DepartmentRepo();
+        HospPatientRepo hos_pat_repo = new HospPatientRepo();
 
         [HttpPost]
         public IActionResult RegionOptions()
@@ -71,6 +72,12 @@ namespace pos_server.Controllers
         public IActionResult GetDeptResidentOptions(SingleValuePayload payload)
         {
             return Ok(dept_res_repo.GetDeptResidentOptions(payload.value));
+        }
+
+        [HttpPost]
+        public IActionResult HospitalPatientOptions()
+        {
+            return Ok(hos_pat_repo.HospitalPatientOptions());
         }
     }
 }

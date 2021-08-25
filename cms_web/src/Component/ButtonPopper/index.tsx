@@ -84,7 +84,11 @@ const ButtonPopper: React.FC<IButtonPopper> = memo(
             )}
             {buttons.map((btn: IButtonItem, index: number) =>
               !!btn.badge_value ? (
-                <Badge badgeContent={btn.badge_value} color="secondary">
+                <Badge
+                  badgeContent={btn.badge_value}
+                  key={index}
+                  color="secondary"
+                >
                   <Button
                     key={index}
                     className="btn"

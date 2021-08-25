@@ -19,6 +19,10 @@ const AdminRoutes = memo(() => {
       <Route path="/request/:hash_key" strict>
         <ManageConsultReqView />
       </Route>
+
+      <Route path="/request/:hash_key" strict>
+        <ManageConsultReqView />
+      </Route>
       <Route path="/department/" exact>
         <DepartmentRecordView />
       </Route>

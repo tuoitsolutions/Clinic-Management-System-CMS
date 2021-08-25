@@ -2,14 +2,8 @@
 using cms_server.Hooks;
 using cms_server.Repositories;
 using hrms_server.Payloads;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using pos_server.Entities;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using static pos_server.Payloads.ConsultRequestPayloads;
 
 namespace cms_server.Controllers
@@ -47,6 +41,13 @@ namespace cms_server.Controllers
         {
             string user_type = UseClaims.GetUserType((ClaimsIdentity)User.Identity);
             return Ok(consult_req_repo.GetTableConsultRequest(payload, User.Identity.Name, user_type));
+        }
+
+        [HttpPost]
+        public IActionResult GetTablePatConsultHistory(ConsultRequestTablePayload payload)
+        {
+            string user_type = UseClaims.GetUserType((ClaimsIdentity)User.Identity);
+            return Ok(consult_req_repo.GetTablePatConsultHistory(payload, User.Identity.Name, user_type));
         }
 
         [HttpPost]
@@ -103,5 +104,59 @@ namespace cms_server.Controllers
         {
             return Ok(consult_req_repo.ChangeConsultationCost(payload, User.Identity.Name));
         }
+
+        [HttpPost]
+        public IActionResult StartConsultation(HospPatientEntity payload)
+        {
+            payload.last_updated_by = User.Identity.Name;
+            return Ok(consult_req_repo.StartConsultation(payload));
+        }
+
+
+        [HttpPost]
+        public IActionResult EndConsult(ConsultRequestEntity payload)
+        {
+            string user_type = UseClaims.GetUserType((ClaimsIdentity)User.Identity);
+            payload.last_updated_by = User.Identity.Name;
+            return Ok(consult_req_repo.EndConsult(payload));
+        }
+
+
+        [HttpPost]
+        public IActionResult TakeOverConsult(ConsultRequestEntity payload)
+        {
+            string user_type = UseClaims.GetUserType((ClaimsIdentity)User.Identity);
+            payload.last_updated_by = User.Identity.Name;
+            return Ok(consult_req_repo.TakeOverConsult(payload, user_type));
+        }
+
+
+        [HttpPost]
+        public IActionResult MapConsultationToPatient(HospPatientEntity payload)
+        {
+            payload.last_updated_by = User.Identity.Name;
+            return Ok(consult_req_repo.MapConsultationToPatient(payload));
+        }
+
+        [HttpPost]
+        public IActionResult GetCosultLinkInfo(SingleValuePayload payload)
+        {
+            return Ok(consult_req_repo.GetCosultLinkInfo(payload.value));
+        }
+
+        [HttpPost]
+        public IActionResult AuthenticateConsultLink(ConsultRequestEntity payload)
+        {
+            return Ok(consult_req_repo.AuthenticateConsultLink(payload));
+        }
+
+        [HttpPost]
+        public IActionResult IsConsultLinkAuthenticated(ConsultRequestEntity payload)
+        {
+            return Ok(consult_req_repo.IsConsultLinkAuthenticated(payload));
+        }
+
+
+
     }
 }

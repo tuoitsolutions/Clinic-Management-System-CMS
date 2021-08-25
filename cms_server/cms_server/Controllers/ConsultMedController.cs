@@ -33,10 +33,23 @@ namespace cms_server.Controllers
         }
 
         [HttpPost]
-        public IActionResult GetConsultMedByConsultMedPk(SingleValuePayload payload)
+        public IActionResult GetConsultMedByPk(SingleValuePayload payload)
         {
             return Ok(dept_res_repo.GetConsultMedByPk(payload.value));
         }
+
+        [HttpPost]
+        public IActionResult PreviewMedPrescrip(SingleValuePayload payload)
+        {
+            return Ok(dept_res_repo.PreviewMedPrescrip(payload.value));
+        }
+
+        [HttpPost]
+        public IActionResult EmailMedPrescrip(ConsultMedEntity payload)
+        {
+            return Ok(dept_res_repo.EmailMedPrescrip(payload, User.Identity.Name));
+        }
+
 
     }
 }
