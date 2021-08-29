@@ -136,7 +136,8 @@ const DialogTitleStyle = styled(DialogTitle)`
   .dialog-title {
     /* color: ${(p) => p.theme.palette.primary.contrastText} !important; */
     color: #fff !important;
-    font-weight: 600;
+    font-weight: 900;
+    /* font-size: 0.87em; */
   }
 
   .toolbar {

@@ -108,7 +108,7 @@ export const PatientManageUi = styled(Container)`
 
   @media all and (min-width: ${(props) =>
       props.theme.breakpoints.values.xs}px) {
-    grid-template-areas: "profile" "notes" "tabs";
+    grid-template-areas: "actions" "profile" "notes" "tabs";
     /* grid-auto-columns: 1fr; */
     justify-content: start;
     justify-items: start;
@@ -116,16 +116,21 @@ export const PatientManageUi = styled(Container)`
 
   @media all and (min-width: ${(props) =>
       props.theme.breakpoints.values.sm}px) {
-    grid-template-areas: "profile notes" "tabs tabs";
+    grid-template-areas: "actions actions" "profile notes" "tabs tabs";
     grid-auto-columns: 1fr;
     grid-auto-columns: 300px 1fr;
   }
 
   @media all and (min-width: ${(props) =>
       props.theme.breakpoints.values.md}px) {
-    grid-template-areas: "profile tabs" "notes tabs";
+    grid-template-areas: "actions actions" "profile tabs" "notes tabs";
     grid-auto-columns: 300px 1fr;
-    grid-auto-rows: auto 1fr;
+    grid-auto-rows: auto auto 1fr;
+  }
+
+  .actions {
+    grid-area: actions;
+    width: 100%;
   }
   .patient-profile {
     grid-area: profile;

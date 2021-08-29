@@ -1,6 +1,7 @@
 ﻿using claim_form_server.Repositories;
 using cms_server.Entities;
 using cms_server.Hooks;
+using cms_server.Models;
 using cms_server.Pdf;
 using Dapper;
 using ddt_server.Config;
@@ -11,6 +12,7 @@ using DeliveryRoomWatcher.Hooks;
 using DeliveryRoomWatcher.Models.Common;
 using DeliveryRoomWatcher.Repositories;
 using MySql.Data.MySqlClient;
+using pos_server.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -193,7 +195,7 @@ namespace cms_server.Repositories
                 if (update_sts_affected_rows > 0)
                 {
                     int insert_logs_affected_rows = con.Execute($@"
-                                         insert into logs set
+                                         insert into the logs set
                                          ref_pk=@ref_pk,
                                          ref_table=@ref_table,
                                          activity=@activity,
@@ -315,6 +317,12 @@ namespace cms_server.Repositories
                                                    WHERE consult_req_pk=@consult_req_pk limit 1 ;",
                                                   new { payload.consult_req_pk }, transaction: tran);
 
+
+                UserEntity user_info = con.QuerySingle<UserEntity>(
+                    $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                    , new { user_pk }
+                    , transaction: tran);
+
                 int update_sts_affected_rows = con.Execute($@"
                                         update consult_request set  sts_pk ='x' where consult_req_pk=@consult_req_pk;
                             ", new { selected_row.consult_req_pk }, transaction: tran);
@@ -322,7 +330,7 @@ namespace cms_server.Repositories
                 if (update_sts_affected_rows > 0)
                 {
                     int insert_logs_affected_rows = con.Execute($@"
-                                         insert into logs set
+                                         INSERT INTO `logs` set
                                          ref_pk=@ref_pk,
                                          ref_table=@ref_table,
                                          activity=@activity,
@@ -331,7 +339,7 @@ namespace cms_server.Repositories
                             ",
                     new LogModel
                     {
-                        activity = $"the consultation request of {selected_row.last_name}, {selected_row.first_name} has been declined!",
+                        activity = $"the consultation request {selected_row.consult_req_pk} has been reapproved by {user_info.full_name}!",
                         encoded_by = user_pk,
                         ref_pk = selected_row.consult_req_pk,
                         ref_table = "consult_request"
@@ -340,44 +348,44 @@ namespace cms_server.Repositories
                     if (insert_logs_affected_rows > 0)
                     {
 
-                        //string otp_code = UseOtp.create();
-                        string otp_code = "111111";
+                        string full_body = $"This is {def_val_repo.GetHospitalName().data}. Dear {selected_row.last_name}, {selected_row.first_name}, your consultation request has been reapproved. {payload.body} ";
 
-                        bool send_to_sms = payload.send_to.FirstOrDefault(x => x == "sms") == null ? false : true;
-                        bool send_to_email = payload.send_to.FirstOrDefault(x => x == "email") == null ? false : true;
-
-
-                        string full_body = $"This is {def_val_repo.GetHospitalName().data}. Dear {selected_row.last_name}, {selected_row.first_name}, your consultation request has been declined. {payload.body} ";
-
-                        if (send_to_sms)
+                        if (payload.body.Length > 0)
                         {
-                            int message_sent = con.Execute($@"INSERT INTO messageout SET
-                                                              messageto='${selected_row.mob_no}',
+                            if (payload.send_to_sms)
+                            {
+                                int message_sent = con.Execute($@"INSERT INTO messageout SET
+                                                              encoded_by='{user_pk}',
+                                                              messageto='{selected_row.mob_no}',
                                                               messagetext=@messagetext;",
-                                                              new { messageto = selected_row.mob_no, messagetext = full_body }, transaction: tran);
+                                                                  new { messageto = selected_row.mob_no, messagetext = full_body }, transaction: tran);
 
-                            if (message_sent < 1)
-                            {
-                                return new ResponseModel
+                                if (message_sent < 1)
                                 {
-                                    success = false,
-                                    message = "An error has occured when trying to send the message. Please try again!"
-                                };
+                                    return new ResponseModel
+                                    {
+                                        success = false,
+                                        message = "An error has occured when trying to send the message. Please try again!"
+                                    };
+                                }
                             }
-                        }
 
-                        if (send_to_email)
-                        {
-                            string brand_name = def_val_repo.GetHospitalName().data.ToString();
-                            ResponseModel email_response = UseEmail.SendEmail(brand_name, selected_row.email, full_body, "Consultation Request Message");
-
-                            if (!email_response.success)
+                            if (payload.send_to_email)
                             {
-                                return email_response;
+                                string brand_name = def_val_repo.GetHospitalName().data.ToString();
+                                ResponseModel email_response = UseEmail.SendEmail(brand_name, selected_row.email, full_body, "Consultation Request Message");
+
+                                if (!email_response.success)
+                                {
+                                    return email_response;
+
+                                }
 
                             }
 
                         }
+
+
 
                         tran.Commit();
                         return new ResponseModel
@@ -415,6 +423,134 @@ namespace cms_server.Repositories
                 };
             }
         }
+
+
+        public ResponseModel UndeclineConsultRequest(SendMessagePayload payload, string user_pk)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+                ConsultRequestEntity selected_row = con.QuerySingle<ConsultRequestEntity>(
+                                                  $@"SELECT * FROM (
+                                                   SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgcaddress
+                                                   FROM `consult_request` cr
+                                                   LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                                   LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                                   LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                                   LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
+                                                   WHERE consult_req_pk=@consult_req_pk limit 1 ;",
+                                                  new { payload.consult_req_pk }, transaction: tran);
+
+
+                UserEntity user_info = con.QuerySingle<UserEntity>(
+                    $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                    , new { user_pk }
+                    , transaction: tran);
+
+                int update_sts_affected_rows = con.Execute($@"
+                                        update consult_request set  sts_pk ='fa' where consult_req_pk=@consult_req_pk;
+                            ", new { selected_row.consult_req_pk }, transaction: tran);
+
+                if (update_sts_affected_rows > 0)
+                {
+                    int insert_logs_affected_rows = con.Execute($@"
+                                         INSERT INTO `logs` set
+                                         ref_pk=@ref_pk,
+                                         ref_table=@ref_table,
+                                         activity=@activity,
+                                         encoded_at = now(),
+                                         encoded_by=@encoded_by;
+                            ",
+                    new LogModel
+                    {
+                        activity = $"the consultation request {selected_row.consult_req_pk} has been reapproved by {user_info.full_name}!",
+                        encoded_by = user_pk,
+                        ref_pk = selected_row.consult_req_pk,
+                        ref_table = "consult_request"
+                    }, transaction: tran);
+
+                    if (insert_logs_affected_rows > 0)
+                    {
+
+                        string full_body = $"This is {def_val_repo.GetHospitalName().data}. Dear {selected_row.last_name}, {selected_row.first_name}, your consultation request has been reapproved. {payload.body} ";
+
+                        if (payload.body.Length > 0)
+                        {
+                            if (payload.send_to_sms)
+                            {
+                                int message_sent = con.Execute($@"INSERT INTO messageout SET
+                                                              encoded_by='{user_pk}',
+                                                              messageto='{selected_row.mob_no}',
+                                                              messagetext=@messagetext;",
+                                                                  new { messageto = selected_row.mob_no, messagetext = full_body }, transaction: tran);
+
+                                if (message_sent < 1)
+                                {
+                                    return new ResponseModel
+                                    {
+                                        success = false,
+                                        message = "An error has occured when trying to send the message. Please try again!"
+                                    };
+                                }
+                            }
+
+                            if (payload.send_to_email)
+                            {
+                                string brand_name = def_val_repo.GetHospitalName().data.ToString();
+                                ResponseModel email_response = UseEmail.SendEmail(brand_name, selected_row.email, full_body, "Consultation Request Message");
+
+                                if (!email_response.success)
+                                {
+                                    return email_response;
+
+                                }
+
+                            }
+
+                        }
+
+
+
+                        tran.Commit();
+                        return new ResponseModel
+                        {
+                            message = $"The consultation request of '{selected_row.last_name}, {selected_row.first_name}' has been declined!",
+                            success = true
+                        };
+
+                    }
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "No affected rows in the process."
+                    };
+                }
+
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "Some error occured during the process."
+                };
+
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = err.Message
+                };
+            }
+        }
+
+
 
         public ResponseModel GetTableConsultRequest(ConsultRequestTablePayload payload, string user_pk, string user_type)
         {
@@ -648,7 +784,7 @@ namespace cms_server.Repositories
                       ,psg.`citymundesc`,psg.`provincedesc`,psg.`barangaydesc`,psg.`regiondesc`,psg.`completeaddress` psgcaddress
                       ,CONCAT(d.dept_code,'-',d.dept_name) AS `assign_dept_desc`
                       ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
-                      FROM `consult_request` cr
+                      ,calc_age(birth_date) AS age FROM `consult_request` cr
                       LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
                       LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
                       LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
@@ -671,7 +807,7 @@ namespace cms_server.Repositories
                       ,psg.`citymundesc`,psg.`provincedesc`,psg.`barangaydesc`,psg.`regiondesc`,psg.`completeaddress` psgcaddress
                       ,CONCAT(d.dept_code,'-',d.dept_name) AS `assign_dept_desc`
                       ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
-                      FROM `consult_request` cr
+                      ,calc_age(birth_date) AS age FROM `consult_request` cr
                       LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
                       LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
                       LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
@@ -693,27 +829,6 @@ namespace cms_server.Repositories
                         };
                     }
                 }
-                else
-                {
-                    sql_query = $@"SELECT * FROM (
-                      SELECT cr.*,MD5(cr.consult_req_pk) hash_key
-                      ,r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc
-                      ,psg.`citymundesc`,psg.`provincedesc`,psg.`barangaydesc`,psg.`regiondesc`,psg.`completeaddress` psgcaddress
-                      ,CONCAT(d.dept_code,'-',d.dept_name) AS `assign_dept_desc`
-                      ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
-                      FROM `consult_request` cr
-                      LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
-                      LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
-                      LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
-                      LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`
-                      LEFT JOIN `department` d ON d.`dept_pk` = cr.`assign_dept_pk`
-                      LEFT JOIN `hosp_resident` hr ON hr.`res_pk` = cr.`assign_res_pk`
-                      ) AS tmp
-                      WHERE hash_key=@hash_key LIMIT 1 ;";
-
-                    table_data = con.Query<ConsultRequestEntity>(sql_query
-                                , new { hash_key }, transaction: tran).ToList();
-                }
 
                 if (table_data.Count > 0)
                 {
@@ -723,6 +838,7 @@ namespace cms_server.Repositories
                         "select * from status_master where sts_pk=@sts_pk"
                         , new { selected_row.sts_pk }
                         , transaction: tran);
+
 
                     tran.Commit();
                     return new ResponseModel
@@ -1044,7 +1160,7 @@ namespace cms_server.Repositories
 
 
                     int insert_logs_affected_rows = con.Execute(
-                            $@"INSERT into logs set
+                            $@"INSERT into the logs set
                              ref_pk=@ref_pk,
                              ref_table=@ref_table,
                              activity=@activity,
@@ -1175,7 +1291,7 @@ namespace cms_server.Repositories
 
 
                     int insert_logs_affected_rows = con.Execute(
-                            $@"INSERT into logs set
+                            $@"INSERT into the logs set
                              ref_pk=@ref_pk,
                              ref_table=@ref_table,
                              activity=@activity,
@@ -1278,7 +1394,7 @@ namespace cms_server.Repositories
 
 
                         int insert_logs_affected_rows = con.Execute(
-                                $@"INSERT into logs set
+                                $@"INSERT into the logs set
                                  ref_pk=@ref_pk,
                                  ref_table=@ref_table,
                                  activity=@activity,
@@ -1471,7 +1587,7 @@ namespace cms_server.Repositories
                     };
 
                     int insert_log = con.Execute(
-                            $@"INSERT into logs set
+                            $@"INSERT into the logs set
                                  ref_pk=@ref_pk,
                                  ref_table=@ref_table,
                                  activity=@activity,
@@ -1514,6 +1630,117 @@ namespace cms_server.Repositories
             }
         }
 
+        public ResponseModel SetConsultAsPaid(ConsultRequestEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                List<ConsultRequestEntity> tbl_consult = con.Query<ConsultRequestEntity>(
+                    $@"SELECT * FROM `consult_request` WHERE consult_req_pk = @consult_req_pk LIMIT 1;"
+                    , payload
+                    , transaction: tran).ToList();
+
+
+                UserEntity user_info = con.QuerySingle<UserEntity>(
+                    $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                    , new { payload.user_pk }
+                    , transaction: tran);
+
+                if (tbl_consult.Count > 0)
+                {
+                    ConsultRequestEntity selected_consult = tbl_consult[0];
+                    payload.consult_req_pk = selected_consult.consult_req_pk;
+
+                    if (!selected_consult.sts_pk.Equals("fa"))
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "This consultation request can no longer be set as paid!"
+                        };
+                    }
+
+                    int edited_dtls = con.Execute(
+                        @"UPDATE `consult_request` 
+                          SET 
+                          pay_at=NOW(),
+                          sts_pk='pd'
+                          WHERE consult_req_pk = @consult_req_pk; "
+                         , payload
+                         , transaction: tran);
+
+                    if (edited_dtls > 0)
+                    {
+                        LogModel log_payload = new LogModel
+                        {
+                            activity = $"The status of consultation {selected_consult.consult_req_pk} has been manually set as PAID  by {user_info.full_name}",
+                            encoded_by = payload.user_pk,
+                            ref_pk = selected_consult.consult_req_pk,
+                            ref_table = "consult_request"
+                        };
+
+                        int added_logs = con.Execute(
+                                $@"INSERT INTO `logs` SET
+                                     ref_pk=@ref_pk,
+                                     ref_table=@ref_table,
+                                     activity=@activity,
+                                     encoded_at = NOW(),
+                                     encoded_by=@encoded_by;"
+                                , log_payload
+                                , transaction: tran);
+
+                        if (added_logs > 0)
+                        {
+                            tran.Commit();
+                            return new ResponseModel
+                            {
+                                success = true,
+                                message = $"The status of consultation {selected_consult.consult_req_pk} has been manually set as PAID.",
+                            };
+                        }
+                        else
+                        {
+                            return new ResponseModel
+                            {
+                                success = false,
+                                message = "There are no affected rows when trying to audit the action to the logs!"
+                            };
+                        }
+                    }
+                    else
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "There are no affected rows when trying to update the record!"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "We could not find the consultation request that you are trying to manage!"
+                    };
+                }
+
+
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated with error: " + err.Message
+                };
+            }
+        }
+
+
         public ResponseModel EndConsult(ConsultRequestEntity payload)
         {
             try
@@ -1554,7 +1781,7 @@ namespace cms_server.Repositories
                         };
 
                         int insert_log = con.Execute(
-                                $@"INSERT into logs set
+                                $@"INSERT into the logs set
                                  ref_pk=@ref_pk,
                                  ref_table=@ref_table,
                                  activity=@activity,
@@ -1653,7 +1880,7 @@ namespace cms_server.Repositories
                             };
 
                             int insert_log = con.Execute(
-                                    $@"INSERT into logs set
+                                    $@"INSERT into the logs set
                                        ref_pk=@ref_pk,
                                        ref_table=@ref_table,
                                        activity=@activity,
@@ -1783,7 +2010,7 @@ namespace cms_server.Repositories
                     };
 
                     int insert_logs_affected_rows = con.Execute(
-                            $@"INSERT into logs set
+                            $@"INSERT into the logs set
                                  ref_pk=@ref_pk,
                                  ref_table=@ref_table,
                                  activity=@activity,
@@ -1967,5 +2194,667 @@ namespace cms_server.Repositories
             }
         }
 
+        //Patient Picture
+        public ResponseModel GetConsultPatPic(string hash_key)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                List<ConsultRequestEntity> table_data = con.Query<ConsultRequestEntity>(
+                        $@"SELECT consult_req_pk, pic_dest  FROM `consult_request` 
+                        WHERE MD5(consult_req_pk)=@hash_key LIMIT 1 ;"
+                        , new { hash_key }
+                        , transaction: tran).ToList();
+
+                if (table_data.Count > 0)
+                {
+                    ConsultRequestEntity selected_row = table_data[0];
+
+                    byte[] img_byte_arr = UseFtp.DownloadFtp(DefaultConfig.ftp_ip + selected_row.pic_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+
+                    if (img_byte_arr != null)
+                    {
+                        selected_row.pic_dest = Convert.ToBase64String(img_byte_arr);
+                    }
+                    else
+                    {
+                        selected_row.pic_dest = null;
+                    }
+
+                    tran.Commit();
+                    return new ResponseModel
+                    {
+                        success = true,
+                        data = selected_row
+                    };
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "The record that you are trying to retrieve does not exist!"
+                    };
+                }
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel UpdateConsultPatPic(ConsultRequestEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                if (payload.attach_profile_pic != null)
+                {
+                    List<ConsultRequestEntity> tbl_consult = con.Query<ConsultRequestEntity>(
+                        $@"SELECT * FROM `consult_request` WHERE MD5(consult_req_pk) = @hash_key LIMIT 1;"
+                        , payload
+                        , transaction: tran).ToList();
+
+                    UserEntity user_info = con.QuerySingle<UserEntity>(
+                        $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                        , new { payload.user_pk }
+                        , transaction: tran);
+
+
+                    if (tbl_consult.Count > 0)
+                    {
+                        ConsultRequestEntity selected_consult = tbl_consult[0];
+                        FileResponseModel file_upload_response = new FileResponseModel
+                        {
+                            success = true
+                        };
+
+                        file_upload_response = UseFtp.UploadToFtp(payload.attach_profile_pic, DefaultConfig.ftp_ip, $"/{DefaultConfig.app_name}/Uploads/ConsultationFiles/", DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                        if (!file_upload_response.success)
+                        {
+                            return new ResponseModel
+                            {
+                                success = false,
+                                message = file_upload_response.message
+                            };
+                        }
+                        else
+                        {
+                            payload.pic_dest = file_upload_response.data.path;
+                        }
+
+                        int edited_pic = con.Execute(@"
+                                UPDATE  `consult_request` 
+                                SET 
+                                pic_dest=@pic_dest
+                                WHERE MD5(consult_req_pk) = @hash_key"
+                                    , payload
+                                    , transaction: tran);
+
+                        if (edited_pic > 0)
+                        {
+                            LogModel log_payload = new LogModel
+                            {
+                                activity = $"The patient picture of the consultation {selected_consult.consult_req_pk} has been updated by {user_info.full_name}",
+                                encoded_by = payload.user_pk,
+                                ref_pk = selected_consult.consult_req_pk,
+                                ref_table = "consult_request"
+                            };
+
+                            int added_logs = con.Execute(
+                                    $@"INSERT INTO `logs` SET
+                                     ref_pk=@ref_pk,
+                                     ref_table=@ref_table,
+                                     activity=@activity,
+                                     encoded_at = NOW(),
+                                     encoded_by=@encoded_by;"
+                                    , log_payload
+                                    , transaction: tran);
+
+                            if (added_logs > 0)
+                            {
+                                tran.Commit();
+                                return new ResponseModel
+                                {
+                                    success = true,
+                                    message = "The requestor's profile picture has been updated successfully."
+                                };
+                            }
+                            else
+                            {
+                                return new ResponseModel
+                                {
+                                    success = false,
+                                    message = "There are no affected rows when trying to audit the action to the logs!"
+                                };
+                            }
+                        }
+                        else
+                        {
+                            return new ResponseModel
+                            {
+                                success = false,
+                                message = "There are no affected rows when trying to save the record!"
+                            };
+                        }
+                    }
+                    else
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "We could not find the consultation request that you are trying to manage!"
+                        };
+                    }
+
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "We could not find an image to upload! Kindly make sure to attach an image file."
+                    };
+                }
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated with error: " + err.Message
+                };
+            }
+        }
+
+
+        //DOCTOR NOTES
+        public ResponseModel GetConsultDocNotes(string hash_key)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                List<ConsultRequestEntity> table_data = con.Query<ConsultRequestEntity>(
+                        $@"SELECT doctor_notes  FROM `consult_request` 
+                        WHERE MD5(consult_req_pk)=@hash_key LIMIT 1 ;"
+                        , new { hash_key }
+                        , transaction: tran).ToList();
+
+                if (table_data.Count > 0)
+                {
+                    ConsultRequestEntity selected_row = table_data[0];
+
+                    tran.Commit();
+                    return new ResponseModel
+                    {
+                        success = true,
+                        data = selected_row.doctor_notes
+                    };
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "The record that you are trying to retrieve does not exist!"
+                    };
+                }
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+        public ResponseModel UpdateConsultDocNotes(ConsultRequestEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                if (payload.attach_profile_pic != null)
+                {
+                    List<ConsultRequestEntity> tbl_consult = con.Query<ConsultRequestEntity>(
+                        $@"SELECT * FROM `consult_request` WHERE MD5(consult_req_pk) = @hash_key LIMIT 1;"
+                        , payload
+                        , transaction: tran).ToList();
+
+                    UserEntity user_info = con.QuerySingle<UserEntity>(
+                        $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                        , new { payload.user_pk }
+                        , transaction: tran);
+
+                    if (!user_info.user_type.Equals("hosp_resident"))
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "Only residents are allowed to do this action."
+                        };
+                    }
+
+                    if (tbl_consult.Count > 0)
+                    {
+                        ConsultRequestEntity selected_consult = tbl_consult[0];
+
+                        int edited_pic = con.Execute(
+                            @"UPDATE `consult_request` 
+                             SET 
+                             doctor_notes=@doctor_notes
+                             WHERE MD5(consult_req_pk) = @hash_key"
+                             , payload
+                             , transaction: tran);
+
+                        if (edited_pic > 0)
+                        {
+                            LogModel log_payload = new LogModel
+                            {
+                                activity = $"The doctor notes of the consultation {selected_consult.consult_req_pk} has been edited by {user_info.full_name}",
+                                encoded_by = payload.user_pk,
+                                ref_pk = selected_consult.consult_req_pk,
+                                ref_table = "consult_request"
+                            };
+
+                            int added_logs = con.Execute(
+                                    $@"INSERT INTO `logs` SET
+                                     ref_pk=@ref_pk,
+                                     ref_table=@ref_table,
+                                     activity=@activity,
+                                     encoded_at = NOW(),
+                                     encoded_by=@encoded_by;"
+                                    , log_payload
+                                    , transaction: tran);
+
+                            if (added_logs > 0)
+                            {
+                                tran.Commit();
+                                return new ResponseModel
+                                {
+                                    success = true,
+                                    message = "The doctor notes has been updated successfully."
+                                };
+                            }
+                            else
+                            {
+                                return new ResponseModel
+                                {
+                                    success = false,
+                                    message = "There are no affected rows when trying to audit the action to the logs!"
+                                };
+                            }
+                        }
+                        else
+                        {
+                            return new ResponseModel
+                            {
+                                success = false,
+                                message = "There are no affected rows when trying to save the record!"
+                            };
+                        }
+                    }
+                    else
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "We could not find the consultation request that you are trying to manage!"
+                        };
+                    }
+
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "We could not find an image to upload! Kindly make sure to attach an image file."
+                    };
+                }
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated with error: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel UpdateConsultDtls(ConsultRequestEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                List<ConsultRequestEntity> tbl_consult = con.Query<ConsultRequestEntity>(
+                    $@"SELECT * FROM `consult_request` WHERE consult_req_pk = @consult_req_pk LIMIT 1;"
+                    , payload
+                    , transaction: tran).ToList();
+
+                UserEntity user_info = con.QuerySingle<UserEntity>(
+                    $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                    , new { payload.user_pk }
+                    , transaction: tran);
+
+                if (tbl_consult.Count > 0)
+                {
+                    ConsultRequestEntity selected_consult = tbl_consult[0];
+                    payload.consult_req_pk = selected_consult.consult_req_pk;
+
+                    int edited_dtls = con.Execute(
+                        @"UPDATE `consult_request` 
+                             SET 
+                             prefix=@prefix,
+                             first_name=@first_name,
+                             middle_name=@middle_name,
+                             last_name=@last_name,
+                             suffix=@suffix,
+                             gender=@gender,
+                             cs_pk=@cs_pk,
+                             nat_pk=@nat_pk,
+                             rel_pk=@rel_pk,
+                             birth_date=DATE(@birth_date),
+                             email=@email,
+                             mob_no=@mob_no,
+                             brgy_pk=@brgy_pk,
+                             prov_pk=@prov_pk,
+                             citymun_pk=@citymun_pk,
+                             region_pk=@region_pk,
+                             zip_code=@zip_code,
+                             line1=@line1,
+                             chief_complaint=@chief_complaint,
+                             symptoms=@symptoms,
+                             notes=@notes
+                             WHERE consult_req_pk = @consult_req_pk; "
+                         , payload
+                         , transaction: tran);
+
+                    if (edited_dtls > 0)
+                    {
+                        LogModel log_payload = new LogModel
+                        {
+                            activity = $"The details of the consultation {selected_consult.consult_req_pk} has been updated by {user_info.full_name}",
+                            encoded_by = payload.user_pk,
+                            ref_pk = selected_consult.consult_req_pk,
+                            ref_table = "consult_request"
+                        };
+
+                        int added_logs = con.Execute(
+                                $@"INSERT INTO `logs` SET
+                                     ref_pk=@ref_pk,
+                                     ref_table=@ref_table,
+                                     activity=@activity,
+                                     encoded_at = NOW(),
+                                     encoded_by=@encoded_by;"
+                                , log_payload
+                                , transaction: tran);
+
+                        if (added_logs > 0)
+                        {
+                            tran.Commit();
+                            return new ResponseModel
+                            {
+                                success = true,
+                                message = $"The details of the consultation {selected_consult.consult_req_pk} has been updated has been updated successfully!"
+                            };
+                        }
+                        else
+                        {
+                            return new ResponseModel
+                            {
+                                success = false,
+                                message = "There are no affected rows when trying to audit the action to the logs!"
+                            };
+                        }
+                    }
+                    else
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "There are no affected rows when trying to save the record!"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "We could not find the consultation request that you are trying to manage!"
+                    };
+                }
+
+
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated with error: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel SendConsultSms(SmsModel payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                List<ConsultRequestEntity> tbl_consult = con.Query<ConsultRequestEntity>(
+                    $@"SELECT * FROM `consult_request` WHERE MD5(consult_req_pk) = @hash_key LIMIT 1;"
+                    , payload
+                    , transaction: tran).ToList();
+
+                UserEntity user_info = con.QuerySingle<UserEntity>(
+                    $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                    , new { user_pk = payload.encoded_by }
+                    , transaction: tran);
+
+                if (tbl_consult.Count > 0)
+                {
+                    ConsultRequestEntity selected_consult = tbl_consult[0];
+                    payload.consult_req_pk = selected_consult.consult_req_pk;
+
+                    int edited_dtls = con.Execute(
+                        @"INSERT INTO `messageout` 
+                         SET 
+                         MessageTo=@message_to,
+                         MessageText=@message_text,
+                         encoded_at=@encoded_at,
+                         encoded_by=@encoded_by;"
+                         , payload
+                         , transaction: tran);
+
+                    if (edited_dtls > 0)
+                    {
+                        LogModel log_payload = new LogModel
+                        {
+                            activity = $"{ user_info.full_name } sent a message to the consultation {selected_consult.consult_req_pk}",
+                            encoded_by = payload.encoded_by,
+                            ref_pk = selected_consult.consult_req_pk,
+                            ref_table = "consult_request"
+                        };
+
+                        int added_logs = con.Execute(
+                                $@"INSERT INTO `logs` SET
+                                     ref_pk=@ref_pk,
+                                     ref_table=@ref_table,
+                                     activity=@activity,
+                                     encoded_at = NOW(),
+                                     encoded_by=@encoded_by;"
+                                , log_payload
+                                , transaction: tran);
+
+                        if (added_logs > 0)
+                        {
+                            tran.Commit();
+                            return new ResponseModel
+                            {
+                                success = true,
+                                message = $"Your message has been sent!"
+                            };
+                        }
+                        else
+                        {
+                            return new ResponseModel
+                            {
+                                success = false,
+                                message = "There are no affected rows when trying to audit the action to the logs!"
+                            };
+                        }
+                    }
+                    else
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "There are no affected rows when trying to save the record!"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "We could not find the consultation request that you are trying to manage!"
+                    };
+                }
+
+
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated with error: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel SendConsultEmail(EmailModel payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                List<ConsultRequestEntity> tbl_consult = con.Query<ConsultRequestEntity>(
+                    $@"SELECT * FROM `consult_request` WHERE MD5(consult_req_pk) = @hash_key LIMIT 1;"
+                    , payload
+                    , transaction: tran).ToList();
+
+                UserEntity user_info = con.QuerySingle<UserEntity>(
+                    $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                    , new { user_pk = payload.encoded_by }
+                    , transaction: tran);
+
+                if (tbl_consult.Count > 0)
+                {
+                    ConsultRequestEntity selected_consult = tbl_consult[0];
+                    payload.consult_req_pk = selected_consult.consult_req_pk;
+
+
+                    LogModel log_payload = new LogModel
+                    {
+                        activity = $"{ user_info.full_name } sent an email to the requestor with regards to the consultation {selected_consult.consult_req_pk}",
+                        encoded_by = payload.encoded_by,
+                        ref_pk = selected_consult.consult_req_pk,
+                        ref_table = "consult_request"
+                    };
+
+                    int added_logs = con.Execute(
+                            $@"INSERT INTO `logs` SET
+                                     ref_pk=@ref_pk,
+                                     ref_table=@ref_table,
+                                     activity=@activity,
+                                     encoded_at = NOW(),
+                                     encoded_by=@encoded_by;"
+                            , log_payload
+                            , transaction: tran);
+
+                    if (added_logs > 0)
+                    {
+                        string brand_name = def_val_repo.GetHospitalName().data.ToString();
+
+                        string email_message = $@"Greetings {selected_consult.email} from {brand_name}. {payload.email_body}";
+                        ResponseModel email_response = UseEmail.SendEmail(brand_name, selected_consult.email, email_message, "Consultation Request Direct Email");
+
+
+                        if (email_response.success)
+                        {
+                            tran.Commit();
+                            return new ResponseModel
+                            {
+                                success = true,
+                                message = $"Your email has been sent!"
+                            };
+                        }
+                        else
+                        {
+                            return email_response;
+                        }
+
+                    }
+                    else
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "There are no affected rows when trying to audit the action to the logs!"
+                        };
+                    }
+
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "We could not find the consultation request that you are trying to manage!"
+                    };
+                }
+
+
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated with error: " + err.Message
+                };
+            }
+        }
     }
 }

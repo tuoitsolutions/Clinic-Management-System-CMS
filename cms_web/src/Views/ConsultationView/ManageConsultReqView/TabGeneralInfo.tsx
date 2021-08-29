@@ -12,6 +12,8 @@ import { StringEmptyToDefault } from "../../../Hooks/UseStringFormatter";
 import ConsultRequestEntity from "../../../Services/Entities/ConsultRequestEntity";
 import { RootStore } from "../../../Services/Store";
 import DialogChangeConsultCost from "./DialogChangeConsultCost";
+import DialogUpdateConsultDtls from "./DialogUpdateConsultDtls";
+import DialogUpdateConsultDetails from "./DialogEditConsultDetails";
 
 interface ITabGeneralInfo {
   consult_info: ConsultRequestEntity;
@@ -29,6 +31,14 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
     const [
       open_change_consult_cost_dialog,
       set_open_change_consult_cost_dialog,
+    ] = useState(false);
+
+    const [open_edit_pat_details_dialog, set_open_edit_pat_details_dialog] =
+      useState(false);
+
+    const [
+      open_update_consult_details_dialog,
+      set_open_update_consult_details_dialog,
     ] = useState(false);
     return (
       <>
@@ -53,8 +63,14 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                 <Grid item xs={12} sm={6}>
                   <Grid container spacing={2} justify="flex-end">
                     <Grid item>
-                      <Button color="primary" variant="contained">
-                        Edit Patient Details
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={() => {
+                          set_open_edit_pat_details_dialog(true);
+                        }}
+                      >
+                        Update Consult Dtls.
                       </Button>
                     </Grid>
                   </Grid>
@@ -64,7 +80,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={1}>
-              <Grid item xs={3} md={2} lg={1}>
+              <Grid item xs={12} sm={6} md={2} lg={1}>
                 <div className="info-group">
                   <div className="label">Prefix</div>
                   <div className="value">
@@ -72,7 +88,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={6} md={3} lg={2}>
+              <Grid item xs={12} sm={6} md={3} lg={2}>
                 <div className="info-group">
                   <div className="label">First Name</div>
                   <div className="value">
@@ -80,7 +96,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={6} md={3} lg={2}>
+              <Grid item xs={12} sm={6} md={3} lg={2}>
                 <div className="info-group">
                   <div className="label">Middle Name</div>
                   <div className="value">
@@ -88,7 +104,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={6} md={3} lg={2}>
+              <Grid item xs={12} sm={6} md={3} lg={2}>
                 <div className="info-group">
                   <div className="label">Last Name</div>
                   <div className="value">
@@ -96,7 +112,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={6} md={2} lg={1}>
+              <Grid item xs={12} sm={6} md={2} lg={1}>
                 <div className="info-group">
                   <div className="label">Suffix</div>
                   <div className="value">
@@ -104,7 +120,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={6} md={3} lg={2}>
+              <Grid item xs={12} sm={6} md={3} lg={2}>
                 <div className="info-group">
                   <div className="label">Mobile Number</div>
                   <div className="value">
@@ -112,7 +128,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={6} md={3} lg={2}>
+              <Grid item xs={12} sm={6} md={3} lg={2}>
                 <div className="info-group">
                   <div className="label">Email Address</div>
                   <div className="value">
@@ -149,26 +165,17 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                 alignContent="center"
                 alignItems="center"
               >
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}>
                   <div className="ctnr-title">
                     <div className="main">Consultation Details</div>
                   </div>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Grid container spacing={2} justify="flex-end">
-                    <Grid item>
-                      <Button color="primary" variant="contained">
-                        Edit Consult Details
-                      </Button>
-                    </Grid>
-                  </Grid>
                 </Grid>
               </Grid>
             </div>
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={1}>
-              <Grid item xs={3} md={3} lg={2}>
+              <Grid item xs={12} md={3} lg={2}>
                 <div className="info-group">
                   <div className="label">Code</div>
                   <div className="value">
@@ -176,7 +183,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={6} md={3} lg={2} xl={1}>
+              <Grid item xs={12} md={6} lg={2} xl={1}>
                 <div className="info-group">
                   <div className="label">Patient Number</div>
                   <div className="value">
@@ -203,7 +210,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={6} md={3} lg={2} xl={1}>
+              <Grid item xs={12} md={6} lg={2} xl={1}>
                 <div className="info-group">
                   <div className="label">Consult Cost</div>
                   <div className="value">
@@ -232,7 +239,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                 </div>
               </Grid>
 
-              <Grid item xs={6} md={4} lg={3}>
+              <Grid item xs={12} md={6} lg={3}>
                 <div className="info-group">
                   <div className="label">Department</div>
                   <div className="value">
@@ -243,7 +250,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={6} md={4} lg={3}>
+              <Grid item xs={12} md={6} lg={3}>
                 <div className="info-group">
                   <div className="label"> Resident</div>
                   <div className="value">
@@ -254,7 +261,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={6} md={3} lg={2}>
+              <Grid item xs={12} md={6} lg={2}>
                 <div className="info-group">
                   <div className="label ">Expected Start On</div>
                   <div className="value">
@@ -266,7 +273,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                 </div>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item xs={12} md={12}>
                 <div className="info-group">
                   <div className="label">Chief Complaint</div>
                   <div className="value">
@@ -274,7 +281,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} md={12}>
                 <div className="info-group">
                   <div className="label">Symptoms</div>
                   <div className="value">
@@ -282,7 +289,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} md={12}>
                 <div className="info-group">
                   <div className="label">Remarks</div>
                   <div className="value">
@@ -370,6 +377,32 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
               handleReloadRecord();
             }}
             selected_consultation={consult_info}
+          />
+        )}
+
+        {!!consult_info?.consult_req_pk && open_edit_pat_details_dialog && (
+          <DialogUpdateConsultDtls
+            open={open_edit_pat_details_dialog}
+            handleCloseDialog={() => {
+              set_open_edit_pat_details_dialog(false);
+            }}
+            successCallback={() => {
+              handleReloadRecord();
+            }}
+            consult_info={consult_info}
+          />
+        )}
+
+        {!!consult_info?.consult_req_pk && open_update_consult_details_dialog && (
+          <DialogUpdateConsultDetails
+            open={open_update_consult_details_dialog}
+            handleCloseDialog={() => {
+              set_open_update_consult_details_dialog(false);
+            }}
+            successCallback={() => {
+              handleReloadRecord();
+            }}
+            consult_info={consult_info}
           />
         )}
       </>

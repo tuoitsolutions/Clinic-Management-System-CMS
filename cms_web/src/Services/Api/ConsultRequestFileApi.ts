@@ -1,4 +1,5 @@
 import { PostFetch } from "../../Hooks/UseFetch";
+import ConsultRequestFileEntity from "../Entities/ConsultRequestFileEntity";
 import { PaginationModel } from "../Models/PaginationModel";
 import ResponseModel from "../Models/ServerResponseModel";
 
@@ -20,7 +21,23 @@ const GetConsultReqFileByPk = async (
   return response;
 };
 
+const InsertConsultFile = async (
+  payload: ConsultRequestFileEntity
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "InsertConsultFile", payload);
+  return response;
+};
+
+const UpdateConsultFile = async (
+  payload: ConsultRequestFileEntity
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "UpdateConsultFile", payload);
+  return response;
+};
+
 export default {
   GetTableConsultReqFile,
   GetConsultReqFileByPk,
+  InsertConsultFile,
+  UpdateConsultFile,
 };

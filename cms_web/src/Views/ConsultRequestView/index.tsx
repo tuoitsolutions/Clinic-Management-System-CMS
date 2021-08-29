@@ -10,6 +10,7 @@ import BodyLoader from "../../Component/BodyLoader";
 import CustomAvatar from "../../Component/CustomAvatar";
 import CustomStepper from "../../Component/CustomStepper/CustomStepper";
 import LoadingButton from "../../Component/LoadingButton";
+import PhotoField from "../../Component/PhotoField/PhotoField";
 import { APP_NAME } from "../../Helpers/AppConfig";
 import DefaultValuesActions from "../../Services/Actions/DefaultValuesActions";
 import {
@@ -131,6 +132,7 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
         .label("Chief Complaint"),
       symptoms: yup.string().nullable().required().label("Symptoms"),
       notes: yup.string().nullable().label("Notes"),
+      assign_dept_pk: yup.string().required().nullable().label("Department"),
       is_charity: yup
         .string()
         .nullable()
@@ -373,6 +375,7 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
                 isBlob={true}
                 spacing={8}
               />
+
               <div className="brand-name">{hospital_name}</div>
               <div className="app-name">{APP_NAME}</div>
             </AppBar>

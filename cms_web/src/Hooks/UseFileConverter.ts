@@ -50,7 +50,6 @@ export const dataURLtoFile = (data_url, filename) => {
 
   const converted_file = new File([u8arr], filename, { type: mime });
 
-  console.log(`file`, converted_file);
   return converted_file;
 };
 
@@ -58,6 +57,7 @@ export const dataURLtoImageFile = (data_url, filename) => {
   if (!!data_url && !!filename) {
     try {
       data_url = "data:image/png;base64, " + data_url;
+
       var arr = data_url.split(","),
         mime = arr[0].match(/:(.*?);/)[1],
         bstr = atob(arr[1]),
@@ -72,6 +72,12 @@ export const dataURLtoImageFile = (data_url, filename) => {
       return null;
     }
   }
-  alert(`null`);
   return null;
 };
+
+// export async function dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
+
+//   const res: Response = await fetch(dataUrl);
+//   const blob: Blob = await res.blob();
+//   return new File([blob], fileName, { type: 'image/png' });
+// }

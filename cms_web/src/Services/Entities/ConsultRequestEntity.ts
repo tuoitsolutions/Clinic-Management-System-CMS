@@ -5,6 +5,7 @@ interface ConsultRequestEntity {
   hash_key?: string;
   consult_req_pk?: string;
   hospital_no?: string;
+  pic_dest?: string;
   prefix?: string;
   first_name?: string;
   middle_name?: string;
@@ -24,7 +25,7 @@ interface ConsultRequestEntity {
   line2?: string;
   brgy_pk?: string;
   prov_pk?: string;
-  city_pk?: string;
+  citymun_pk?: string;
   region_pk?: string;
   zip_code?: string;
   slip_pk?: string;
@@ -64,6 +65,9 @@ interface ConsultRequestEntity {
   assign_dept_pk?: string;
   assign_res_pk?: string;
   assign_dept_consult_date?: string;
+  est_start_date?: string | Date;
+  est_start_time?: string | Date;
+
   assign_dept_at?: string;
   consult_link_pass?: string;
   consult_link_hash?: string;
@@ -82,6 +86,8 @@ interface ConsultRequestEntity {
   status?: StatusMasterEntity;
   //others
   attach_base64_soa?: string;
+  attach_profile_pic?: string | File;
+  age?: string;
 }
 
 export interface ConsultRequestTableModel {
@@ -94,6 +100,8 @@ export interface ConsultRequestTableModel {
 export interface SendMessagePayload {
   consult_req_pk?: string;
   body?: string;
+  send_to_email?: boolean;
+  send_to_sms?: boolean;
   send_to?: Array<string>;
 }
 

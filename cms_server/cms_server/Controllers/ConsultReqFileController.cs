@@ -23,5 +23,21 @@ namespace cms_server.Controllers
         {
             return Ok(consult_req_file_repo.GetConsultReqFileByPk(payload.value));
         }
+
+        [HttpPost]
+        public IActionResult InsertConsultFile(ConsultRequestFileEntity payload)
+        {
+            payload.encoded_by = User.Identity.Name;
+            return Ok(consult_req_file_repo.InsertConsultFile(payload));
+        }
+
+        [HttpPost]
+        public IActionResult UpdateConsultFile(ConsultRequestFileEntity payload)
+        {
+            payload.updated_by = User.Identity.Name;
+            return Ok(consult_req_file_repo.UpdateConsultFile(payload));
+        }
+
+
     }
 }

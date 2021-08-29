@@ -2,10 +2,12 @@
 using Dapper;
 using ddt_server.Config;
 using ddt_server.Hooks;
+using ddt_server.Models;
 using DeliveryRoomWatcher.Config;
 using DeliveryRoomWatcher.Hooks;
 using DeliveryRoomWatcher.Models.Common;
 using MySql.Data.MySqlClient;
+using pos_server.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -107,6 +109,169 @@ namespace cms_server.Repositories
             catch (Exception err)
             {
 
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel InsertConsultFile(ConsultRequestFileEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                List<ConsultReqChatEntity> tbl_consult = con.Query<ConsultReqChatEntity>(
+                       $@"SELECT * FROM `consult_request` WHERE MD5(consult_req_pk) = @hash_key LIMIT 1;"
+                       , payload
+                       , transaction: tran).ToList();
+
+                UserEntity user_info = con.QuerySingle<UserEntity>(
+                    $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                    , new { user_pk = payload.encoded_at }
+                    , transaction: tran);
+
+                if (tbl_consult.Count > 0)
+                {
+                    ConsultReqChatEntity selected_consult = tbl_consult[0];
+                    FileResponseModel file_upload_response = new FileResponseModel
+                    {
+                        success = true
+                    };
+
+                    file_upload_response = UseFtp.UploadToFtp(payload.attach_file, DefaultConfig.ftp_ip, $"/{DefaultConfig.app_name}/Uploads/ConsultationFiles/", DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                    if (!file_upload_response.success)
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = file_upload_response.message
+                        };
+                    }
+                    else
+                    {
+                        payload.file_dest = file_upload_response.data.path;
+                        payload.file_name = file_upload_response.data.name;
+                    }
+
+                    int add_file = con.Execute(@"
+                                    INSERT INTO `consult_request_file` 
+                                    SET 
+                                    file_dest=@file_dest, 
+                                    file_name=@file_name, 
+                                    file_type=@file_type, 
+                                    notes=@notes, 
+                                    is_active='y', 
+                                    encoded_at=NOW(), 
+                                    encoded_by=@encoded_by;"
+                                   , payload
+                                   , transaction: tran);
+
+                    if (add_file > 0)
+                    {
+                        return new ResponseModel
+                        {
+                            success = true,
+                            message = "The file has been saved successfully!"
+                        };
+                    }
+                    else
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "We are not able to save the file that you are trying to upload."
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "We could not find the consultation request that you are trying to manage!"
+                    };
+                }
+
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
+        public ResponseModel UpdateConsultFile(ConsultRequestFileEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                List<ConsultRequestFileEntity> tbl_consult = con.Query<ConsultRequestFileEntity>(
+                       $@"SELECT * FROM `consult_request_file` WHERE cr_file_pk = @cr_file_pk LIMIT 1;"
+                       , payload
+                       , transaction: tran).ToList();
+
+                UserEntity user_info = con.QuerySingle<UserEntity>(
+                    $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                    , new { user_pk = payload.encoded_at }
+                    , transaction: tran);
+
+                if (tbl_consult.Count > 0)
+                {
+                    ConsultRequestFileEntity selected_consult = tbl_consult[0];
+
+                    int add_file = con.Execute(@"
+                                    UPDATE `consult_request_file` 
+                                    SET 
+                                    file_name=@file_name, 
+                                    file_type=@file_type, 
+                                    notes=@notes, 
+                                    is_active=@is_active, 
+                                    updated_at=NOW(), 
+                                    updated_by=@updated_by 
+                                    WHERE cr_file_pk = @cr_file_pk; "
+                                   , payload
+                                   , transaction: tran);
+
+                    if (add_file > 0)
+                    {
+                        return new ResponseModel
+                        {
+                            success = true,
+                            message = "The file has been updated successfully!"
+                        };
+                    }
+                    else
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "We are not able to update the file that you are trying to upload."
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "We could not find the consultation request that you are trying to manage!"
+                    };
+                }
+
+            }
+            catch (Exception err)
+            {
                 return new ResponseModel
                 {
                     success = false,

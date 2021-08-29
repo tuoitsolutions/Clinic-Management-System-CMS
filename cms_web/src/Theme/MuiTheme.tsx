@@ -86,10 +86,10 @@ let theme = createMuiTheme({
   typography: {
     button: {
       textTransform: "unset",
-      letterSpacing: `.3pt`,
-      wordSpacing: `.3pt`,
-      fontWeight: 900,
-      fontSize: `.78em`,
+      // letterSpacing: `.3pt`,
+      // wordSpacing: `.3pt`,
+      fontWeight: 700,
+      fontSize: `.83em`,
     },
     fontFamily: [
       "nunito",

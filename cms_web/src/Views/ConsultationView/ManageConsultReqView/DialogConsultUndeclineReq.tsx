@@ -5,7 +5,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
 import FormDialog from "../../../Component/FormDialog/FormDialog";
-import MultCheckboxHookForm from "../../../Component/HookForm/MultCheckboxHookForm";
+import SingleCheckboxHookForm from "../../../Component/HookForm/SingleCheckboxHookForm";
 import TextFieldHookForm from "../../../Component/HookForm/TextFieldHookForm";
 import {
   closePageLoading,
@@ -16,7 +16,7 @@ import {
 import ConsultRequestApi from "../../../Services/Api/ConsultRequestApi";
 import { SendMessagePayload } from "../../../Services/Entities/ConsultRequestEntity";
 
-interface IDialogDeclineConsultReq {
+interface IDialogUndeclineConsult {
   open: boolean;
   consult_req_pk: string;
   handleCloseDialog: () => void;
@@ -24,16 +24,18 @@ interface IDialogDeclineConsultReq {
 }
 
 const form_schema = yup.object({
-  body: yup.string().required().nullable().label("Body"),
-  send_to: yup.array().of(yup.string()).min(1).compact().label("Send To"),
+  body: yup.string().nullable().label("Body"),
+  send_to_email: yup.string().nullable().label("Send To Email"),
+  send_to_sms: yup.string().nullable().label("Send To SMS"),
 });
 
-const DialogDeclineConsultReq: FC<IDialogDeclineConsultReq> = memo((props) => {
+const DialogUndeclineConsult: FC<IDialogUndeclineConsult> = memo((props) => {
   const dispatch = useDispatch();
 
   const def_val = {
     body: "",
-    send_to: ["sms", "email"],
+    send_to_email: true,
+    send_to_sms: true,
   };
 
   const form_instance = useForm<any>({
@@ -52,16 +54,16 @@ const DialogDeclineConsultReq: FC<IDialogDeclineConsultReq> = memo((props) => {
         dispatch(
           setGeneralPrompt({
             open: true,
-            custom_title: `Are you sure that you want to decline this consultation request?`,
+            custom_title: `Are you sure that you want to reapprove this consultation request?`,
             continue_callback: async () => {
               dispatch(
                 showPageLoading({
                   show: true,
                   loading_message:
-                    "Decliding consultation request, thank you for your patience",
+                    "Reapproving consultation request, thank you for your patience",
                 })
               );
-              const response = await ConsultRequestApi.DeclineConsultRequest(
+              const response = await ConsultRequestApi.UndeclineConsultRequest(
                 payload
               );
 
@@ -83,13 +85,13 @@ const DialogDeclineConsultReq: FC<IDialogDeclineConsultReq> = memo((props) => {
         );
       }
     },
-    [dispatch, form_instance, props.consult_req_pk]
+    [dispatch, props]
   );
 
   return (
     <>
       <FormDialog
-        title="Consultation Request Declining Form"
+        title="Inform the requester about the  reason for reapproving"
         open={props.open}
         handleClose={props.handleCloseDialog}
         minWidth={500}
@@ -102,16 +104,15 @@ const DialogDeclineConsultReq: FC<IDialogDeclineConsultReq> = memo((props) => {
             >
               <div
                 style={{
-                  display: `grid`,
                   padding: `1.5em`,
                   backgroundColor: `#fff`,
                   borderRadius: 10,
                 }}
               >
-                <Grid container spacing={6}>
+                <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <TextFieldHookForm
-                      label="Body"
+                      label="Write a message that you want to send to the requester"
                       name="body"
                       fullWidth
                       InputLabelProps={{
@@ -119,26 +120,21 @@ const DialogDeclineConsultReq: FC<IDialogDeclineConsultReq> = memo((props) => {
                       }}
                       multiline={true}
                       rows={3}
-                      placeholder="Write some message to be sent to the requestor..."
+                      placeholder="Write a message that you want to send to the requester here..."
                     />
                   </Grid>
 
                   <Grid item xs={12}>
-                    <MultCheckboxHookForm
-                      label="Send To"
-                      name="send_to"
-                      row={true}
-                      required
-                      radio_items={[
-                        {
-                          id: "sms",
-                          label: "SMS",
-                        },
-                        {
-                          id: "email",
-                          label: "Email",
-                        },
-                      ]}
+                    <SingleCheckboxHookForm
+                      label="Send to the requester's mobile number"
+                      name="send_to_sms"
+                      size="small"
+                    />
+
+                    <SingleCheckboxHookForm
+                      label="Send to the requester's email"
+                      name="send_to_email"
+                      size="small"
                     />
                   </Grid>
                 </Grid>
@@ -173,4 +169,4 @@ const DialogDeclineConsultReq: FC<IDialogDeclineConsultReq> = memo((props) => {
   );
 });
 
-export default DialogDeclineConsultReq;
+export default DialogUndeclineConsult;

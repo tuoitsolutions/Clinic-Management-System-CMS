@@ -3,7 +3,14 @@ interface ConsultRequestFileEntity {
   consult_req_pk?: string;
   file_dest?: string;
   file_name?: string;
-  encoded_at?: Date;
+  file_type?: string;
+  notes?: string;
+  is_active?: "y" | "n";
+  encoded_at?: string | Date;
+  encoded_by?: string;
+  updated_at?: string | Date;
+  updated_by?: string;
+  attach_file?: FormData;
 }
 
 export interface ConsultRequestFileTableModel {

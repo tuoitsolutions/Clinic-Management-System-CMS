@@ -33,6 +33,8 @@ namespace pos_server.Payloads
         {
             public string consult_req_pk { get; set; }
             public string body { get; set; }
+            public bool send_to_email { get; set; }
+            public bool send_to_sms { get; set; }
             public List<string> send_to { get; set; }
         }
     }

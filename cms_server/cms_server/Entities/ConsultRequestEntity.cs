@@ -10,8 +10,8 @@ namespace cms_server.Entities
     {
         public string hash_key { get; set; }
         public string consult_req_pk { get; set; }
-        public string otp_code { get; set; }
         public string hospital_no { get; set; }
+        public string pic_dest { get; set; }
         public string prefix { get; set; }
         public string first_name { get; set; }
         public string middle_name { get; set; }
@@ -30,7 +30,7 @@ namespace cms_server.Entities
         public string line1 { get; set; }
         public string is_charity { get; set; }
         public string is_agree_priv_pol { get; set; }
-        //public string line2 { get; set; }
+        public string doctor_notes { get; set; }
         public string brgy_pk { get; set; }
         public string prov_pk { get; set; }
         public string citymun_pk { get; set; }
@@ -66,6 +66,8 @@ namespace cms_server.Entities
         public DateTime? paymongo_paid_at { get; set; }
         public string assign_dept_pk { get; set; }
         public string assign_res_pk { get; set; }
+        public DateTime? exp_start_date { get; set; }
+        public DateTime? exp_start_time { get; set; }
         public DateTime? assign_dept_consult_date { get; set; }
         public DateTime? assign_dept_at { get; set; }
         public string consult_link_pass { get; set; }
@@ -85,8 +87,11 @@ namespace cms_server.Entities
         public ConsultRequestFileEntity consult_req_file { get; set; }
         public StatusMasterEntity status { get; set; }
         //ext
+        public string otp_code { get; set; }
         public List<IFormFile> attach_req_files { set; get; }
         public string attach_base64_soa { get; set; }
+        public IFormFile attach_profile_pic { get; set; }
         public string age { get; set; }
+        public string user_pk { get; set; }
     }
 }

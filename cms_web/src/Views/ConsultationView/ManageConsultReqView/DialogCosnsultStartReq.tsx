@@ -84,10 +84,6 @@ const form_structure = {
     name: "line1",
     label: "Line 1",
   },
-  line2: {
-    name: "line2",
-    label: "Line 2",
-  },
   brgy_pk: {
     name: "brgy_pk",
     label: "Barangay",
@@ -136,7 +132,6 @@ const form_schema = yup.object({
   email: yup.string().required().nullable().label(form_structure.email.label),
   mob_no: yup.string().required().nullable().label(form_structure.mob_no.label),
   line1: yup.string().required().nullable().label(form_structure.line1.label),
-  line2: yup.string().required().nullable().label(form_structure.line2.label),
   brgy_pk: yup
     .string()
     .required()
@@ -185,8 +180,6 @@ const DialogStartConsult: FC<IDialogStartConsult> = memo((props) => {
       payload.consult_req_pk = props.selected_record.consult_req_pk;
 
       payload.hospital_no = hospital_no;
-
-      console.log(`payload`, payload);
 
       if (!!payload.consult_req_pk) {
         dispatch(
@@ -424,19 +417,16 @@ const DialogStartConsult: FC<IDialogStartConsult> = memo((props) => {
                   >
                     <Grid container spacing={5}>
                       <Grid item xs={12}>
-                        <Grid container>
-                          <Grid item xs={6}>
-                            <AutocompleteHookForm
-                              name="hospital_no"
-                              label="Existing Patient"
-                              fullWidth={true}
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
-                              options={hosp_pat_options}
-                            />
-                          </Grid>
-                        </Grid>
+                        <AutocompleteHookForm
+                          name="hospital_no"
+                          label="You can map this consultation to the patient's previous consultation by choosing the patient's name"
+                          placeholder="You can map this consultation to the patient's previous consultation by choosing the patient's name"
+                          fullWidth={true}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          options={hosp_pat_options}
+                        />
                       </Grid>
 
                       <Grid item xs={12} md={2}>
@@ -709,19 +699,6 @@ const DialogStartConsult: FC<IDialogStartConsult> = memo((props) => {
                           required
                         />
                       </Grid>
-
-                      <Grid item xs={12} md={6}>
-                        <TextFieldHookForm
-                          name={form_structure.line2.name}
-                          label={form_structure.line2.label}
-                          placeholder={`Enter the ${form_structure.line2.label}`}
-                          fullWidth
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          required
-                        />
-                      </Grid>
                     </Grid>
                   </div>
                 </form>
@@ -737,7 +714,7 @@ const DialogStartConsult: FC<IDialogStartConsult> = memo((props) => {
               type="submit"
               form="form_instance"
             >
-              Save Changes
+              Start Consultation Now
             </Button>
             <Button
               variant="contained"

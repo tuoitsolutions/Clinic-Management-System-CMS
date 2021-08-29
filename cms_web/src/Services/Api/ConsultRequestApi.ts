@@ -54,6 +54,13 @@ const DeclineConsultRequest = async (
   return response;
 };
 
+const UndeclineConsultRequest = async (
+  payload: SendMessagePayload
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "UndeclineConsultRequest", payload);
+  return response;
+};
+
 const IsPayLinkExpired = async (hash_key: string): Promise<ResponseModel> => {
   const response = await PostFetch(BASE + "IsPayLinkExpired", {
     value: hash_key,
@@ -157,12 +164,72 @@ const TakeOverConsult = async (
   return response;
 };
 
+const SetConsultAsPaid = async (
+  payload: ConsultRequestEntity
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "SetConsultAsPaid", payload);
+  return response;
+};
+
+const GetConsultPatPic = async (hash_key: string): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetConsultPatPic", {
+    value: hash_key,
+  });
+  return response;
+};
+
+const UpdateConsultPatPic = async (
+  form_data: FormData
+): Promise<ResponseModel> => {
+  const response = await FormDataPostFetch(
+    BASE + "UpdateConsultPatPic",
+    form_data
+  );
+  return response;
+};
+
+const GetConsultDocNotes = async (hash_key: string): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetConsultDocNotes", {
+    value: hash_key,
+  });
+  return response;
+};
+
+const UpdateConsultDocNotes = async (
+  payload: ConsultRequestEntity
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "UpdateConsultDocNotes", payload);
+  return response;
+};
+
+const UpdateConsultDtls = async (
+  payload: ConsultRequestEntity
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "UpdateConsultDtls", payload);
+  return response;
+};
+
+const SendConsultSms = async (
+  payload: ConsultRequestEntity
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "SendConsultSms", payload);
+  return response;
+};
+
+const SendConsultEmail = async (
+  payload: ConsultRequestEntity
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "SendConsultEmail", payload);
+  return response;
+};
+
 export default {
   InsertConsultRequest,
   GetTableConsultRequest,
   GetConsultReqByPk,
   SendPaymentLink,
   DeclineConsultRequest,
+  UndeclineConsultRequest,
   IsPayLinkExpired,
   IsPayOtpVerified,
   VerifyPayOtp,
@@ -179,4 +246,12 @@ export default {
   EndConsult,
   TakeOverConsult,
   GetTablePatConsultHistory,
+  SetConsultAsPaid,
+  GetConsultPatPic,
+  UpdateConsultPatPic,
+  GetConsultDocNotes,
+  UpdateConsultDocNotes,
+  UpdateConsultDtls,
+  SendConsultSms,
+  SendConsultEmail,
 };

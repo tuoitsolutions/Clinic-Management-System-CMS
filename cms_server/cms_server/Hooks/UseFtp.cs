@@ -71,6 +71,80 @@ namespace ddt_server.Hooks
             }
         }
 
+        public static FileResponseModel UploadToFtp(IFormFile file, string ftp_base_url, string file_dest_path, string username, string password)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    string root_file_name = Path.GetFileName(file.FileName);
+                    string ext = Path.GetExtension(root_file_name);
+
+                    string unique_file_name = Path.GetFileNameWithoutExtension(root_file_name)
+                              + "_"
+                              + Guid.NewGuid().ToString().Substring(0, 4)
+                              + ext;
+
+
+
+                    string root_dir = "ftp://" + ftp_base_url + file_dest_path;
+
+                    bool root_dir_exists = CreateFTPDirectory(root_dir, username, password);
+
+                    if (root_dir_exists)
+                    {
+                        FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(root_dir + "/" + unique_file_name));
+                        request.Method = WebRequestMethods.Ftp.UploadFile;
+                        request.UsePassive = false;
+                        request.Credentials = new NetworkCredential(username, password);
+
+
+                        using (Stream ftpStream = request.GetRequestStream())
+                        {
+                            file.CopyTo(ftpStream);
+                        }
+
+
+                        return new FileResponseModel
+                        {
+                            success = true,
+                            data = new FileModel
+                            {
+                                name = unique_file_name,
+                                path = file_dest_path + unique_file_name,
+                                ext = ext
+                            }
+                        };
+                    }
+                    else
+                    {
+                        return new FileResponseModel
+                        {
+                            success = false,
+                            message = "Unable to create the specified directory. Please make sure that the file URI is correct!"
+                        };
+                    }
+
+
+                }
+
+
+                return new FileResponseModel
+                {
+                    success = false,
+                    message = "The file cannot be null"
+                };
+            }
+            catch (Exception e)
+            {
+                return new FileResponseModel
+                {
+                    success = false,
+                    message = e.Message
+                };
+            }
+        }
+
         public static FileResponseModel UploadFtp(IFormFile file, string ftp_path, string username, string password)
         {
             try
@@ -143,7 +217,6 @@ namespace ddt_server.Hooks
                     message = e.Message
                 };
             }
-
         }
 
 

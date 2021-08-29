@@ -1,5 +1,6 @@
 ﻿using cms_server.Entities;
 using cms_server.Hooks;
+using cms_server.Models;
 using cms_server.Repositories;
 using hrms_server.Payloads;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,13 @@ namespace cms_server.Controllers
         {
             return Ok(consult_req_repo.DeclineConsultRequest(payload, User.Identity.Name));
         }
+
+        [HttpPost]
+        public IActionResult UndeclineConsultRequest(SendMessagePayload payload)
+        {
+            return Ok(consult_req_repo.UndeclineConsultRequest(payload, User.Identity.Name));
+        }
+
 
         [HttpPost]
         public IActionResult GetTableConsultRequest(ConsultRequestTablePayload payload)
@@ -156,6 +164,62 @@ namespace cms_server.Controllers
             return Ok(consult_req_repo.IsConsultLinkAuthenticated(payload));
         }
 
+        //
+        [HttpPost]
+        public IActionResult SetConsultAsPaid(ConsultRequestEntity payload)
+        {
+            payload.user_pk = User.Identity.Name;
+            return Ok(consult_req_repo.SetConsultAsPaid(payload));
+        }
+
+
+        [HttpPost]
+        public IActionResult GetConsultPatPic(SingleValuePayload payload)
+        {
+            return Ok(consult_req_repo.GetConsultPatPic(payload.value));
+        }
+
+
+        [HttpPost]
+        public IActionResult UpdateConsultPatPic([FromForm] ConsultRequestEntity payload)
+        {
+            payload.user_pk = User.Identity.Name;
+            return Ok(consult_req_repo.UpdateConsultPatPic(payload));
+        }
+
+        [HttpPost]
+        public IActionResult GetConsultDocNotes(SingleValuePayload payload)
+        {
+            return Ok(consult_req_repo.GetConsultDocNotes(payload.value));
+        }
+
+        [HttpPost]
+        public IActionResult UpdateConsultDocNotes(ConsultRequestEntity payload)
+        {
+            payload.user_pk = User.Identity.Name;
+            return Ok(consult_req_repo.UpdateConsultDocNotes(payload));
+        }
+
+        [HttpPost]
+        public IActionResult UpdateConsultDtls(ConsultRequestEntity payload)
+        {
+            payload.user_pk = User.Identity.Name;
+            return Ok(consult_req_repo.UpdateConsultDtls(payload));
+        }
+
+        [HttpPost]
+        public IActionResult SendConsultSms(SmsModel payload)
+        {
+            payload.encoded_by = User.Identity.Name;
+            return Ok(consult_req_repo.SendConsultSms(payload));
+        }
+
+        [HttpPost]
+        public IActionResult SendConsultEmail(EmailModel payload)
+        {
+            payload.encoded_by = User.Identity.Name;
+            return Ok(consult_req_repo.SendConsultEmail(payload));
+        }
 
 
     }

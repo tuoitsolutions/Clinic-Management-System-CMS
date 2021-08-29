@@ -609,11 +609,11 @@ canvas {
 }
 
 .ctnr-title .main {
-  font-weight: 600;
+  font-weight: 900;
   opacity: 0.6;
   align-self: end;
-  font-size: 0.95em;
-  text-transform: uppercase;
+  font-size: 0.9em;
+  /* text-transform: uppercase; */
 }
 .ctnr-title .sub {
   align-self: start;
