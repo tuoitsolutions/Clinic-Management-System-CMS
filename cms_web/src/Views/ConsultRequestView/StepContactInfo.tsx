@@ -30,8 +30,8 @@ const StepContactInfo: FC<IStepContactInfo> = memo(
 
     return (
       <div className="tab-container">
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6}>
             <TextFieldHookForm
               name="email"
               label="Email Address"
@@ -61,8 +61,8 @@ const StepContactInfo: FC<IStepContactInfo> = memo(
           </Grid>
 
           <Grid item xs={12}>
-            <Grid container spacing={3}>
-              <Grid item xs={6} md={2}>
+            <Grid container spacing={4}>
+              <Grid item xs={12} md={2}>
                 <TextFieldHookForm
                   name="zip_code"
                   label="Zip Code"
@@ -71,10 +71,11 @@ const StepContactInfo: FC<IStepContactInfo> = memo(
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  disabled
                 />
               </Grid>
 
-              <Grid item xs={6} md={4}>
+              <Grid item xs={12} md={5}>
                 <AutocompleteHookForm
                   label="Region"
                   name="region_pk"
@@ -85,10 +86,11 @@ const StepContactInfo: FC<IStepContactInfo> = memo(
                   }}
                   placeholder="Enter region"
                   required
+                  disabled
                 />
               </Grid>
 
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={5}>
                 <AutocompleteHookForm
                   label="Province"
                   name="prov_pk"
@@ -113,7 +115,7 @@ const StepContactInfo: FC<IStepContactInfo> = memo(
                 />
               </Grid>
 
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={5}>
                 <AutocompleteHookForm
                   label="City/Municipality"
                   name="citymun_pk"
@@ -134,7 +136,7 @@ const StepContactInfo: FC<IStepContactInfo> = memo(
                 />
               </Grid>
 
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={5}>
                 <AutocompleteHookForm
                   label="Barangay"
                   name="brgy_pk"
@@ -149,28 +151,15 @@ const StepContactInfo: FC<IStepContactInfo> = memo(
                 />
               </Grid>
 
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12}>
                 <TextFieldHookForm
                   name="line1"
-                  label="Building/Lot/Block"
+                  label="Building/Lot/Block & Street/Subd."
                   fullWidth
                   InputLabelProps={{
                     shrink: true,
                   }}
-                  placeholder="Enter building/lot/block"
-                  required
-                />
-              </Grid>
-
-              <Grid item xs={12} md={4}>
-                <TextFieldHookForm
-                  name="line2"
-                  label="Street/Subd."
-                  fullWidth
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  placeholder="Enter street/subd."
+                  placeholder="Enter building/lot/block and street/subd."
                   required
                 />
               </Grid>

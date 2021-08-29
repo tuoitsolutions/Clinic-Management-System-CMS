@@ -20,6 +20,7 @@ interface HospResidentEntity {
   //ext
   img_attach?: any;
   specialty?: string;
+  total_consult?: string;
 }
 
 export interface HospResidentTableModel {

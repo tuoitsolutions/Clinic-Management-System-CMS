@@ -5,10 +5,9 @@ export const StyledConsultRequestView = styled(Container)`
   min-height: 100vh;
   background-color: #fff;
   padding: 1em;
-  /* margin: 1em; */
-  /* border-radius: 7px; */
+  /* border-radius: 5px; */
   overflow: hidden;
-  /* background-color: red !important; */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.02) !important;
 
   .header-ctnr {
     display: grid;
@@ -19,32 +18,36 @@ export const StyledConsultRequestView = styled(Container)`
     background-color: ${(p) => p.theme.palette.primary.main};
     color: ${(p) => p.theme.palette.primary.contrastText};
     margin: -1em;
-    padding: 0.5em 1em;
+    padding: 1em;
     margin-bottom: 0.5em;
+    box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.2) !important;
 
     /* grid-gap: 0.3em; */
     .brand-logo {
       grid-area: logo;
-      margin-right: 0.5em;
-      height: 60px;
-      width: 60px;
+      margin-right: 1em;
     }
     .brand-name {
       grid-area: name;
       align-self: end;
-      font-weight: 600;
+      font-size: 1.2em;
+      font-weight: 900;
     }
     .app-name {
       grid-area: app;
       align-self: start;
-      font-weight: 400;
-      font-size: 0.87em;
+      font-weight: 900;
+      font-size: 0.9em;
+      opacity: 0.9;
+      letter-spacing: 0.3pt;
+      word-spacing: 0.3pt;
     }
   }
+
   .main-title {
     padding: 0.5em 1em;
-    font-weight: 500;
-    font-size: 1em;
+    /* font-weight: 600;
+    font-size: 1em; */
   }
 
   .tabs-ctnr {
@@ -54,13 +57,13 @@ export const StyledConsultRequestView = styled(Container)`
   .actions {
     /* padding: 1em; */
     padding-top: 2em;
-    display: grid;
+    /* display: grid;
     justify-content: end;
     justify-items: end;
     align-items: center;
     align-content: center;
-    grid-gap: 0.5em;
-    grid-auto-flow: column;
+    grid-gap: 1.5em;
+    grid-auto-flow: column; */
   }
 
   .summary-footer {
@@ -94,6 +97,6 @@ export const StyledConsultRequestView = styled(Container)`
   }
 
   .tab-container {
-    padding: 1.5em 1em;
+    padding: 1em;
   }
 `;

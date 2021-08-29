@@ -182,6 +182,7 @@ namespace cms_server.Repositories
             }
 
         }
+
         public ResponseModel ReligionOptions()
         {
             using (var con = new MySqlConnection(DatabaseConfig.GetConnection()))
@@ -217,6 +218,7 @@ namespace cms_server.Repositories
             }
 
         }
+
 
     }
 }

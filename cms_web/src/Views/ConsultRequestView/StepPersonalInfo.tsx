@@ -15,7 +15,7 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
   ({ nationality_options, religion_options }) => {
     return (
       <div className="tab-container">
-        <Grid container spacing={3}>
+        <Grid container spacing={4}>
           <Grid item xs={6} md={2}>
             <TextFieldHookForm
               name="prefix"
@@ -31,6 +31,7 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
             <TextFieldHookForm
               label="First Name"
               name="first_name"
+              type="text"
               fullWidth
               InputLabelProps={{
                 shrink: true,
@@ -42,6 +43,7 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
           <Grid item xs={12} md={4}>
             <TextFieldHookForm
               name="middle_name"
+              type="text"
               label="Middle Name"
               fullWidth
               InputLabelProps={{
@@ -53,6 +55,7 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
           <Grid item xs={12} md={4}>
             <TextFieldHookForm
               name="last_name"
+              type="text"
               label="Last Name"
               fullWidth
               InputLabelProps={{
@@ -76,7 +79,7 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
           <Grid item xs={12} md={3}>
             <MultiRadioFieldHookForm
               name="gender"
-              label="What is the patient's gender?"
+              label="Gender"
               row
               size="small"
               radio_items={[
@@ -98,7 +101,7 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
               fullWidth
               autoOk
               placeholder="Enter birth date"
-              defaultValue={null}
+              mask="__/__/____"
             />
           </Grid>
           <Grid item xs={12} md={4}>

@@ -40,10 +40,27 @@ const LinkTabs: React.FC<ILinkTabs> = memo(({ tabs, orientation }) => {
     tabs.length > 0 && (
       <StyledLinkTabs>
         <Grid container>
-          <Grid item xs={12} md={3} lg={2}>
+          <Grid
+            item
+            xs={12}
+            md={orientation === "horizontal" ? 12 : 3}
+            lg={orientation === "horizontal" ? 12 : 2}
+          >
             <AntTabs
-              orientation={desktop ? "vertical" : "horizontal"}
-              variant={desktop ? "standard" : "scrollable"}
+              orientation={
+                !!orientation
+                  ? orientation
+                  : desktop
+                  ? "vertical"
+                  : "horizontal"
+              }
+              variant={
+                !!orientation
+                  ? "scrollable"
+                  : desktop
+                  ? "standard"
+                  : "scrollable"
+              }
               value={tabs.findIndex((p) =>
                 window.location.pathname
                   .toLowerCase()
@@ -53,12 +70,18 @@ const LinkTabs: React.FC<ILinkTabs> = memo(({ tabs, orientation }) => {
               indicatorColor="primary"
               textColor="primary"
               style={{
-                borderRight: desktop
-                  ? `1px solid ${theme.palette.divider}`
-                  : "",
-                borderBottom: !desktop
-                  ? `1px solid ${theme.palette.divider}`
-                  : "",
+                borderRight:
+                  orientation === "horizontal"
+                    ? ""
+                    : desktop
+                    ? `1px solid ${theme.palette.divider}`
+                    : "",
+                borderBottom:
+                  orientation === "horizontal"
+                    ? ""
+                    : !desktop
+                    ? `1px solid ${theme.palette.divider}`
+                    : "",
                 height: "100%",
               }}
             >
@@ -75,9 +98,13 @@ const LinkTabs: React.FC<ILinkTabs> = memo(({ tabs, orientation }) => {
               ))}
             </AntTabs>
           </Grid>
-          <Grid item xs={12} md={9} lg={10}>
+          <Grid
+            item
+            xs={12}
+            md={orientation === "horizontal" ? 12 : 9}
+            lg={orientation === "horizontal" ? 12 : 10}
+          >
             <div className="body" style={{ minHeight: 400, padding: `1em` }}>
-              {/* {RenderSwitchComponent} */}
               <RouterSwitch>
                 {tabs.map((tab, index) => (
                   <Route path={tab.link} exact key={index}>
@@ -122,7 +149,9 @@ const StyledLinkTabs = styled.div`
 
 const AntTabs = withStyles({
   root: {
-    borderBottom: "1px solid #e8e8e8",
+    // borderBottom: "1px solid #e8e8e8",
+    boxShadow: `0 3px 2px -2px rgba(0, 0, 0, 0.1)`,
+    minHeight: 0,
   },
   indicator: {
     backgroundColor: "#1890ff",
@@ -133,9 +162,9 @@ const AntTab = withStyles((theme: Theme) =>
   createStyles({
     root: {
       textTransform: "none",
-      minWidth: 72,
+      minWidth: 20,
       fontWeight: theme.typography.fontWeightRegular,
-      marginRight: theme.spacing(4),
+      marginRight: theme.spacing(3),
       "&:hover": {
         color: "#40a9ff",
         opacity: 1,

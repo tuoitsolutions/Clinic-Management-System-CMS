@@ -218,7 +218,7 @@ namespace cms_server.Repositories
                 con.Open();
                 using var tran = con.BeginTransaction();
                 List<OptionModel> table_data = con.Query<OptionModel>($@"
-                                     SELECT dept_pk id, concat(dept_code,'-',dept_name) label FROM `department` WHERE is_active = 'y' order BY dept_name ASC"
+                                     SELECT dept_pk id, dept_name label FROM `department` WHERE is_active = 'y' order BY dept_name ASC"
                                      , null, transaction: tran).ToList();
                 return new ResponseModel
                 {

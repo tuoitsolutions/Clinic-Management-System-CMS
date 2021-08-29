@@ -95,7 +95,7 @@ const DialogChangeConsultCost: FC<IDialogChangeConsultCost> = memo((props) => {
         title="Change the Cost of the Consultation"
         open={props.open}
         handleClose={props.handleCloseDialog}
-        minWidth={350}
+        minWidth={400}
         body={
           <FormProvider {...form_instance}>
             <form
@@ -114,7 +114,7 @@ const DialogChangeConsultCost: FC<IDialogChangeConsultCost> = memo((props) => {
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <NumberHookForm
-                      label="Consultation Cost (PHP)"
+                      label="Consultation Cost (Php)"
                       name="consult_cost"
                       fullWidth
                       type="text"

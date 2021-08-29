@@ -1,10 +1,9 @@
 {
   "version": 2,
-  "dgSpecHash": "6r2QhenIXmc/SgqVLIU+tak4XzBzZ8ua/FvnMM/AFQ0qBDDuXgV+q2J3zjxhOlRv7sgs+pTgdHX2FzxtWV74Pw==",
+  "dgSpecHash": "TIZqqMtME8zv3BIvtebB0MlKbkpUg8AAKWYUkPlo5Ozj/Voh0v3d5WiIN4DHstu/+A5aBivXyUvIZivdw4abZg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Public\\Software Development\\Clinic Management System (cms_v2)\\cms_server\\cms_server\\cms_server.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\mrmon\\.nuget\\packages\\anglesharp\\1.0.0-alpha-844\\anglesharp.1.0.0-alpha-844.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\bouncycastle.netcore\\1.8.3\\bouncycastle.netcore.1.8.3.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\dapper\\2.0.78\\dapper.2.0.78.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\fluentftp\\34.0.2\\fluentftp.34.0.2.nupkg.sha512",

@@ -136,11 +136,11 @@ CREATE TABLE `bill_paymongo` (
   `card_src_last4` varchar(200) DEFAULT NULL,
   `logged_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`bill_paymongo_pk`,`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8;
 
 /*Data for the table `bill_paymongo` */
 
-insert  into `bill_paymongo`(`bill_paymongo_pk`,`id`,`event_type`,`source_type`,`amount`,`city`,`country`,`line1`,`line2`,`postal_code`,`state`,`email`,`name`,`phone`,`currency`,`livemode`,`checkout_url`,`failed_url`,`success_url`,`status`,`type`,`created_at`,`updated_at`,`paid_at`,`consult_req_pk`,`fee`,`pay_descrip`,`pay_net_amount`,`pay_payout`,`pay_src_id`,`pay_src_type`,`pay_statement_descrip`,`payment_intent_id`,`origin`,`tax_amount`,`refunds`,`taxes`,`access_url`,`client_key`,`card_src_id`,`card_src_type`,`card_src_brand`,`card_src_country`,`card_src_last4`,`logged_at`) values (37,'src_QidEtvmU9Cf6uQn25Mna6fFT','source.create','source',50000,'DAVAO CITY','PH','Block 4 ','Washington Village, Ma-a','8000','DAVAO DEL SUR','mrmontiveles@gmail.com',NULL,'+639321321312','PHP',0,'https://test-sources.paymongo.com/sources?id=src_QidEtvmU9Cf6uQn25Mna6fFT','http://localhost:3000/payment/failed','http://localhost:3000/payment/success','pending','gcash',1629522343,1629522343,NULL,'20218R0002',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2021-08-21 13:05:41'),(38,'pay_xF9jTu8eEK1XAquU3U9WKHdJ','source.chargeable','payment',50000,'DAVAO CITY','PH','Block 4 ','Washington Village, Ma-a','8000','DAVAO DEL SUR','mrmontiveles@gmail.com',NULL,'+639321321312','PHP',0,NULL,NULL,NULL,'paid',NULL,1629522362,1629522362,1629522362,'20218R0002',1450,'Online consultation payment for 20218R0002',48550,NULL,'src_QidEtvmU9Cf6uQn25Mna6fFT','gcash','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2021-08-21 13:05:59'),(39,'evt_ureLCHtaVAqMvZ4MzsgAS2Wj','payment.paid','event',50000,'DAVAO CITY','PH','Block 4 ','Washington Village, Ma-a','8000','DAVAO DEL SUR','mrmontiveles@gmail.com',NULL,'+639321321312','PHP',0,NULL,NULL,NULL,'paid',NULL,1629522362,1629522362,1629522362,'20218R0002',1450,'Online consultation payment for 20218R0002',48550,NULL,'pay_xF9jTu8eEK1XAquU3U9WKHdJ','payment','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'src_QidEtvmU9Cf6uQn25Mna6fFT','gcash',NULL,NULL,NULL,'2021-08-21 13:06:15'),(40,'pi_puLki96BSCmsoEmCpzgZbUyy','source.create','payment_intent',50000,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'PHP',0,NULL,NULL,NULL,'awaiting_payment_method',NULL,1629522505,1629522505,NULL,'20218R0002',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'pi_puLki96BSCmsoEmCpzgZbUyy_client_2bj4B9aDGDtzSWopqKw8xeFZ',NULL,NULL,NULL,NULL,NULL,'2021-08-21 13:08:22'),(41,'evt_4NfLst5dNGDPySCnHvuboUbE','payment.paid','event',50000,'DAVAO CITY','PH','Block 4 ','Washington Village, Ma-a','8000','DAVAO DEL SUR','mrmontiveles@gmail.com',NULL,'+639321321312','PHP',0,NULL,NULL,NULL,'paid',NULL,1629522508,1629522508,1629522508,'20218R0002',3250,'Online consultation payment intent for 20218R0002',46250,NULL,'pay_cVzMFfjDgDYiRf3EoTmhTv9K','payment','Payment Intent 20218R0002',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'card_5BJ3LtZPoTXpBw7vUBXf8qac','card','visa','US','0007','2021-08-21 13:08:44');
+insert  into `bill_paymongo`(`bill_paymongo_pk`,`id`,`event_type`,`source_type`,`amount`,`city`,`country`,`line1`,`line2`,`postal_code`,`state`,`email`,`name`,`phone`,`currency`,`livemode`,`checkout_url`,`failed_url`,`success_url`,`status`,`type`,`created_at`,`updated_at`,`paid_at`,`consult_req_pk`,`fee`,`pay_descrip`,`pay_net_amount`,`pay_payout`,`pay_src_id`,`pay_src_type`,`pay_statement_descrip`,`payment_intent_id`,`origin`,`tax_amount`,`refunds`,`taxes`,`access_url`,`client_key`,`card_src_id`,`card_src_type`,`card_src_brand`,`card_src_country`,`card_src_last4`,`logged_at`) values (37,'src_QidEtvmU9Cf6uQn25Mna6fFT','source.create','source',50000,'DAVAO CITY','PH','Block 4 ','Washington Village, Ma-a','8000','DAVAO DEL SUR','mrmontiveles@gmail.com',NULL,'+639321321312','PHP',0,'https://test-sources.paymongo.com/sources?id=src_QidEtvmU9Cf6uQn25Mna6fFT','http://localhost:3000/payment/failed','http://localhost:3000/payment/success','pending','gcash',1629522343,1629522343,NULL,'20218R0002',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2021-08-21 13:05:41'),(38,'pay_xF9jTu8eEK1XAquU3U9WKHdJ','source.chargeable','payment',50000,'DAVAO CITY','PH','Block 4 ','Washington Village, Ma-a','8000','DAVAO DEL SUR','mrmontiveles@gmail.com',NULL,'+639321321312','PHP',0,NULL,NULL,NULL,'paid',NULL,1629522362,1629522362,1629522362,'20218R0002',1450,'Online consultation payment for 20218R0002',48550,NULL,'src_QidEtvmU9Cf6uQn25Mna6fFT','gcash','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2021-08-21 13:05:59'),(39,'evt_ureLCHtaVAqMvZ4MzsgAS2Wj','payment.paid','event',50000,'DAVAO CITY','PH','Block 4 ','Washington Village, Ma-a','8000','DAVAO DEL SUR','mrmontiveles@gmail.com',NULL,'+639321321312','PHP',0,NULL,NULL,NULL,'paid',NULL,1629522362,1629522362,1629522362,'20218R0002',1450,'Online consultation payment for 20218R0002',48550,NULL,'pay_xF9jTu8eEK1XAquU3U9WKHdJ','payment','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'src_QidEtvmU9Cf6uQn25Mna6fFT','gcash',NULL,NULL,NULL,'2021-08-21 13:06:15'),(40,'pi_puLki96BSCmsoEmCpzgZbUyy','source.create','payment_intent',50000,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'PHP',0,NULL,NULL,NULL,'awaiting_payment_method',NULL,1629522505,1629522505,NULL,'20218R0002',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'pi_puLki96BSCmsoEmCpzgZbUyy_client_2bj4B9aDGDtzSWopqKw8xeFZ',NULL,NULL,NULL,NULL,NULL,'2021-08-21 13:08:22'),(41,'evt_4NfLst5dNGDPySCnHvuboUbE','payment.paid','event',50000,'DAVAO CITY','PH','Block 4 ','Washington Village, Ma-a','8000','DAVAO DEL SUR','mrmontiveles@gmail.com',NULL,'+639321321312','PHP',0,NULL,NULL,NULL,'paid',NULL,1629522508,1629522508,1629522508,'20218R0002',3250,'Online consultation payment intent for 20218R0002',46250,NULL,'pay_cVzMFfjDgDYiRf3EoTmhTv9K','payment','Payment Intent 20218R0002',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'card_5BJ3LtZPoTXpBw7vUBXf8qac','card','visa','US','0007','2021-08-21 13:08:44'),(42,'src_zdM5gXwnHdNhjB2YB1PLcKeV','source.create','source',50000,'CITY OF TABUK (Capital)','PH','Block 4 Lot 2','Washington Village, Appas','8000','KALINGA','mrmontiveles@gmail.com',NULL,'+639321321324','PHP',0,'https://test-sources.paymongo.com/sources?id=src_zdM5gXwnHdNhjB2YB1PLcKeV','http://localhost:3000/payment/failed','http://localhost:3000/payment/success','pending','gcash',1629884572,1629884572,NULL,'20218R0004',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2021-08-25 17:42:51'),(43,'pay_z3Ae93Dyf2BVBQUV8QkG5UjT','source.chargeable','payment',50000,'CITY OF TABUK (Capital)','PH','Block 4 Lot 2','Washington Village, Appas','8000','KALINGA','mrmontiveles@gmail.com',NULL,'+639321321324','PHP',0,NULL,NULL,NULL,'paid',NULL,1629884684,1629884684,1629884684,'20218R0004',1450,'Online consultation payment for 20218R0004',48550,NULL,'src_zdM5gXwnHdNhjB2YB1PLcKeV','gcash','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2021-08-25 17:44:44'),(44,'evt_iC41Zi8NyJK41oC1sTGM3wke','payment.paid','event',50000,'CITY OF TABUK (Capital)','PH','Block 4 Lot 2','Washington Village, Appas','8000','KALINGA','mrmontiveles@gmail.com',NULL,'+639321321324','PHP',0,NULL,NULL,NULL,'paid',NULL,1629884684,1629884684,1629884684,'20218R0004',1450,'Online consultation payment for 20218R0004',48550,NULL,'pay_z3Ae93Dyf2BVBQUV8QkG5UjT','payment','',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'src_zdM5gXwnHdNhjB2YB1PLcKeV','gcash',NULL,NULL,NULL,'2021-08-25 17:45:06'),(45,'pi_XUiDo4QDGEvL8WW62XkoXHxD','source.create','payment_intent',85075,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'PHP',0,NULL,NULL,NULL,'awaiting_payment_method',NULL,1629887725,1629887725,NULL,'20218R0001',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'pi_XUiDo4QDGEvL8WW62XkoXHxD_client_okRSE9WC65f7XGmK9MiJET5C',NULL,NULL,NULL,NULL,NULL,'2021-08-25 18:35:25'),(46,'evt_4RWBsANH9JoRwxFCZF25H9CH','payment.paid','event',85075,'HAGONOY','PH','Molavel Street','Purok 7-A, Hagonoy Crossing','8208','DAVAO DEL SUR','mrmontiveles@gmail.com',NULL,'+639299550278','PHP',0,NULL,NULL,NULL,'paid',NULL,1629887731,1629887731,1629887731,'20218R0001',4478,'Online consultation payment intent for 20218R0001',79746,NULL,'pay_dsqsYboBi7kj7nAW3deETkyr','payment','Payment Intent 20218R0001',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'card_oZRAH5wgcPaRHtB8urQCY6zX','card','visa','US','0007','2021-08-25 18:35:47');
 
 /*Table structure for table `citymunicipality` */
 
@@ -174,6 +174,20 @@ CREATE TABLE `civilstatus` (
 /*Data for the table `civilstatus` */
 
 insert  into `civilstatus`(`cskey`,`csdesc`) values ('A','Annulled'),('D','Divorced'),('M','Married'),('R','Widower'),('S','Single'),('W','Widow');
+
+/*Table structure for table `class_ses_msg` */
+
+CREATE TABLE `class_ses_msg` (
+  `ses_msg_pk` int(11) NOT NULL AUTO_INCREMENT,
+  `session_pk` int(11) NOT NULL,
+  `msg_body` text NOT NULL,
+  `sent_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `user_pk` int(11) NOT NULL COMMENT 'sender',
+  `shown` enum('y','n') NOT NULL DEFAULT 'y',
+  PRIMARY KEY (`ses_msg_pk`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+
+/*Data for the table `class_ses_msg` */
 
 /*Table structure for table `clients` */
 
@@ -738,11 +752,29 @@ CREATE TABLE `consult_req_allergy` (
   `encoded_at` datetime NOT NULL,
   `encoder_pk` varchar(20) NOT NULL,
   PRIMARY KEY (`cr_allergy_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 /*Data for the table `consult_req_allergy` */
 
-insert  into `consult_req_allergy`(`cr_allergy_pk`,`consult_req_pk`,`substance`,`reaction`,`first_occur`,`notes`,`is_active`,`encoded_at`,`encoder_pk`) values (10,'20218R0002','Shrimp','Skin irratation','2021-08-10','-','y','2021-08-23 05:02:30','55'),(11,'20218R0002','Drinks with acid','Stomach ache','2021-05-04','-','y','2021-08-23 05:03:20','55');
+insert  into `consult_req_allergy`(`cr_allergy_pk`,`consult_req_pk`,`substance`,`reaction`,`first_occur`,`notes`,`is_active`,`encoded_at`,`encoder_pk`) values (10,'20218R0002','Shrimp','Skin irratation','2021-08-10','-','y','2021-08-23 05:02:30','55'),(11,'20218R0002','Drinks with acid','Stomach ache','2021-05-04','-','y','2021-08-23 05:03:20','55'),(12,'20218R0004','Skin Care Allergy','Skin irratation','2021-08-02','-','y','2021-08-25 18:05:49','55');
+
+/*Table structure for table `consult_req_chat` */
+
+CREATE TABLE `consult_req_chat` (
+  `cr_chat_pk` int(11) NOT NULL AUTO_INCREMENT,
+  `consult_req_pk` varchar(30) NOT NULL,
+  `msg_body` varchar(300) NOT NULL,
+  `sent_at` datetime NOT NULL,
+  `shown` enum('y','n') NOT NULL,
+  `sender_pk` varchar(20) DEFAULT NULL,
+  `sender_name` varchar(150) NOT NULL,
+  `user_type` varchar(50) NOT NULL,
+  PRIMARY KEY (`cr_chat_pk`)
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
+
+/*Data for the table `consult_req_chat` */
+
+insert  into `consult_req_chat`(`cr_chat_pk`,`consult_req_pk`,`msg_body`,`sent_at`,`shown`,`sender_pk`,`sender_name`,`user_type`) values (1,'20218R0002','ewqeqw','2021-08-25 11:52:10','y','admin','primero,cms',''),(2,'20218R0002','ewqeqw 2','2021-08-25 11:52:34','y','admin','primero,cms',''),(3,'20218R0002','ewqeweewe','2021-08-25 14:47:36','y','1','primero,cms','hosp_resident'),(4,'20218R0002','Are you online?','2021-08-25 15:08:15','y','1','primero,cms','hosp_resident'),(5,'20218R0002','testewqewqewq','2021-08-25 15:10:10','y','1','primero,cms','hosp_resident'),(6,'20218R0002','???','2021-08-25 15:10:16','y','1','primero,cms','hosp_resident'),(7,'20218R0002','???','2021-08-25 15:11:56','y','1','primero,cms','hosp_resident'),(8,'20218R0002','....','2021-08-25 15:13:00','y','1','primero,cms','hosp_resident'),(9,'20218R0002','Okay na','2021-08-25 15:15:29','y','1','primero,cms','hosp_resident'),(10,'20218R0002','wqeqwewq','2021-08-25 15:16:25','y','1','primero,cms','hosp_resident'),(11,'20218R0002','???','2021-08-25 15:16:43','y','1','primero,cms','hosp_resident'),(12,'20218R0002','I am muted?','2021-08-25 15:22:20','y',NULL,'Fernandez, Edward Joseph','patient'),(13,'20218R0002','Test 2','2021-08-25 15:26:24','y',NULL,'Fernandez, Edward Joseph','patient'),(14,'20218R0002','test 3','2021-08-25 15:26:59','y',NULL,'Fernandez, Edward Joseph','patient'),(15,'20218R0002','Hey','2021-08-25 15:31:01','y',NULL,'Fernandez, Edward Joseph','patient'),(16,'20218R0002','??','2021-08-25 15:31:14','y','55','Te, Dave','hosp_resident'),(17,'20218R0002','??','2021-08-25 15:32:46','y','55','Te, Dave','hosp_resident'),(18,'20218R0002','....','2021-08-25 15:32:59','y','55','Te, Dave','hosp_resident'),(19,'20218R0002','eyy','2021-08-25 15:33:24','y','55','Te, Dave','hosp_resident'),(20,'20218R0002','Yes?','2021-08-25 15:55:27','y','55','Te, Dave','hosp_resident'),(21,'20218R0002','Hey','2021-08-25 16:01:11','y','55','Te, Dave','hosp_resident'),(22,'20218R0002','Yes, doc?','2021-08-25 16:01:22','y',NULL,'Fernandez, Edward Joseph','patient'),(23,'20218R0002','Wala lang','2021-08-25 16:01:26','y','55','Te, Dave','hosp_resident'),(24,'20218R0002','Ahh okie dog','2021-08-25 16:01:29','y',NULL,'Fernandez, Edward Joseph','patient'),(25,'20218R0002','doc*','2021-08-25 16:01:32','y',NULL,'Fernandez, Edward Joseph','patient'),(26,'20218R0002','Hi doctor','2021-08-25 16:54:16','y',NULL,'Fernandez, Edward Joseph','patient'),(27,'20218R0004','Hey, dead patient.','2021-08-25 18:06:45','y','55','Te, Dave','hosp_resident'),(28,'20218R0004','Yes, doc?','2021-08-25 18:06:53','y',NULL,'Fernandez, Edward Joseph','patient'),(29,'20218R0001','Hi doc','2021-08-25 18:47:37','y',NULL,'Tuazon, Honelyn','patient');
 
 /*Table structure for table `consult_req_immune` */
 
@@ -774,17 +806,18 @@ CREATE TABLE `consult_req_med` (
   `med_desc` varchar(200) NOT NULL,
   `unit` varchar(150) DEFAULT NULL,
   `dosage` varchar(150) NOT NULL,
+  `duration` varchar(150) NOT NULL,
   `is_other_med` enum('y','n') NOT NULL,
   `fromhosp` enum('y','n') NOT NULL DEFAULT 'n',
   `is_active` enum('y','n') NOT NULL DEFAULT 'y',
   `encoded_at` datetime NOT NULL,
   `encoder_pk` varchar(11) NOT NULL,
   PRIMARY KEY (`cr_med_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 /*Data for the table `consult_req_med` */
 
-insert  into `consult_req_med`(`cr_med_pk`,`consult_req_pk`,`med_no`,`med_desc`,`unit`,`dosage`,`is_other_med`,`fromhosp`,`is_active`,`encoded_at`,`encoder_pk`) values (11,'20218R0002',NULL,'Alaxan FR','tablet','1 per day','y','n','y','2021-08-23 01:29:43','55'),(12,'20218R0002',NULL,'Paracentamol (adult)','tablet','3x day','y','n','n','2021-08-23 01:29:20','55');
+insert  into `consult_req_med`(`cr_med_pk`,`consult_req_pk`,`med_no`,`med_desc`,`unit`,`dosage`,`duration`,`is_other_med`,`fromhosp`,`is_active`,`encoded_at`,`encoder_pk`) values (11,'20218R0002',NULL,'Alaxan FR','tablet','1 Morning, 1 Night(Before Food)','8 days (Tot: 20 Tab)','y','n','y','2021-08-23 01:29:43','55'),(12,'20218R0002',NULL,'Paracentamol (adult)','tablet','3x day','8 days (Tot: 10 Tab)','y','n','y','2021-08-23 01:29:20','55'),(13,'20218R0004',NULL,'Alaxan FR','Bottle','2x a day','1 month','y','n','y','2021-08-25 18:51:28','55'),(14,'20218R0004',NULL,'Medicol','Bottle','10x a day','2 months','y','n','y','2021-08-25 18:51:57','55');
 
 /*Table structure for table `consult_req_med_prob` */
 
@@ -817,11 +850,11 @@ CREATE TABLE `consult_req_proc` (
   `encoded_at` datetime NOT NULL,
   `encoder_pk` varchar(20) NOT NULL,
   PRIMARY KEY (`cr_proc_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 /*Data for the table `consult_req_proc` */
 
-insert  into `consult_req_proc`(`cr_proc_pk`,`consult_req_pk`,`proc_no`,`proc_desc`,`reg_price`,`notes`,`is_active`,`encoded_at`,`encoder_pk`) values (10,'20218R0002',NULL,'CBC',NULL,'-','y','2021-08-23 04:47:53','55');
+insert  into `consult_req_proc`(`cr_proc_pk`,`consult_req_pk`,`proc_no`,`proc_desc`,`reg_price`,`notes`,`is_active`,`encoded_at`,`encoder_pk`) values (10,'20218R0002',NULL,'CBC',NULL,'-','y','2021-08-23 04:47:53','55'),(11,'20218R0004',NULL,'Blood testing',NULL,'-','y','2021-08-25 18:52:23','55'),(12,'20218R0004',NULL,'Stool test',NULL,'','y','2021-08-25 18:52:37','55');
 
 /*Table structure for table `consult_req_vital_sign` */
 
@@ -850,7 +883,7 @@ insert  into `consult_req_vital_sign`(`cr_vs_pk`,`consult_req_pk`,`blood_pressur
 
 CREATE TABLE `consult_request` (
   `consult_req_pk` varchar(30) NOT NULL,
-  `hos_pk` varchar(20) DEFAULT NULL,
+  `hospital_no` varchar(30) DEFAULT NULL,
   `prefix` varchar(20) DEFAULT NULL,
   `first_name` varchar(100) NOT NULL,
   `middle_name` varchar(100) DEFAULT NULL,
@@ -865,6 +898,8 @@ CREATE TABLE `consult_request` (
   `mob_no` varchar(15) NOT NULL,
   `chief_complaint` varchar(255) DEFAULT NULL,
   `symptoms` varchar(255) DEFAULT NULL,
+  `notes` varchar(200) DEFAULT NULL,
+  `doctor_notes` varchar(500) DEFAULT NULL,
   `line1` varchar(150) DEFAULT NULL,
   `line2` varchar(150) DEFAULT NULL,
   `brgy_pk` varchar(50) DEFAULT NULL,
@@ -874,18 +909,18 @@ CREATE TABLE `consult_request` (
   `zip_code` varchar(50) DEFAULT NULL,
   `slip_pk` varchar(50) DEFAULT NULL,
   `tran_method` enum('c','o') DEFAULT NULL,
-  `consult_cost` decimal(11,2) NOT NULL DEFAULT '0.00',
+  `consult_cost` decimal(11,2) NOT NULL DEFAULT '500.00',
   `discount_type` varchar(20) DEFAULT NULL,
   `discount_id_num` varchar(50) DEFAULT NULL,
   `discount_desc` varchar(250) DEFAULT NULL,
   `discount_rate` decimal(11,2) DEFAULT '0.00',
   `discount_amount` decimal(11,2) DEFAULT '0.00',
-  `request_at` timestamp NULL DEFAULT NULL,
-  `accept_at` timestamp NULL DEFAULT NULL,
-  `soa_sent_at` timestamp NULL DEFAULT NULL,
-  `pay_at` timestamp NULL DEFAULT NULL,
-  `consult_at` timestamp NULL DEFAULT NULL,
-  `finish_at` timestamp NULL DEFAULT NULL,
+  `request_at` datetime DEFAULT NULL,
+  `accept_at` datetime DEFAULT NULL,
+  `soa_sent_at` datetime DEFAULT NULL,
+  `pay_at` datetime DEFAULT NULL,
+  `consult_at` datetime DEFAULT NULL,
+  `ended_at` datetime DEFAULT NULL,
   `sts_pk` varchar(3) DEFAULT NULL,
   `pay_sts_pk` varchar(3) NOT NULL DEFAULT 'wp',
   `payment_method` varchar(20) DEFAULT NULL,
@@ -896,6 +931,8 @@ CREATE TABLE `consult_request` (
   `pay_link_sent_at` datetime DEFAULT NULL,
   `pay_link_sent_count` int(2) NOT NULL DEFAULT '0',
   `soa_sent_count` int(2) NOT NULL DEFAULT '0',
+  `med_pres_sent` int(2) NOT NULL DEFAULT '0',
+  `proc_pres_sent` int(2) NOT NULL DEFAULT '0',
   `paymongo_src_id` varchar(200) DEFAULT NULL,
   `paymongo_src_id_enc_at` datetime DEFAULT NULL,
   `paymongo_charge_at` datetime DEFAULT NULL,
@@ -904,12 +941,14 @@ CREATE TABLE `consult_request` (
   `assign_res_pk` int(11) DEFAULT NULL,
   `assign_dept_consult_date` date DEFAULT NULL,
   `assign_dept_at` datetime DEFAULT NULL,
+  `consult_link_pass` varchar(50) DEFAULT NULL,
+  `consult_link_hash` text,
   PRIMARY KEY (`consult_req_pk`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `consult_request` */
 
-insert  into `consult_request`(`consult_req_pk`,`hos_pk`,`prefix`,`first_name`,`middle_name`,`last_name`,`suffix`,`gender`,`cs_pk`,`nat_pk`,`rel_pk`,`birth_date`,`email`,`mob_no`,`chief_complaint`,`symptoms`,`line1`,`line2`,`brgy_pk`,`prov_pk`,`citymun_pk`,`region_pk`,`zip_code`,`slip_pk`,`tran_method`,`consult_cost`,`discount_type`,`discount_id_num`,`discount_desc`,`discount_rate`,`discount_amount`,`request_at`,`accept_at`,`soa_sent_at`,`pay_at`,`consult_at`,`finish_at`,`sts_pk`,`pay_sts_pk`,`payment_method`,`payment_receipt_no`,`last_update_at`,`last_update_by`,`payment_source_id`,`pay_link_sent_at`,`pay_link_sent_count`,`soa_sent_count`,`paymongo_src_id`,`paymongo_src_id_enc_at`,`paymongo_charge_at`,`paymongo_paid_at`,`assign_dept_pk`,`assign_res_pk`,`assign_dept_consult_date`,`assign_dept_at`) values ('20218R0001',NULL,NULL,'Honelyn','Oliver','Tuazon',NULL,'f','S','3','40','1998-03-02','mrmontiveles@gmail.com','+639299550278','Nothing','Nothing','Molavel Street','Purok 7-A','112502012','112500000',NULL,'110000000','8208',NULL,NULL,850.75,NULL,NULL,NULL,0.00,0.00,'2021-08-16 22:35:49',NULL,NULL,NULL,NULL,NULL,'fa','wp',NULL,NULL,NULL,NULL,NULL,NULL,0,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),('20218R0002',NULL,'Mr','Edward Joseph','Mijares','Fernandez','Jr','m','M','3','30','1995-11-11','mrmontiveles@gmail.com','+639321321312','Body weakness','Body weakness','Block 4 ','Washington Village','112402061','112400000',NULL,'110000000','8000',NULL,NULL,500.00,NULL,NULL,NULL,0.00,0.00,'2021-08-16 22:45:51',NULL,NULL,'2021-08-21 13:08:44',NULL,NULL,'pd','wp',NULL,NULL,NULL,NULL,NULL,NULL,1,3,'pi_puLki96BSCmsoEmCpzgZbUyy','2021-08-21 13:08:22','2021-08-21 13:05:59','2021-08-21 13:08:44',2,2,'2021-08-23','2021-08-22 03:35:25');
+insert  into `consult_request`(`consult_req_pk`,`hospital_no`,`prefix`,`first_name`,`middle_name`,`last_name`,`suffix`,`gender`,`cs_pk`,`nat_pk`,`rel_pk`,`birth_date`,`email`,`mob_no`,`chief_complaint`,`symptoms`,`notes`,`doctor_notes`,`line1`,`line2`,`brgy_pk`,`prov_pk`,`citymun_pk`,`region_pk`,`zip_code`,`slip_pk`,`tran_method`,`consult_cost`,`discount_type`,`discount_id_num`,`discount_desc`,`discount_rate`,`discount_amount`,`request_at`,`accept_at`,`soa_sent_at`,`pay_at`,`consult_at`,`ended_at`,`sts_pk`,`pay_sts_pk`,`payment_method`,`payment_receipt_no`,`last_update_at`,`last_update_by`,`payment_source_id`,`pay_link_sent_at`,`pay_link_sent_count`,`soa_sent_count`,`med_pres_sent`,`proc_pres_sent`,`paymongo_src_id`,`paymongo_src_id_enc_at`,`paymongo_charge_at`,`paymongo_paid_at`,`assign_dept_pk`,`assign_res_pk`,`assign_dept_consult_date`,`assign_dept_at`,`consult_link_pass`,`consult_link_hash`) values ('20218R0001',NULL,NULL,'Honelyn','Oliver','Tuazon',NULL,'f','S','3','40','1998-03-02','mrmontiveles@gmail.com','+639299550278','Nothing','Nothing',NULL,NULL,'Molavel Street','Purok 7-A','112404008','112500000','112404000','110000000','8208',NULL,NULL,850.75,NULL,NULL,NULL,0.00,0.00,'2021-08-16 22:35:49',NULL,NULL,'2021-08-25 18:35:47','2021-08-25 18:44:44','2021-08-25 18:48:05','e','wp',NULL,NULL,NULL,NULL,NULL,NULL,1,0,0,0,'pi_XUiDo4QDGEvL8WW62XkoXHxD','2021-08-25 18:35:25',NULL,'2021-08-25 18:35:47',2,1,'2021-08-25','2021-08-25 18:42:25','017849','da0da4cb9cedde8211f3a888122a5b5ff0f0918ba1f92b416e9abb137d62daa6'),('20218R0002','20218P000001','Mr','Edward Joseph','Mijares','Fernandez','Jr','m','M','3','30','1995-11-11','mrmontiveles@gmail.com','+639321321312','Body weakness','Body weakness',NULL,NULL,'Block 4 ','Washington Village','112404008','112400000','112404000','110000000','8000',NULL,NULL,500.00,NULL,NULL,NULL,0.00,0.00,'2021-08-16 22:45:51',NULL,NULL,'2021-08-21 13:08:44','2021-08-24 17:36:01','2021-08-25 16:58:39','e','wp',NULL,NULL,NULL,NULL,NULL,NULL,1,3,1,0,'pi_puLki96BSCmsoEmCpzgZbUyy','2021-08-21 13:08:22','2021-08-21 13:05:59','2021-08-21 13:08:44',2,1,'2021-08-24','2021-08-24 17:11:06','560829','e760e93f51df7abd9a5888d5246af7c6a2e171e3ae1ba042abe8a74bc9c37d43'),('20218R0003',NULL,NULL,'Sherry','Quinkito','Montiveles',NULL,'f','S','3','2','2020-09-07','mrmontiveles@gmail.com','+639299550278','-','-','-',NULL,'Block 3 Lot 2','Molave Street','137504003','137500000','137504000','130000000','8000',NULL,NULL,500.00,NULL,NULL,NULL,0.00,0.00,'2021-08-25 17:16:44',NULL,NULL,NULL,NULL,NULL,'fa','wp',NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),('20218R0004','20218P000001',NULL,'Edward Joseph',NULL,'Fernandez',NULL,'m','R','3','4','1998-08-25','mrmontiveles@gmail.com','+639321321324','Sakit sa ulo','-','-',NULL,'Block 4 Lot 2','Washington Village','143213003','143200000','143213000','140000000','8000',NULL,NULL,500.00,NULL,NULL,NULL,0.00,0.00,'2021-08-25 17:25:31',NULL,NULL,'2021-08-25 17:45:06','2021-08-25 18:06:00','2021-08-25 18:07:12','e','wp',NULL,NULL,NULL,NULL,NULL,NULL,1,0,1,1,'src_zdM5gXwnHdNhjB2YB1PLcKeV','2021-08-25 17:42:51','2021-08-25 17:44:44','2021-08-25 17:45:06',2,1,'2021-08-25','2021-08-25 17:45:44','732109','db23df15df331a078fbbb07fc22d5ebf381cdc6f48aed6662daa9fbdb3cc86f2');
 
 /*Table structure for table `consult_request_file` */
 
@@ -920,11 +959,11 @@ CREATE TABLE `consult_request_file` (
   `file_name` varchar(255) DEFAULT NULL,
   `encoded_at` datetime NOT NULL,
   PRIMARY KEY (`cr_file_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 
 /*Data for the table `consult_request_file` */
 
-insert  into `consult_request_file`(`cr_file_pk`,`consult_req_pk`,`file_dest`,`file_name`,`encoded_at`) values (7,'20218R0001','localhost/CMS/Uploads/ConsultationFiles/HONELYN-TUAZON-qr_3c2a.png','HONELYN-TUAZON-qr_3c2a.png','2021-08-16 22:35:49'),(8,'20218R0001','localhost/CMS/Uploads/ConsultationFiles/id - Copy_4918.jpg','id - Copy_4918.jpg','2021-08-16 22:35:49'),(9,'20218R0002','localhost/CMS/Uploads/ConsultationFiles/58374481_2383797928308475_3053420897881817088_o_7963.jpg','58374481_2383797928308475_3053420897881817088_o_7963.jpg','2021-08-16 22:45:51'),(10,'20218R0002','localhost/CMS/Uploads/ConsultationFiles/Article Review_db8b.pdf','Article Review_db8b.pdf','2021-08-16 22:45:51');
+insert  into `consult_request_file`(`cr_file_pk`,`consult_req_pk`,`file_dest`,`file_name`,`encoded_at`) values (7,'20218R0001','localhost/CMS/Uploads/ConsultationFiles/HONELYN-TUAZON-qr_3c2a.png','HONELYN-TUAZON-qr_3c2a.png','2021-08-16 22:35:49'),(8,'20218R0001','localhost/CMS/Uploads/ConsultationFiles/id - Copy_4918.jpg','id - Copy_4918.jpg','2021-08-16 22:35:49'),(9,'20218R0002','localhost/CMS/Uploads/ConsultationFiles/58374481_2383797928308475_3053420897881817088_o_7963.jpg','58374481_2383797928308475_3053420897881817088_o_7963.jpg','2021-08-16 22:45:51'),(10,'20218R0002','localhost/CMS/Uploads/ConsultationFiles/Article Review_db8b.pdf','Article Review_db8b.pdf','2021-08-16 22:45:51'),(11,'20218R0003','localhost/CMS/Uploads/ConsultationFiles/glass_design_37ed.png','glass_design_37ed.png','2021-08-25 17:16:44'),(12,'20218R0004','localhost/CMS/Uploads/ConsultationFiles/2.-Unraveling_the_Effects_of_Leadership_and_84d6.pdf','2.-Unraveling_the_Effects_of_Leadership_and_84d6.pdf','2021-08-25 17:25:31'),(13,'20218R0004','localhost/CMS/Uploads/ConsultationFiles/123686927_362856781596956_7445543278986656916_n_b4e1.png','123686927_362856781596956_7445543278986656916_n_b4e1.png','2021-08-25 17:25:31');
 
 /*Table structure for table `def_logo` */
 
@@ -1043,34 +1082,36 @@ insert  into `doctor`(`docid`,`pic`,`firstname`,`middlename`,`lastname`,`honorif
 CREATE TABLE `hosp_patient` (
   `hospital_no` varchar(30) NOT NULL,
   `user_pk` int(11) DEFAULT NULL,
-  `pic_dest` text,
-  `first_name` varchar(50) NOT NULL,
-  `middle_name` varchar(50) DEFAULT NULL,
-  `last_name` varchar(50) NOT NULL,
+  `pic_dest` varchar(999) DEFAULT NULL,
+  `prefix` varchar(50) DEFAULT NULL,
+  `first_name` varchar(150) NOT NULL,
+  `middle_name` varchar(150) DEFAULT NULL,
+  `last_name` varchar(150) NOT NULL,
   `suffix` varchar(20) DEFAULT NULL,
-  `prefix` varchar(20) DEFAULT NULL,
   `birth_date` date NOT NULL,
-  `birth_place` varchar(255) DEFAULT NULL,
+  `birth_place` varchar(500) DEFAULT NULL,
+  `cs_pk` varchar(10) NOT NULL,
+  `nat_pk` int(11) NOT NULL,
+  `rel_pk` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `mob_no` varchar(50) NOT NULL,
+  `line1` varchar(255) NOT NULL,
+  `line2` varchar(255) NOT NULL,
+  `brgy_pk` varchar(20) NOT NULL,
   `citymun_pk` varchar(20) NOT NULL,
-  `zip_code` varchar(20) NOT NULL,
-  `consult_count` int(11) NOT NULL DEFAULT '0',
-  `last_consult_at` datetime NOT NULL,
-  `last_updated_at` datetime NOT NULL,
-  `last_updated_by` varchar(20) NOT NULL,
   `prov_pk` varchar(20) NOT NULL,
   `region_pk` varchar(20) NOT NULL,
-  `cs_pk` varchar(20) NOT NULL,
-  `rel_pk` varchar(20) NOT NULL,
-  `nat_pk` varchar(20) NOT NULL,
-  `email` varchar(200) NOT NULL,
-  `mob_no` varchar(100) NOT NULL,
-  `line1` varchar(300) NOT NULL,
-  `line2` varchar(300) NOT NULL,
-  `brgy_pk` varchar(20) NOT NULL,
+  `zip_code` varchar(20) NOT NULL,
+  `consult_count` int(11) NOT NULL DEFAULT '0',
+  `last_consult_at` datetime DEFAULT NULL,
+  `last_updated_at` datetime DEFAULT NULL,
+  `last_updated_by` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`hospital_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*Data for the table `hosp_patient` */
+
+insert  into `hosp_patient`(`hospital_no`,`user_pk`,`pic_dest`,`prefix`,`first_name`,`middle_name`,`last_name`,`suffix`,`birth_date`,`birth_place`,`cs_pk`,`nat_pk`,`rel_pk`,`email`,`mob_no`,`line1`,`line2`,`brgy_pk`,`citymun_pk`,`prov_pk`,`region_pk`,`zip_code`,`consult_count`,`last_consult_at`,`last_updated_at`,`last_updated_by`) values ('20218P000001',NULL,NULL,'Mr','Edward Joseph','Mijares','Fernandez','Jr','1995-11-11','Davao City','M',3,30,'mrmontiveles@gmail.com','+639321321312','Block 4 ','Washington Village','112404008','112404000','112400000','110000000','8000',7,'2021-08-25 18:06:00','2021-08-25 18:06:00','55'),('20218P000002',NULL,NULL,NULL,'Honelyn','Oliver','Tuazon',NULL,'1998-03-02',NULL,'S',3,40,'mrmontiveles@gmail.com','+639299550278','Molavel Street','Purok 7-A','112404008','112404000','112500000','110000000','8208',1,'2021-08-25 18:44:44','2021-08-25 18:44:44','55');
 
 /*Table structure for table `hosp_resident` */
 
@@ -1141,11 +1182,11 @@ CREATE TABLE `logs` (
   `encoded_at` datetime NOT NULL,
   `encoded_by` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`log_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=94 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8;
 
 /*Data for the table `logs` */
 
-insert  into `logs`(`log_pk`,`ref_pk`,`ref_table`,`activity`,`sts_pk`,`user_reason`,`encoded_at`,`encoded_by`) values (62,'20218R0002','consult_request','the consultation request of Fernandez, Edward Joseph has been declined!',NULL,NULL,'2021-08-18 13:55:37','1'),(63,'20218R0002','consult_request','the consultation request of Fernandez, Edward Joseph has been declined!',NULL,NULL,'2021-08-18 14:10:44','1'),(66,'20218R0002','consult_request','sent the payment link of Fernandez, Edward Joseph',NULL,NULL,'2021-08-18 14:28:17','1'),(67,'20218R0002','consult_request','the consultation request 20218R0002 Statement has been emailed to mrmontiveles@gmail.com.',NULL,NULL,'2021-08-21 23:45:30','1'),(68,'20218R0002','consult_request','the consultation request 20218R0002 Statement of Account (SOA) has been emailed to mrmontiveles@gmail.com.',NULL,NULL,'2021-08-21 23:57:39','1'),(70,'20218R0002','consult_request','the consultation request 20218R0002 Statement of Account (SOA) has been emailed to mrmontiveles@gmail.com.',NULL,NULL,'2021-08-21 23:59:36','1'),(71,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-22 03:02:54','1'),(72,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-22 03:14:37','1'),(73,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-22 03:16:05','1'),(74,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-22 03:19:33','1'),(75,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-22 03:20:03','1'),(76,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-22 03:35:25','1'),(77,'20218R0001','consult_request','the cost of the consultation request 20218R0001 has been changed to 700!',NULL,NULL,'2021-08-22 13:19:02','1'),(78,'20218R0001','consult_request','the cost of the consultation request 20218R0001 has been changed to 500!',NULL,NULL,'2021-08-22 13:19:16','1'),(79,'20218R0001','consult_request','the cost of the consultation request 20218R0001 has been changed to 250.5!',NULL,NULL,'2021-08-22 13:19:55','1'),(80,'20218R0001','consult_request','the cost of the consultation request 20218R0001 has been changed to 500!',NULL,NULL,'2021-08-22 13:21:38','1'),(81,'20218R0001','consult_request','the cost of the consultation request 20218R0001 has been changed to 850.75!',NULL,NULL,'2021-08-22 13:21:47','1'),(82,'12','consult_req_med','The vital sign with ID 12 has been updated!',NULL,NULL,'2021-08-23 01:29:16','55'),(83,'12','consult_req_med','The vital sign with ID 12 has been updated!',NULL,NULL,'2021-08-23 01:29:20','55'),(84,'11','consult_req_med','The vital sign with ID 11 has been updated!',NULL,NULL,'2021-08-23 01:29:43','55'),(85,'13','consult_req_vital_sign','The vital sign with ID 13 has been updated!',NULL,NULL,'2021-08-23 04:40:34','55'),(86,'13','consult_req_vital_sign','The vital sign with ID 13 has been updated!',NULL,NULL,'2021-08-23 04:40:39','55'),(87,'10','consult_req_proc','The vital sign with ID 10 has been updated!',NULL,NULL,'2021-08-23 04:47:48','55'),(88,'10','consult_req_proc','The vital sign with ID 10 has been updated!',NULL,NULL,'2021-08-23 04:47:53','55'),(89,'10','consult_req_allergy','The vital sign with ID 10 has been updated!',NULL,NULL,'2021-08-23 05:02:30','55'),(90,'11','consult_req_allergy','The vital sign with ID 11 has been updated!',NULL,NULL,'2021-08-23 05:03:15','55'),(91,'11','consult_req_allergy','The vital sign with ID 11 has been updated!',NULL,NULL,'2021-08-23 05:03:20','55'),(92,'8','consult_req_immune','The vital sign with ID 8 has been updated!',NULL,NULL,'2021-08-23 05:15:28','55'),(93,'466','consult_req_med_prob','The vital sign with ID 466 has been updated!',NULL,NULL,'2021-08-23 05:28:03','55');
+insert  into `logs`(`log_pk`,`ref_pk`,`ref_table`,`activity`,`sts_pk`,`user_reason`,`encoded_at`,`encoded_by`) values (62,'20218R0002','consult_request','the consultation request of Fernandez, Edward Joseph has been declined!',NULL,NULL,'2021-08-18 13:55:37','1'),(63,'20218R0002','consult_request','the consultation request of Fernandez, Edward Joseph has been declined!',NULL,NULL,'2021-08-18 14:10:44','1'),(66,'20218R0002','consult_request','sent the payment link of Fernandez, Edward Joseph',NULL,NULL,'2021-08-18 14:28:17','1'),(67,'20218R0002','consult_request','the consultation request 20218R0002 Statement has been emailed to mrmontiveles@gmail.com.',NULL,NULL,'2021-08-21 23:45:30','1'),(68,'20218R0002','consult_request','the consultation request 20218R0002 Statement of Account (SOA) has been emailed to mrmontiveles@gmail.com.',NULL,NULL,'2021-08-21 23:57:39','1'),(70,'20218R0002','consult_request','the consultation request 20218R0002 Statement of Account (SOA) has been emailed to mrmontiveles@gmail.com.',NULL,NULL,'2021-08-21 23:59:36','1'),(71,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-22 03:02:54','1'),(72,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-22 03:14:37','1'),(73,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-22 03:16:05','1'),(74,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-22 03:19:33','1'),(75,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-22 03:20:03','1'),(76,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-22 03:35:25','1'),(77,'20218R0001','consult_request','the cost of the consultation request 20218R0001 has been changed to 700!',NULL,NULL,'2021-08-22 13:19:02','1'),(78,'20218R0001','consult_request','the cost of the consultation request 20218R0001 has been changed to 500!',NULL,NULL,'2021-08-22 13:19:16','1'),(79,'20218R0001','consult_request','the cost of the consultation request 20218R0001 has been changed to 250.5!',NULL,NULL,'2021-08-22 13:19:55','1'),(80,'20218R0001','consult_request','the cost of the consultation request 20218R0001 has been changed to 500!',NULL,NULL,'2021-08-22 13:21:38','1'),(81,'20218R0001','consult_request','the cost of the consultation request 20218R0001 has been changed to 850.75!',NULL,NULL,'2021-08-22 13:21:47','1'),(82,'12','consult_req_med','The vital sign with ID 12 has been updated!',NULL,NULL,'2021-08-23 01:29:16','55'),(83,'12','consult_req_med','The vital sign with ID 12 has been updated!',NULL,NULL,'2021-08-23 01:29:20','55'),(84,'11','consult_req_med','The vital sign with ID 11 has been updated!',NULL,NULL,'2021-08-23 01:29:43','55'),(85,'13','consult_req_vital_sign','The vital sign with ID 13 has been updated!',NULL,NULL,'2021-08-23 04:40:34','55'),(86,'13','consult_req_vital_sign','The vital sign with ID 13 has been updated!',NULL,NULL,'2021-08-23 04:40:39','55'),(87,'10','consult_req_proc','The vital sign with ID 10 has been updated!',NULL,NULL,'2021-08-23 04:47:48','55'),(88,'10','consult_req_proc','The vital sign with ID 10 has been updated!',NULL,NULL,'2021-08-23 04:47:53','55'),(89,'10','consult_req_allergy','The vital sign with ID 10 has been updated!',NULL,NULL,'2021-08-23 05:02:30','55'),(90,'11','consult_req_allergy','The vital sign with ID 11 has been updated!',NULL,NULL,'2021-08-23 05:03:15','55'),(91,'11','consult_req_allergy','The vital sign with ID 11 has been updated!',NULL,NULL,'2021-08-23 05:03:20','55'),(92,'8','consult_req_immune','The vital sign with ID 8 has been updated!',NULL,NULL,'2021-08-23 05:15:28','55'),(93,'466','consult_req_med_prob','The vital sign with ID 466 has been updated!',NULL,NULL,'2021-08-23 05:28:03','55'),(94,'20218R0002','consult_request','the consultation request 20218R0002 has been mapped to the the hospital records',NULL,NULL,'2021-08-24 00:35:11','55'),(95,'20218R0002','consult_request','the consultation request 20218R0002 has been mapped to the the hospital records',NULL,NULL,'2021-08-24 00:38:06','55'),(96,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D001 - Surgery!',NULL,NULL,'2021-08-24 17:08:22','1'),(97,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-24 17:11:00','1'),(98,'20218R0002','consult_request','the consultation request 20218R0002 has been assigned to D001 - Surgery!',NULL,NULL,'2021-08-24 17:11:06','1'),(99,'20218R0002','consult_request','the resident Te, Dave has taken over the consulation 20218R0002.',NULL,NULL,'2021-08-24 17:35:05','55'),(100,'20218R0002','consult_request','the consultation 20218R0002 has been started',NULL,NULL,'2021-08-24 17:36:05','55'),(101,'20218R0002','consult_request','the consultation 20218R0002 has ended.',NULL,NULL,'2021-08-24 18:52:21','55'),(102,'20218R0002','consult_request','the consultation 20218R0002 Medical Prescription has been emailed to mrmontiveles@gmail.com.',NULL,NULL,'2021-08-24 21:36:46','55'),(103,'20218R0002','consult_request','the consultation 20218R0002 Procedure Prescription has been emailed to mrmontiveles@gmail.com.',NULL,NULL,'2021-08-24 21:37:28','55'),(104,'20218R0002','consult_request','the consultation 20218R0002 Medical Prescription has been emailed to mrmontiveles@gmail.com.',NULL,NULL,'2021-08-24 21:41:38','55'),(105,'20218R0002','consult_request','the consultation 20218R0002 has ended.',NULL,NULL,'2021-08-25 16:58:39','55'),(106,'20218R0004','consult_request','sent the payment link of Fernandez, Edward Joseph',NULL,NULL,'2021-08-25 17:27:20','1'),(107,'20218R0004','consult_request','the consultation request 20218R0004 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-25 17:45:44','1'),(108,'20218R0004','consult_request','the consultation request 20218R0004 has been mapped to the the hospital records',NULL,NULL,'2021-08-25 17:46:09','55'),(109,'20218R0004','consult_request','the consultation 20218R0004 has been started',NULL,NULL,'2021-08-25 18:06:04','55'),(110,'20218R0004','consult_request','the consultation 20218R0004 has ended.',NULL,NULL,'2021-08-25 18:07:12','55'),(111,'20218R0001','consult_request','sent the payment link of Tuazon, Honelyn',NULL,NULL,'2021-08-25 18:33:20','1'),(112,'20218R0001','consult_request','the consultation request 20218R0001 has been assigned to D002 - Eye Center!',NULL,NULL,'2021-08-25 18:42:25','1'),(113,'20218R0001','consult_request','the resident Te, Dave has taken over the consulation 20218R0001.',NULL,NULL,'2021-08-25 18:43:28','55'),(114,'20218R0001','consult_request','the consultation 20218R0001 has been started',NULL,NULL,'2021-08-25 18:44:47','55'),(115,'20218R0001','consult_request','the consultation 20218R0001 has ended.',NULL,NULL,'2021-08-25 18:48:05','55'),(116,'20218R0004','consult_request','the consultation 20218R0004 Medical Prescription has been emailed to mrmontiveles@gmail.com.',NULL,NULL,'2021-08-25 18:53:06','55'),(117,'20218R0004','consult_request','the consultation 20218R0004 Procedure Prescription has been emailed to mrmontiveles@gmail.com.',NULL,NULL,'2021-08-25 18:53:47','55'),(118,'20218R0003','consult_request','the cost of the consultation request 20218R0003 has been changed to 500!',NULL,NULL,'2021-08-25 19:02:57','1');
 
 /*Table structure for table `medproblems` */
 
@@ -1195,11 +1236,11 @@ CREATE TABLE `messageout` (
   `IsRead` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Id`),
   KEY `IDX_IsRead` (`IsRead`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `messageout` */
 
-insert  into `messageout`(`Id`,`MessageTo`,`MessageFrom`,`MessageText`,`MessageType`,`MessageGuid`,`MessageInfo`,`Gateway`,`UserId`,`UserInfo`,`Priority`,`Scheduled`,`ValidityPeriod`,`IsSent`,`IsRead`) values (41,'$+639321321312',NULL,'This is Saint Paul Hospital of Cavite. Dear Fernandez, Edward Joseph, your consultation request has been declined. Sorry, we are not available. ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(42,'$+639321321312',NULL,'This is Saint Paul Hospital of Cavite. Dear Fernandez, Edward Joseph, your consultation request has been declined. The information given is not valid. ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(44,'$+639321321312',NULL,'This is Saint Paul Hospital of Cavite. Dear Fernandez, , your Consultation Request Payment Link OTP is: 547628. This is only valid within 24 hours.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(47,'$+639321321312',NULL,'This is Saint Paul Hospital of Cavite. Dear Fernandez, , your Consultation Request Payment Link OTP is: 768954. This is only valid within 10 minutes.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(48,'$+639321321312',NULL,'This is Saint Paul Hospital of Cavite. Dear Fernandez, , your Consultation Request Payment Link OTP is: 179482. This is only valid within 10 minutes.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0);
+insert  into `messageout`(`Id`,`MessageTo`,`MessageFrom`,`MessageText`,`MessageType`,`MessageGuid`,`MessageInfo`,`Gateway`,`UserId`,`UserInfo`,`Priority`,`Scheduled`,`ValidityPeriod`,`IsSent`,`IsRead`) values (41,'$+639321321312',NULL,'This is Saint Paul Hospital of Cavite. Dear Fernandez, Edward Joseph, your consultation request has been declined. Sorry, we are not available. ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(42,'$+639321321312',NULL,'This is Saint Paul Hospital of Cavite. Dear Fernandez, Edward Joseph, your consultation request has been declined. The information given is not valid. ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(44,'$+639321321312',NULL,'This is Saint Paul Hospital of Cavite. Dear Fernandez, , your Consultation Request Payment Link OTP is: 547628. This is only valid within 24 hours.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(47,'$+639321321312',NULL,'This is Saint Paul Hospital of Cavite. Dear Fernandez, , your Consultation Request Payment Link OTP is: 768954. This is only valid within 10 minutes.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(48,'$+639321321312',NULL,'This is Saint Paul Hospital of Cavite. Dear Fernandez, , your Consultation Request Payment Link OTP is: 179482. This is only valid within 10 minutes.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(51,'$+639321321312',NULL,'This is Lanang Premiere Hospital, Inc. Dear Fernandez, Edward Joseph, \r\n                                         kindly attend your online consultation at $http://localhost:3000/online-consultation/9478516b33c502acb0e33d706db9ed57 using the password 312495.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(52,'$+639321321312',NULL,'This is Lanang Premiere Hospital, Inc. Dear Fernandez, Edward Joseph, \r\n                                         kindly attend your online consultation at http://localhost:3000/online-consultation/9478516b33c502acb0e33d706db9ed57 using the password 820567.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(53,'$+639321321312',NULL,'This is Lanang Premiere Hospital, Inc. Dear Fernandez, Edward Joseph, \r\n                                         kindly attend your online consultation at http://localhost:3000/online-consultation/9478516b33c502acb0e33d706db9ed57 using the password 732094.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(54,'$+639321321312',NULL,'This is Lanang Premiere Hospital, Inc. Dear Fernandez, Edward Joseph, \r\n                                         kindly attend your online consultation at http://localhost:3000/online-consultation/9478516b33c502acb0e33d706db9ed57 using the password 560829.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(55,'$+639321321324',NULL,'This is Lanang Premiere Hospital, Inc. Dear Fernandez, , your Consultation Request Payment Link OTP is: 763102. This is only valid within 24 hours.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(56,'$+639321321324',NULL,'This is Lanang Premiere Hospital, Inc. Dear Fernandez, Edward Joseph, \r\n                                         kindly attend your online consultation at http://localhost:3000/online-consultation/14fb827dd9f0f631793c9cf3c21b3c68 using the password 732109.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(57,'$+639299550278',NULL,'This is Lanang Premiere Hospital, Inc. Dear Tuazon, , your Consultation Request Payment Link OTP is: 249607. This is only valid within 24 hours.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0),(58,'$+639299550278',NULL,'This is Lanang Premiere Hospital, Inc. Dear Tuazon, Honelyn, \r\n                                         kindly attend your online consultation at http://localhost:3000/online-consultation/56911177f5612facf020cdda41d909fd using the password 017849.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0);
 
 /*Table structure for table `messageroom` */
 
@@ -1271,11 +1312,11 @@ CREATE TABLE `otp` (
   `consult_req_pk` varchar(50) DEFAULT NULL,
   `encoded_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`otp_pk`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 
 /*Data for the table `otp` */
 
-insert  into `otp`(`otp_pk`,`user_pk`,`mob_no`,`otp_code`,`expire_sec`,`is_verified`,`consult_req_pk`,`encoded_at`) values (1,'qweqwe@gmail.com','+639231231232','942703',5000,'n',NULL,'2021-08-16 21:55:21'),(4,'ewqeqwe@gmail.com','+639323123213','137508',5000,'n',NULL,'2021-08-16 21:58:42'),(14,'honelyntuazo@gmail.com','+639299550278','163825',5000,'n',NULL,'2021-08-16 22:35:36'),(16,'mrmontiveles@gmail.com','+639321321312','179482',600,'y','20218R0002','2021-08-18 23:05:20');
+insert  into `otp`(`otp_pk`,`user_pk`,`mob_no`,`otp_code`,`expire_sec`,`is_verified`,`consult_req_pk`,`encoded_at`) values (1,'qweqwe@gmail.com','+639231231232','942703',5000,'n',NULL,'2021-08-16 21:55:21'),(4,'ewqeqwe@gmail.com','+639323123213','137508',5000,'n',NULL,'2021-08-16 21:58:42'),(16,'mrmontiveles@gmail.com','+639321321312','179482',600,'y','20218R0002','2021-08-18 23:05:20'),(20,'mrmontiveles@gmail.com','+639321321324','763102',5000,'y','20218R0004','2021-08-25 17:27:20'),(21,'mrmontiveles@gmail.com','+639299550278','249607',5000,'y','20218R0001','2021-08-25 18:33:20');
 
 /*Table structure for table `pagemaster` */
 
@@ -1450,7 +1491,7 @@ CREATE TABLE `status_master` (
 
 /*Data for the table `status_master` */
 
-insert  into `status_master`(`sts_pk`,`sts_desc`,`sts_color`,`sts_bg_color`) values ('a','approved','#071e3d','#21e6c1'),('fa','for approval','#f5f5f5','#2f89fc'),('pd','paid','#fff','#2cb978'),('x','declined','#f5eded','#000000');
+insert  into `status_master`(`sts_pk`,`sts_desc`,`sts_color`,`sts_bg_color`) values ('a','approved','#071e3d','#21e6c1'),('e','ended','white','black'),('fa','for approval','#f5f5f5','#2f89fc'),('pd','paid','#5c5757','#faee5a'),('s','started','#fff','#2cb978'),('x','declined','#f5eded','#000000');
 
 /*Table structure for table `stockcateg` */
 
@@ -1500,6 +1541,19 @@ CREATE TABLE `users` (
 /*Data for the table `users` */
 
 insert  into `users`(`user_pk`,`username`,`full_name`,`user_type`,`clinic_pk`,`pass`,`sts_pk`,`log_count`,`encoded_at`,`encoder_pk`) values (1,'pgh','primero,cms','admin','','˙FH—ô}P4°®Ã\Z3K=„','o',0,'2021-01-04 09:24:04','pgh'),(4,'wyatt1231','ewqewqewq, ewqewqewq','clinic','3','l¿ﬁîZÿ–Ö˚Ëe]ˇÜà','o',0,'2021-01-05 13:20:18','1'),(6,'wyatt12314','Montiveles, Marc Reyangel','clinic','5','ì  »JqXﬂ	∂~vL∞Ã','o',0,'2021-01-05 13:30:04','1'),(21,'thon123456','sales, thon','clinic','20','ÙÚt)¸∫Ïa∞«aCßóK','o',0,'2021-01-05 19:16:39','1'),(22,'qwewqeqw123','qweqwe, ewqewqe','clinic','21','ZvÒ™««fÎ& JöÇ5','o',0,'2021-01-08 01:13:53','1'),(29,'honelyn123123','Tuazon, Honelyn','clinic','20','îø€á≈q‘‚<ÜK\rï','o',0,'2021-01-11 22:11:05','21'),(30,'eren123123','Jaegar, Eren','clinic','20','7pÊNZµl⁄´P∫»	','o',0,'2021-01-11 22:14:35','21'),(31,'tristan123123','Albanse, Tristan','clinic','20','√>±◊µy‰^yÉ7Åª','o',0,'2021-01-11 22:16:50','21'),(35,'lemente123','Lemente, Flloyd','doctor','20','iRkeûQ&÷ÉThW_f†','o',0,'2021-01-13 00:01:42','21'),(36,'benavares123','Avares, Ben','doctor','20','”q∂œ‡‹xC[†◊*B“J','o',0,'2021-01-13 00:23:46','21'),(37,'doki123456','Rusiana, Doki','clinic','22','\Z≥[®‘-≈4õ›_#gz','o',0,'2021-01-19 16:52:20','1'),(41,'james@gmail.com','Abante, James','doctor','20','Jî¡MøŒØ	^¯ı∑L(','o',0,'2021-01-28 13:33:21','21'),(42,'park@gmail.com','Hoon, Park','doctor','20','œa⁄´&öæGfV‰3\'ê√}','o',0,'2021-01-28 13:35:02','21'),(43,'honelyn@gmail.com','Tuazon, Honelyn','doctor','22','¨ÿ”á˘∫l<íN¿_Hôı','o',0,'2021-06-25 12:31:31','37'),(50,'001','Fernandez, Edward Joseph','admin','SA','\0ºŒÈ´l\'\'[{0ñ]Dìr','o',0,'2021-08-11 13:27:21','1'),(51,'002','Fernandez, Glory Ann','admin','SA','i‰Ísp”iG\'ﬂsQµπ','o',0,'2021-08-11 13:29:10','1'),(52,'020','Gono, Roger','admin','SA','EcéπôAnU>@>ºuÅzÛ','o',0,'2021-08-11 13:53:31','1'),(54,'003','Fernandez, Edward Joseph','admin','SA','&2ˇ‰@›ïΩ%≈VqÜ¨Õ','o',0,'2021-08-11 13:57:10','1'),(55,'D001','Te, Dave','hosp_resident',NULL,'ÜDõ®\Z≠2phÈª÷ª∂\\','o',0,'2021-08-11 18:02:57','54'),(56,'D002','Tuazon, Honelyn','hosp_resident',NULL,'•Sö´ßU¨ryVKRGá','o',0,'2021-08-11 18:07:16','54');
+
+/* Function  structure for function  `calc_age` */
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` FUNCTION `calc_age`(dob date) RETURNS varchar(30) CHARSET latin1
+BEGIN
+	DECLARE nxt VARCHAR(30);
+	
+	SET nxt = (SELECT YEAR(CURRENT_TIMESTAMP) - YEAR(dob) - (RIGHT(CURRENT_TIMESTAMP, 5) < RIGHT(dob, 5)) as age);
+	RETURN nxt;
+    END */$$
+DELIMITER ;
 
 /* Function  structure for function  `getBrgyCityMun` */
 
@@ -1664,6 +1718,22 @@ BEGIN
 	DECLARE nxt VARCHAR(30);
 	
 	SET nxt = (SELECT COALESCE(CONCAT(YEAR(NOW()),MONTH(NOW()),'R',LPAD((MAX(SUBSTR(consult_req_pk,LOCATE('R',consult_req_pk) + coalesce(inc_val,1)))+COALESCE(inc_val,1)),4,0) ), CONCAT(YEAR(NOW()),MONTH(NOW()),'R','0001'))  AS nxt    FROM `consult_request`);
+	RETURN nxt;
+    END */$$
+DELIMITER ;
+
+/* Function  structure for function  `next_hospital_no` */
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` FUNCTION `next_hospital_no`(inc_val int(11)) RETURNS varchar(30) CHARSET latin1
+BEGIN
+	DECLARE nxt VARCHAR(30);
+	SET nxt = (SELECT COALESCE
+	(CONCAT(YEAR(NOW()),MONTH(NOW()),'P',
+	LPAD((MAX(SUBSTR(hospital_no,
+	LOCATE('P',hospital_no) + coalesce(inc_val,1)))+COALESCE(inc_val,1)),6,0) ),
+	CONCAT(YEAR(NOW()),MONTH(NOW()),'P','000001'))  AS nxt  FROM `hosp_patient`);
 	RETURN nxt;
     END */$$
 DELIMITER ;

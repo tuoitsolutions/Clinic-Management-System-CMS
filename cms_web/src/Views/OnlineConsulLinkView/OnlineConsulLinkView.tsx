@@ -262,6 +262,26 @@ const OnlineConsultLinkView: FC<IOnlineConsultLinkView> = memo(() => {
       }
     };
 
+    mounted && selected_consult_req?.consult_req_pk && fetch_initial_data();
+
+    return () => {
+      mounted = false;
+    };
+  }, [dispatch, selected_consult_req]);
+
+  useEffect(() => {
+    let mounted = true;
+    const fetch_initial_data = async () => {
+      const res = await ChatConsultApi.GetConsultChat(
+        selected_consult_req.consult_req_pk
+      );
+      if (res.success) {
+        set_chat_messages(res.data);
+      } else {
+        dispatch(setPageSnackbar(res?.message?.toString(), "error"));
+      }
+    };
+
     mounted && selected_consult_req && fetch_initial_data();
 
     return () => {

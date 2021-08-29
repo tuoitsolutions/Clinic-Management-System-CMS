@@ -11,6 +11,7 @@ import MaskedCard from "../../Component/Mask/MaskedCard";
 import MaskedPhoneNumber from "../../Component/Mask/MaskedPhoneNumber";
 import { PAYMONG_SERVER_URL } from "../../Helpers/AppConfig";
 import HelpNumber from "../../Helpers/HelpNumber";
+import { StringEmptyToDefault } from "../../Hooks/UseStringFormatter";
 import {
   closePageLoading,
   setGeneralPrompt,
@@ -82,11 +83,14 @@ const CardPayment: FC<ICardPayment> = memo(({ selected_consult_req }) => {
     resolver: yupResolver(form_schema),
     mode: "onChange",
     defaultValues: {
-      name: `${selected_consult_req?.first_name} ${selected_consult_req?.middle_name} ${selected_consult_req?.last_name} ${selected_consult_req?.suffix}`,
+      name: `${StringEmptyToDefault(
+        selected_consult_req?.first_name,
+        ""
+      )} ${StringEmptyToDefault(selected_consult_req?.last_name, "")}`,
       email: selected_consult_req.email,
       phone: selected_consult_req.mob_no,
-      line1: selected_consult_req.line1,
-      line2: `${selected_consult_req.line2}, ${selected_consult_req.barangaydesc}`,
+      line1: StringEmptyToDefault(selected_consult_req?.line1, ""),
+      line2: StringEmptyToDefault(selected_consult_req?.line2, ""),
       state: selected_consult_req.provincedesc,
       postal_code: selected_consult_req.zip_code,
       city: selected_consult_req.citymundesc,
@@ -324,7 +328,7 @@ const CardPayment: FC<ICardPayment> = memo(({ selected_consult_req }) => {
         >
           <div>
             <Grid container spacing={6}>
-              <Grid item xs={12} md={8}>
+              <Grid item xs={12} md={7}>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <div className="cntr-title">
@@ -360,7 +364,7 @@ const CardPayment: FC<ICardPayment> = memo(({ selected_consult_req }) => {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={12} md={5}>
+                  <Grid item xs={12} md={6}>
                     <TextFieldHookForm
                       name="email"
                       label="Email Address"
@@ -374,7 +378,7 @@ const CardPayment: FC<ICardPayment> = memo(({ selected_consult_req }) => {
 
                   <Grid item xs={12}>
                     <Grid container spacing={3}>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12}>
                         <TextFieldHookForm
                           name="line1"
                           label="Line 1"
@@ -385,7 +389,7 @@ const CardPayment: FC<ICardPayment> = memo(({ selected_consult_req }) => {
                           placeholder="Line1 of the billing address information"
                         />
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12}>
                         <TextFieldHookForm
                           name="line2"
                           label="Line 2"
@@ -418,7 +422,7 @@ const CardPayment: FC<ICardPayment> = memo(({ selected_consult_req }) => {
                           placeholder="Postal Code of the billing address information"
                         />
                       </Grid>
-                      <Grid item xs={12} md={3}>
+                      <Grid item xs={12} md={5}>
                         <TextFieldHookForm
                           name="city"
                           label="City"
@@ -446,7 +450,7 @@ const CardPayment: FC<ICardPayment> = memo(({ selected_consult_req }) => {
                 </Grid>
               </Grid>
 
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={5}>
                 <div
                   style={{
                     padding: `1em`,
@@ -483,7 +487,7 @@ const CardPayment: FC<ICardPayment> = memo(({ selected_consult_req }) => {
                     <Grid item xs={6}>
                       <DateFieldHookForm
                         name="exp_month"
-                        label="Expiry Month"
+                        label="Exp. Month"
                         fullWidth
                         InputLabelProps={{
                           shrink: true,
@@ -496,7 +500,7 @@ const CardPayment: FC<ICardPayment> = memo(({ selected_consult_req }) => {
                     <Grid item xs={6}>
                       <DateFieldHookForm
                         name="exp_year"
-                        label="Expiry Year"
+                        label="Exp. Year"
                         fullWidth
                         InputLabelProps={{
                           shrink: true,

@@ -34,6 +34,8 @@ interface ConsultRequestEntity {
   discount_rate?: string;
   discount_id_num?: string;
   discount_amount?: string;
+  is_charity?: "y" | "n";
+  is_agree_priv_pol?: "y" | "n";
   consult_cost?: number;
   request_at?: Date;
   accept_at?: Date;

@@ -68,8 +68,8 @@ export const InvalidTimeToDefault = (
 
 export const InvalidDateToDefault = (
   date: Date | null | string,
-  defaultString: string
-): string => {
+  defaultString: any
+): any => {
   if (!date) {
     return defaultString;
   }
@@ -84,8 +84,8 @@ export const InvalidDateToDefault = (
 
 export const InvalidDateTimeToDefault = (
   date: Date | null | string,
-  defaultString: string
-): string => {
+  defaultString: any
+): any => {
   if (!date) {
     return defaultString;
   }

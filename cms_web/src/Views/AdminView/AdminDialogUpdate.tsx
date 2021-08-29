@@ -32,7 +32,8 @@ interface IAdminDialogUpdate {
 }
 
 const form_schema = yup.object({
-  emp_id: yup.string().required().label("Employee Id"),
+  emp_id: yup.string().nullable().required().label("Employee Id"),
+  prefix: yup.string().nullable().label("Prefix"),
   first_name: yup.string().nullable().required().label("First Name"),
   middle_name: yup.string().nullable().label("Middle Name"),
   last_name: yup.string().nullable().required().label("Last Name"),

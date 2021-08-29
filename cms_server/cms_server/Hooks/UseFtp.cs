@@ -42,6 +42,7 @@ namespace ddt_server.Hooks
 
         public static byte[] DownloadFtp(string ftp_path, string username, string password)
         {
+
             try
             {
                 var request = new WebClient();

@@ -8,6 +8,7 @@ import TextFieldHookForm from "../../Component/HookForm/TextFieldHookForm";
 import MaskedPhoneNumber from "../../Component/Mask/MaskedPhoneNumber";
 import { PAYMONG_SERVER_URL } from "../../Helpers/AppConfig";
 import HelpNumber from "../../Helpers/HelpNumber";
+import { StringEmptyToDefault } from "../../Hooks/UseStringFormatter";
 import {
   closePageLoading,
   setGeneralPrompt,
@@ -38,11 +39,14 @@ const GCashPayment: FC<IGCashPayment> = memo(({ selected_consult_req }) => {
     resolver: yupResolver(form_schema),
     mode: "onChange",
     defaultValues: {
-      name: `${selected_consult_req?.first_name} ${selected_consult_req?.middle_name} ${selected_consult_req?.last_name} ${selected_consult_req?.suffix}`,
+      name: `${StringEmptyToDefault(
+        selected_consult_req?.first_name,
+        ""
+      )} ${StringEmptyToDefault(selected_consult_req?.last_name, "")}`,
       email: selected_consult_req.email,
       phone: selected_consult_req.mob_no,
-      line1: selected_consult_req.line1,
-      line2: `${selected_consult_req.line2}, ${selected_consult_req.barangaydesc}`,
+      line1: StringEmptyToDefault(selected_consult_req?.line1, ""),
+      line2: StringEmptyToDefault(selected_consult_req?.line2, ""),
       state: selected_consult_req.provincedesc,
       postal_code: selected_consult_req.zip_code,
       city: selected_consult_req.citymundesc,
@@ -136,7 +140,7 @@ const GCashPayment: FC<IGCashPayment> = memo(({ selected_consult_req }) => {
           id="form_instance"
         >
           <div>
-            <Grid container spacing={3}>
+            <Grid container spacing={6}>
               <Grid item xs={12}>
                 <div className="cntr-title">
                   <div className="sub">

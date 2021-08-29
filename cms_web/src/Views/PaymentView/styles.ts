@@ -69,14 +69,23 @@ export const StyledPaymentView = styled(Container)`
     grid-auto-columns: 1fr 400px;
     margin-top: 2em;
     grid-gap: 1em;
+    grid-template-areas: "pay soa";
+
+    @media (max-width: 768px) {
+      /* grid-auto-columns: 1fr 400px; */
+      grid-template-areas: "pay" "soa";
+    }
+
     .body-title {
       font-weight: 500;
       font-size: 1.2em;
       margin: 1em 0;
     }
     .pay-method-ctnr {
+      grid-area: pay;
     }
     .pay-soa {
+      grid-area: soa;
       .pay-soa-content {
         padding: 1em;
         background-color: #fafafa;

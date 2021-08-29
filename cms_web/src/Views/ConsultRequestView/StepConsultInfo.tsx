@@ -1,20 +1,51 @@
 import { Grid } from "@material-ui/core";
 import React, { FC, memo } from "react";
+import AutocompleteHookForm from "../../Component/HookForm/AutocompleteHookForm";
 import DropzoneFieldHookForm from "../../Component/HookForm/DropzoneFieldHookForm";
+import MultiRadioFieldHookForm from "../../Component/HookForm/MultiRadioFieldHookForm";
+import SingleCheckboxHookForm from "../../Component/HookForm/SingleCheckboxHookForm";
 import TextFieldHookForm from "../../Component/HookForm/TextFieldHookForm";
+import { OptionItemModel } from "../../Services/Models/OptionModel";
 
 interface IStepConsultInfo {
   step: number;
+  dept_options: Array<OptionItemModel>;
 }
 
-const StepConsultInfo: FC<IStepConsultInfo> = memo(({ step }) => {
+const StepConsultInfo: FC<IStepConsultInfo> = memo(({ step, dept_options }) => {
   return (
     <div className="tab-container">
       <Grid container spacing={3}>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6}>
+          <MultiRadioFieldHookForm
+            name="is_charity"
+            label="Are you a charity patient?"
+            row
+            size="small"
+            radio_items={[
+              { label: "Yes", value: "y" },
+              { label: "No", value: "n" },
+            ]}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <AutocompleteHookForm
+            name="assign_dept_pk"
+            label="Choose the department for this consultation?"
+            options={dept_options}
+            defaultValue=""
+            InputLabelProps={{
+              shrink: true,
+            }}
+            placeholder="Choose the department for this consultation?"
+            required
+          />
+        </Grid>
+
+        <Grid item xs={12} md={6}>
           <TextFieldHookForm
             name="chief_complaint"
-            label="Cheif Complaint"
+            label="Chief Complaint"
             fullWidth
             multiline
             rows={2}
@@ -26,7 +57,7 @@ const StepConsultInfo: FC<IStepConsultInfo> = memo(({ step }) => {
           />
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6}>
           <TextFieldHookForm
             name="symptoms"
             label="Symptoms"
@@ -44,11 +75,11 @@ const StepConsultInfo: FC<IStepConsultInfo> = memo(({ step }) => {
         <Grid item xs={12}>
           <TextFieldHookForm
             name="notes"
-            label="Notes or Othere Remarks"
+            label="Notes and/or Other Remarks"
             fullWidth
             multiline
             rows={2}
-            placeholder="Write the notes or other remarks here"
+            placeholder="Write the notes and/or other remarks here"
             InputLabelProps={{
               shrink: true,
             }}
@@ -56,10 +87,26 @@ const StepConsultInfo: FC<IStepConsultInfo> = memo(({ step }) => {
         </Grid>
 
         <Grid item xs={12}>
+          <SingleCheckboxHookForm
+            label={
+              <span>
+                I have read and agreed to the{" "}
+                <a href="/privacy-policy" target="__blank" className="link">
+                  Privacy Policy
+                </a>
+                .
+              </span>
+            }
+            name="is_agree_priv_pol"
+            size="small"
+          />
+        </Grid>
+
+        <Grid item xs={12}>
           <DropzoneFieldHookForm
             name="attach_req_files"
             disabled={step !== 2}
-            label="Kindly drop/upload a picture or pdf of your procedure prescription here."
+            label="You can drop at most three (3) files (images,PDFs only) that are related to this consultation here."
             accept={"image/*,.pdf"}
             multiple={true}
             maxFiles={3}

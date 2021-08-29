@@ -132,6 +132,10 @@ const AutocompleteHookForm: FC<TextFieldProps & IAutocompleteHookForm> = memo(
                   error={error}
                   helperText={error_message}
                   required={required}
+                  // InputProps={{
+                  //   autoComplete: "off",
+                  // }}
+                  autoComplete="off"
                 />
               );
             }}

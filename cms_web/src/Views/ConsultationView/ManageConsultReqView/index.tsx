@@ -10,11 +10,13 @@ import {
 import EditRoundedIcon from "@material-ui/icons/EditRounded";
 import EmailRoundedIcon from "@material-ui/icons/EmailRounded";
 import { Alert } from "@material-ui/lab";
+import { useTheme } from "@material-ui/styles";
 import React, { FC, memo, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import BodyLoader from "../../../Component/BodyLoader";
 import ButtonPopper from "../../../Component/ButtonPopper";
+import CustomAvatar from "../../../Component/CustomAvatar";
 import LinkTabs, { ILinkTab } from "../../../Component/LinkTabs";
 import PreviewPDF from "../../../Component/PreviewPDF";
 import HelpNumber from "../../../Helpers/HelpNumber";
@@ -41,8 +43,11 @@ import DialogChangeConsultCost from "./DialogChangeConsultCost";
 import DialogDeclineConsultReq from "./DialogDeclineConsultReq";
 import DialogMapConsultPatient from "./DialogMapConsultPatient";
 import DialogStartConsult from "./DialogStartConsult";
+import { PatientManageUi } from "./styles";
 import TabAllergyRecord from "./TabAllergyRecord";
+import TabChatHistoryRecord from "./TabChatHistoryRecord";
 import TabDeptResident from "./TabFileRecord";
+import TabGeneralInfo from "./TabGeneralInfo";
 import TabImmuneRecord from "./TabImmuneRecord";
 import TabMedProbRecord from "./TabMedProbRecord";
 import TabMedRecord from "./TabMedRecord";
@@ -60,6 +65,7 @@ interface IParams {
 const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
   const dispatch = useDispatch();
   const params = useParams<IParams>();
+  const theme = useTheme();
 
   const user_type = useSelector(
     (store: RootStore) => store.UserReducer.user?.user_type
@@ -103,7 +109,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
         })
       );
       const response = await ConsultRequestApi.PreviewConsultSoa(
-        selected_record.consult_req_pk
+        selected_record?.consult_req_pk
       );
       dispatch(closePageLoading());
 
@@ -129,7 +135,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
         })
       );
       const response = await ConsultMedApi.PreviewMedPrescrip(
-        selected_record.consult_req_pk
+        selected_record?.consult_req_pk
       );
       dispatch(closePageLoading());
 
@@ -155,7 +161,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
         })
       );
       const response = await ConsultProcApi.PreviewProcPrescrip(
-        selected_record.consult_req_pk
+        selected_record?.consult_req_pk
       );
       dispatch(closePageLoading());
 
@@ -185,7 +191,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
             })
           );
           const response = await ConsultRequestApi.SendPaymentLink(
-            selected_record.consult_req_pk
+            selected_record?.consult_req_pk
           );
 
           dispatch(closePageLoading());
@@ -218,7 +224,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
               })
             );
             const response = await ConsultRequestApi.EmailConsultRequestSoa({
-              consult_req_pk: selected_record.consult_req_pk,
+              consult_req_pk: selected_record?.consult_req_pk,
               attach_base64_soa: `${preview_soa}`,
             });
 
@@ -253,7 +259,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
               })
             );
             const response = await ConsultMedApi.EmailMedPrescrip({
-              consult_req_pk: selected_record.consult_req_pk,
+              consult_req_pk: selected_record?.consult_req_pk,
               attach_file: `${preview_med_presc}`,
             });
 
@@ -288,7 +294,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
               })
             );
             const response = await ConsultProcApi.EmailProcPrescrip({
-              consult_req_pk: selected_record.consult_req_pk,
+              consult_req_pk: selected_record?.consult_req_pk,
               attach_file: `${preview_proc_presc}`,
             });
 
@@ -323,7 +329,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
               })
             );
             const response = await ConsultRequestApi.EndConsult({
-              consult_req_pk: selected_record.consult_req_pk,
+              consult_req_pk: selected_record?.consult_req_pk,
             });
 
             dispatch(closePageLoading());
@@ -357,7 +363,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
               })
             );
             const response = await ConsultRequestApi.TakeOverConsult({
-              consult_req_pk: selected_record.consult_req_pk,
+              consult_req_pk: selected_record?.consult_req_pk,
             });
 
             dispatch(closePageLoading());
@@ -437,7 +443,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
         {
           label: "Chat History",
           link: `/request/${params.hash_key}/chat-history`,
-          Component: <div></div>,
+          Component: <TabChatHistoryRecord selected_row={selected_record} />,
         },
         {
           label: "Patient History",
@@ -447,6 +453,16 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
       ];
     } else if (user_type === "admin") {
       LinkTabRoutes = [
+        {
+          label: "General",
+          link: `/request/${params.hash_key}/general`,
+          Component: (
+            <TabGeneralInfo
+              consult_info={selected_record}
+              handleReloadRecord={handleReloadRecord}
+            />
+          ),
+        },
         {
           label: "Files",
           link: `/request/${params.hash_key}/file`,
@@ -518,75 +534,6 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
     return LinkTabRoutes;
   }, [selected_record, user_type]);
 
-  // let LinkTabRoutes: Array<ILinkTab> = [
-  //   {
-  //     label: "Files",
-  //     link: `/request/${params.hash_key}/file`,
-  //     Component: (
-  //       <TabDeptResident consult_req_pk={selected_record?.consult_req_pk} />
-  //     ),
-  //   },
-  //   {
-  //     label: "Payment Logs",
-  //     link: `/request/${params.hash_key}/payment-logs`,
-  //     Component: (
-  //       <TabPaymentLog consult_req_pk={selected_record?.consult_req_pk} />
-  //     ),
-  //   },
-  //   {
-  //     label: "Vital Signs",
-  //     link: `/request/${params.hash_key}/vital-sign`,
-  //     Component: (
-  //       <VitalSignRecord consult_req_pk={selected_record?.consult_req_pk} />
-  //     ),
-  //   },
-  //   {
-  //     label: "Medications",
-  //     link: `/request/${params.hash_key}/medication`,
-  //     Component: (
-  //       <TabMedRecord consult_req_pk={selected_record?.consult_req_pk} />
-  //     ),
-  //   },
-  //   {
-  //     label: "Procedures",
-  //     link: `/request/${params.hash_key}/procedure`,
-  //     Component: (
-  //       <TabProcRecord consult_req_pk={selected_record?.consult_req_pk} />
-  //     ),
-  //   },
-  //   {
-  //     label: "Allergies",
-  //     link: `/request/${params.hash_key}/allergy`,
-  //     Component: (
-  //       <TabAllergyRecord consult_req_pk={selected_record?.consult_req_pk} />
-  //     ),
-  //   },
-  //   {
-  //     label: "Immunizations",
-  //     link: `/request/${params.hash_key}/immunization`,
-  //     Component: (
-  //       <TabImmuneRecord consult_req_pk={selected_record?.consult_req_pk} />
-  //     ),
-  //   },
-  //   {
-  //     label: "Medical Problems",
-  //     link: `/request/${params.hash_key}/medical-problem`,
-  //     Component: (
-  //       <TabMedProbRecord consult_req_pk={selected_record?.consult_req_pk} />
-  //     ),
-  //   },
-  //   {
-  //     label: "Chat History",
-  //     link: `/request/${params.hash_key}/chat-history`,
-  //     Component: <div></div>,
-  //   },
-  //   {
-  //     label: "Patient History",
-  //     link: `/request/${params.hash_key}/patient-history`,
-  //     Component: <div></div>,
-  //   },
-  // ];
-
   useEffect(() => {
     let mounted = true;
 
@@ -620,48 +567,113 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
     return () => {
       mounted = false;
     };
-  }, [reload_record_count]);
+  }, [params.hash_key, reload_record_count]);
 
   useEffect(() => {
     dispatch(
       setPageLinksAction([
         {
           link: `/request`,
-          title: "Consult Request Records",
+          title: "Requests",
         },
         {
           link: window.location.pathname,
-          title: "Manage",
+          title: selected_record?.consult_req_pk,
         },
       ])
     );
-  }, [dispatch, user_type]);
+  }, [dispatch, selected_record, user_type]);
   return (
     <>
-      {!loading_initial_data ? (
-        !!error_message ? (
-          <Alert severity="error">{error_message}</Alert>
-        ) : (
-          !!selected_record && (
-            <Container maxWidth="lg">
-              <Grid container spacing={3}>
-                {selected_record?.sts_pk === "s" &&
-                  user_type === "hosp_resident" && (
+      {!!error_message ? (
+        <Alert severity="error">{error_message}</Alert>
+      ) : (
+        !!selected_record && (
+          <PatientManageUi theme={theme} maxWidth="xl">
+            {/* {selected_record?.sts_pk === "s" &&
+                user_type === "hosp_resident" && (
+                  <Grid item xs={12}>
+                    <div className="panel-container">
+                      <ConsultRoom selected_row={selected_record} />
+                    </div>
+                  </Grid>
+                )} */}
+            <div className="panel-container patient-profile">
+              <CustomAvatar spacing={16} alt="PV" src="" />
+
+              <div className="patient-name">
+                {selected_record?.prefix} {selected_record?.first_name}{" "}
+                {selected_record?.middle_name} {selected_record?.last_name}{" "}
+                {selected_record?.suffix}
+              </div>
+
+              <div className="consult-status">
+                <Chip
+                  label={selected_record?.status?.sts_desc}
+                  style={{
+                    color: selected_record?.status?.sts_color,
+                    backgroundColor: selected_record?.status?.sts_bg_color,
+                  }}
+                />
+              </div>
+              <div className="personal-info-ctnr">
+                <div className="info-group-column">
+                  <div className="label">Gender</div>
+                  <div className="value">Male</div>
+                </div>
+                <div className="info-group-column">
+                  <div className="label">Date of Birth</div>
+                  <div className="value">July 28, 1998 (23)</div>
+                </div>
+                <div className="info-group-column">
+                  <div className="label">Charity Patient</div>
+                  <div className="value">No</div>
+                </div>
+                <div className="info-group-column">
+                  <div className="label">Nationality</div>
+                  <div className="value">Filipino</div>
+                </div>
+                <div className="info-group-column">
+                  <div className="label">Civil Status</div>
+                  <div className="value">Married</div>
+                </div>
+                <div className="info-group-column">
+                  <div className="label">Religion</div>
+                  <div className="value">Roman Catholic</div>
+                </div>
+              </div>
+            </div>
+            <div className="panel-container link-tabs">
+              {!!selected_record?.consult_req_pk && !!user_type && (
+                <LinkTabs orientation="horizontal" tabs={GenerateTabLinks()} />
+              )}
+            </div>
+            <div className="panel-container doctor-notes">
+              <div className="ctnr-title">
+                <div className="main">Doctor Notes</div>
+              </div>
+
+              <div className="content">
+                Knee pain, Headache, Last time he looked sick.
+              </div>
+            </div>
+
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={4} lg={3}>
+                <Grid container spacing={3}></Grid>
+              </Grid>
+
+              <Grid item xs={12} md={8} lg={9}></Grid>
+
+              <Grid item xs={12}>
+                <div className="panel-container">
+                  <Grid container spacing={6}>
                     <Grid item xs={12}>
-                      <div className="panel-container">
-                        <ConsultRoom selected_row={selected_record} />
-                      </div>
-                    </Grid>
-                  )}
-                <Grid item xs={12}>
-                  <div className="panel-container">
-                    <Grid container spacing={6}>
-                      <Grid item xs={12}>
-                        <Grid item container spacing={3} justify="flex-end">
-                          {selected_record?.sts_pk === "fa" &&
-                            selected_record?.pay_link_sent_count <= 0 && (
-                              <>
-                                {/* <Grid item>
+                      <Grid item container spacing={3} justify="flex-end">
+                        {selected_record?.sts_pk === "fa" &&
+                          selected_record?.pay_link_sent_count <= 0 && (
+                            <>
+                              {/* <Grid item>
                                   <Button
                                     variant="contained"
                                     color="primary"
@@ -672,332 +684,246 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                                     Send Payment Link
                                   </Button>
                                 </Grid> */}
-                                <Grid item>
-                                  <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    onClick={() => {
-                                      set_open_decline_dialog(true);
-                                    }}
-                                  >
-                                    Decline Request
-                                  </Button>
-                                </Grid>
-                              </>
-                            )}
+                              <Grid item>
+                                <Button
+                                  variant="contained"
+                                  color="secondary"
+                                  onClick={() => {
+                                    set_open_decline_dialog(true);
+                                  }}
+                                >
+                                  Decline Request
+                                </Button>
+                              </Grid>
+                            </>
+                          )}
 
-                          {selected_record?.sts_pk === "pd" &&
-                            user_type === "hosp_resident" && (
-                              <>
-                                <Grid item>
-                                  <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => {
-                                      set_open_start_consult_dialog(true);
-                                    }}
-                                  >
-                                    Start Consultation
-                                  </Button>
-                                </Grid>
-                              </>
-                            )}
-
-                          {selected_record?.sts_pk === "pd" && (
+                        {selected_record?.sts_pk === "pd" &&
+                          user_type === "hosp_resident" && (
                             <>
                               <Grid item>
                                 <Button
                                   variant="contained"
                                   color="primary"
                                   onClick={() => {
-                                    // handleSendPaymentLink();
-                                    set_open_assign_dept_dialog(true);
+                                    set_open_start_consult_dialog(true);
                                   }}
                                 >
-                                  Set Department
+                                  Start Consultation
                                 </Button>
                               </Grid>
                             </>
                           )}
 
-                          {selected_record?.sts_pk === "s" &&
-                            user_type === "hosp_resident" && (
-                              <Grid item>
-                                <Button
-                                  variant="contained"
-                                  color="primary"
-                                  onClick={() => {
-                                    handleEndConsultation();
-                                  }}
-                                >
-                                  End Consultation
-                                </Button>
-                              </Grid>
-                            )}
+                        {selected_record?.sts_pk === "pd" && (
+                          <>
+                            <Grid item>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                  // handleSendPaymentLink();
+                                  set_open_assign_dept_dialog(true);
+                                }}
+                              >
+                                Set Department
+                              </Button>
+                            </Grid>
+                          </>
+                        )}
 
-                          {selected_record?.sts_pk === "pd" &&
-                            !selected_record.assign_res_pk &&
-                            user_type === "hosp_resident" && (
-                              <Grid item>
-                                <Button
-                                  variant="contained"
-                                  color="primary"
-                                  onClick={() => {
-                                    handleTakeOverConsultation();
-                                  }}
-                                >
-                                  Take Over Consultation
-                                </Button>
-                              </Grid>
-                            )}
+                        {selected_record?.sts_pk === "s" &&
+                          user_type === "hosp_resident" && (
+                            <Grid item>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                  handleEndConsultation();
+                                }}
+                              >
+                                End Consultation
+                              </Button>
+                            </Grid>
+                          )}
 
-                          <Grid item>
-                            <ButtonPopper
-                              actionLabel="Documents"
-                              variant="contained"
-                              buttonColor="primary"
-                              buttons={[
-                                {
-                                  text: `Send Payment Link `,
-                                  disabled: selected_record.sts_pk !== "fa",
-                                  badge_value:
-                                    selected_record.pay_link_sent_count,
-                                  handleClick: () => {
-                                    handleSendPaymentLink();
-                                  },
+                        {selected_record?.sts_pk === "pd" &&
+                          !selected_record?.assign_res_pk &&
+                          user_type === "hosp_resident" && (
+                            <Grid item>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                  handleTakeOverConsultation();
+                                }}
+                              >
+                                Take Over Consultation
+                              </Button>
+                            </Grid>
+                          )}
+
+                        <Grid item>
+                          <ButtonPopper
+                            actionLabel="Documents"
+                            variant="contained"
+                            buttonColor="primary"
+                            buttons={[
+                              {
+                                text: `Send Payment Link `,
+                                disabled: selected_record?.sts_pk !== "fa",
+                                badge_value:
+                                  selected_record?.pay_link_sent_count,
+                                handleClick: () => {
+                                  handleSendPaymentLink();
                                 },
-                                {
-                                  text: "Preview SOA",
-                                  handleClick: () => {
-                                    handlePreviewSoa();
-                                  },
+                              },
+                              {
+                                text: "Preview SOA",
+                                handleClick: () => {
+                                  handlePreviewSoa();
                                 },
-                                {
-                                  text: "Preview Medical Prescrip.",
-                                  handleClick: () => {
-                                    handlePreviewMedPrescrip();
-                                  },
+                              },
+                              {
+                                text: "Preview Medical Prescrip.",
+                                handleClick: () => {
+                                  handlePreviewMedPrescrip();
                                 },
-                                {
-                                  text: "Preview Procedure Prescrip.",
-                                  handleClick: () => {
-                                    handlePreviewProcPrescrip();
-                                  },
+                              },
+                              {
+                                text: "Preview Procedure Prescrip.",
+                                handleClick: () => {
+                                  handlePreviewProcPrescrip();
                                 },
-                                {
-                                  text: "Send SMS",
-                                  handleClick: () => {
-                                    console.log(`..`);
-                                  },
+                              },
+                              {
+                                text: "Send SMS",
+                                handleClick: () => {
+                                  console.log(`..`);
                                 },
-                                {
-                                  text: "Compose an Email",
-                                  handleClick: () => {
-                                    console.log(`..`);
-                                  },
+                              },
+                              {
+                                text: "Compose an Email",
+                                handleClick: () => {
+                                  console.log(`..`);
                                 },
-                              ]}
-                            />
-                          </Grid>
+                              },
+                            ]}
+                          />
                         </Grid>
                       </Grid>
+                    </Grid>
 
-                      <Grid item xs={12}>
-                        <Grid container spacing={3}>
-                          <Grid item xs={12} sm={4} lg={2}>
-                            <div className="info-group-column">
-                              <div className="label">Consult Req. Code: </div>
-                              <div className="value">
-                                {selected_record?.consult_req_pk}
-                              </div>
+                    <Grid item xs={12}>
+                      <Grid container spacing={3}>
+                        <Grid item xs={12} sm={6} lg={2}>
+                          <div className="info-group-column">
+                            <div className="label"> Code: </div>
+                            <div className="value">
+                              {selected_record?.consult_req_pk}
                             </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={4}>
-                            <div className="info-group-column">
-                              <div className="label">Requested By: </div>
-                              <div className="value">
-                                {selected_record?.prefix}{" "}
-                                {selected_record?.first_name}{" "}
-                                {selected_record?.middle_name}{" "}
-                                {selected_record?.last_name}{" "}
-                                {selected_record?.suffix}
-                              </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4}>
+                          <div className="info-group-column">
+                            <div className="label">Requested By: </div>
+                            <div className="value">
+                              {selected_record?.prefix}{" "}
+                              {selected_record?.first_name}{" "}
+                              {selected_record?.middle_name}{" "}
+                              {selected_record?.last_name}{" "}
+                              {selected_record?.suffix}
                             </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={1}>
-                            <div className="info-group-column">
-                              <div className="label">Gender: </div>
-                              <div className="value">
-                                {selected_record.gender === "m" && "Male"}
-                                {selected_record.gender === "f" && "Female"}
-                              </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={2}>
+                          <div className="info-group-column">
+                            <div className="label">Gender: </div>
+                            <div className="value">
+                              {selected_record?.gender === "m" && "Male"}
+                              {selected_record?.gender === "f" && "Female"}
                             </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={3}>
-                            <div className="info-group-column">
-                              <div className="label">Email Address: </div>
-                              <div className="value">
-                                {selected_record.email}
-                              </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4}>
+                          <div className="info-group-column">
+                            <div className="label">Email Address: </div>
+                            <div className="value">
+                              {selected_record?.email}
                             </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={2}>
-                            <div className="info-group-column">
-                              <div className="label">Mobile Number: </div>
-                              <div className="value">
-                                {selected_record.mob_no}
-                              </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4}>
+                          <div className="info-group-column">
+                            <div className="label">Mobile Number: </div>
+                            <div className="value">
+                              {selected_record?.mob_no}
                             </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={2}>
-                            <div className="info-group-column">
-                              <div className="label">Civil Status: </div>
-                              <div className="value">
-                                {selected_record.cs_desc}
-                              </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4}>
+                          <div className="info-group-column">
+                            <div className="label">Civil Status: </div>
+                            <div className="value">
+                              {selected_record?.cs_desc}
                             </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={2}>
-                            <div className="info-group-column">
-                              <div className="label">Nationality: </div>
-                              <div className="value">
-                                {selected_record.nat_desc}
-                              </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={4}>
+                          <div className="info-group-column">
+                            <div className="label">Nationality: </div>
+                            <div className="value">
+                              {selected_record?.nat_desc}
                             </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={2}>
-                            <div className="info-group-column">
-                              <div className="label">Religion: </div>
-                              <div className="value">
-                                {selected_record.rel_desc}
-                              </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={5}>
+                          <div className="info-group-column">
+                            <div className="label">Religion: </div>
+                            <div className="value">
+                              {selected_record?.rel_desc}
                             </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={6}>
-                            <div className="info-group-column">
-                              <div className="label">Complete Address: </div>
-                              <div className="value">
-                                {selected_record.line1} {selected_record.line2}{" "}
-                                {selected_record.psgcaddress}{" "}
-                                {selected_record.zip_code}
-                              </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={3}>
+                          <div className="info-group-column">
+                            <div className="label">Current Status: </div>
+                            <div className="value">
+                              <Chip
+                                label={selected_record?.status?.sts_desc}
+                                style={{
+                                  color: selected_record?.status?.sts_color,
+                                  backgroundColor:
+                                    selected_record?.status?.sts_bg_color,
+                                }}
+                              />
                             </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={2}>
-                            <div className="info-group-column">
-                              <div className="label">Current Status: </div>
-                              <div className="value">
-                                <Chip
-                                  label={selected_record?.status?.sts_desc}
-                                  style={{
-                                    color: selected_record?.status?.sts_color,
-                                    backgroundColor:
-                                      selected_record?.status?.sts_bg_color,
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={3}>
-                            <div className="info-group-column">
-                              <div className="label">Requested On: </div>
-                              <div className="value">
-                                {InvalidDateTimeToDefault(
-                                  selected_record?.request_at,
-                                  "TBD"
-                                )}
-                              </div>
-                            </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={3}>
-                            <div className="info-group-column">
-                              <div className="label">Paid On: </div>
-                              <div className="value">
-                                {InvalidDateTimeToDefault(
-                                  selected_record?.pay_at,
-                                  "TBD"
-                                )}
-                              </div>
-                            </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={3}>
-                            <div className="info-group-column">
-                              <div className="label">Consulted On: </div>
-                              <div className="value">
-                                {InvalidDateTimeToDefault(
-                                  selected_record?.consult_at,
-                                  "TBD"
-                                )}
-                              </div>
-                            </div>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={3}>
-                            <div className="info-group-column">
-                              <div className="label">Finished On: </div>
-                              <div className="value">
-                                {InvalidDateTimeToDefault(
-                                  selected_record?.ended_at,
-                                  "TBD"
-                                )}
-                              </div>
-                            </div>
-                          </Grid>
-
-                          <Grid item xs={12} md={4} lg={3}>
-                            <div className="info-group-column">
-                              <div className="label">Consultation Cost: </div>
-                              <div className="value">
-                                <Chip
-                                  label={
-                                    <>
-                                      &#8369;{" "}
-                                      {HelpNumber.NumberToMoney(
-                                        selected_record?.consult_cost
-                                      )}{" "}
-                                    </>
-                                  }
-                                />
-                                {user_type === "admin" &&
-                                  selected_record.sts_pk === "fa" && (
-                                    <Tooltip title="Change the consultation cost">
-                                      <IconButton
-                                        size="small"
-                                        color="primary"
-                                        onClick={() => {
-                                          set_open_change_consult_cost_dialog(
-                                            true
-                                          );
-                                        }}
-                                      >
-                                        <EditRoundedIcon
-                                          fontSize="small"
-                                          color="primary"
-                                        />
-                                      </IconButton>
-                                    </Tooltip>
-                                  )}
-                              </div>
-                            </div>
-                          </Grid>
-
-                          <Grid item xs={12} md={4} lg={3}>
-                            <div className="info-group-column">
-                              <div className="label">Hospital #: </div>
-                              <div className="value">
-                                <div>
-                                  {StringEmptyToDefault(
-                                    selected_record?.hospital_no,
-                                    "To be decided"
-                                  )}
-                                </div>
-
-                                {selected_record?.sts_pk === "pd" && (
-                                  <Tooltip title="Map this consultation to a hospital number (Note: Only for patients that have admitted before)">
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={3}>
+                          <div className="info-group-column">
+                            <div className="label">Consult Cost: </div>
+                            <div className="value">
+                              <Chip
+                                label={
+                                  <>
+                                    &#8369;{" "}
+                                    {HelpNumber.NumberToMoney(
+                                      selected_record?.consult_cost
+                                    )}{" "}
+                                  </>
+                                }
+                              />
+                              {user_type === "admin" &&
+                                selected_record?.sts_pk === "fa" && (
+                                  <Tooltip title="Change the consultation cost">
                                     <IconButton
                                       size="small"
                                       color="primary"
                                       onClick={() => {
-                                        set_open_map_consult_dialog(true);
+                                        set_open_change_consult_cost_dialog(
+                                          true
+                                        );
                                       }}
                                     >
                                       <EditRoundedIcon
@@ -1007,255 +933,327 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                                     </IconButton>
                                   </Tooltip>
                                 )}
-                              </div>
                             </div>
-                          </Grid>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={3}>
+                          <div className="info-group-column">
+                            <div className="label">Hospital #: </div>
+                            <div className="value">
+                              <div>
+                                {StringEmptyToDefault(
+                                  selected_record?.hospital_no,
+                                  "To be decided"
+                                )}
+                              </div>
 
-                          <Grid item xs={12}>
-                            <Grid container spacing={3}>
-                              <Grid item xs={12} md={6}>
-                                <div className="info-group-column">
-                                  <div className="label">Chief Complaint: </div>
-                                  <div className="value">
-                                    {selected_record.chief_complaint}
-                                  </div>
+                              {selected_record?.sts_pk === "pd" && (
+                                <Tooltip title="Map this consultation to a hospital number (Note: Only for patients that have admitted before)">
+                                  <IconButton
+                                    size="small"
+                                    color="primary"
+                                    onClick={() => {
+                                      set_open_map_consult_dialog(true);
+                                    }}
+                                  >
+                                    <EditRoundedIcon
+                                      fontSize="small"
+                                      color="primary"
+                                    />
+                                  </IconButton>
+                                </Tooltip>
+                              )}
+                            </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <div className="info-group-column">
+                            <div className="label">Complete Address: </div>
+                            <div className="value">
+                              {selected_record?.line1} {selected_record?.line2}{" "}
+                              {selected_record?.psgcaddress}{" "}
+                              {selected_record?.zip_code}
+                            </div>
+                          </div>
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} lg={3}>
+                          <div className="info-group-column">
+                            <div className="label">Requested On: </div>
+                            <div className="value">
+                              {InvalidDateTimeToDefault(
+                                selected_record?.request_at,
+                                "TBD"
+                              )}
+                            </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={3}>
+                          <div className="info-group-column">
+                            <div className="label">Paid On: </div>
+                            <div className="value">
+                              {InvalidDateTimeToDefault(
+                                selected_record?.pay_at,
+                                "TBD"
+                              )}
+                            </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={3}>
+                          <div className="info-group-column">
+                            <div className="label">Started On: </div>
+                            <div className="value">
+                              {InvalidDateTimeToDefault(
+                                selected_record?.consult_at,
+                                "TBD"
+                              )}
+                            </div>
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6} lg={3}>
+                          <div className="info-group-column">
+                            <div className="label">Ended On: </div>
+                            <div className="value">
+                              {InvalidDateTimeToDefault(
+                                selected_record?.ended_at,
+                                "TBD"
+                              )}
+                            </div>
+                          </div>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                          <Grid container spacing={3}>
+                            <Grid item xs={12} md={6}>
+                              <div className="info-group-column">
+                                <div className="label">Chief Complaint: </div>
+                                <div className="value">
+                                  {selected_record?.chief_complaint}
                                 </div>
-                              </Grid>
-                              <Grid item xs={12} md={6}>
-                                <div className="info-group-column">
-                                  <div className="label">Symptoms: </div>
-                                  <div className="value">
-                                    {selected_record.symptoms}
-                                  </div>
+                              </div>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                              <div className="info-group-column">
+                                <div className="label">Symptoms: </div>
+                                <div className="value">
+                                  {selected_record?.symptoms}
                                 </div>
-                              </Grid>
+                              </div>
                             </Grid>
                           </Grid>
+                        </Grid>
 
-                          {/* <Grid item xs={12}>
+                        {/* <Grid item xs={12}>
                             <div className="separator"></div>
                           </Grid> */}
-                          <Grid item xs={12} md={3}>
-                            <div className="info-group-column">
-                              <div className="label">Assigned Department: </div>
+                        <Grid item xs={12} md={3}>
+                          <div className="info-group-column">
+                            <div className="label">Assigned Department: </div>
 
-                              {StringEmptyToDefault(
-                                selected_record?.assign_dept_desc,
+                            {StringEmptyToDefault(
+                              selected_record?.assign_dept_desc,
+                              "To be decided"
+                            )}
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} md={3}>
+                          <div className="info-group-column">
+                            <div className="label">Assigned Doctor: </div>
+                            {StringEmptyToDefault(
+                              selected_record?.assign_res_desc,
+                              "To be decided"
+                            )}
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} md={3}>
+                          <div className="info-group-column">
+                            <div className="label ">Expected Start On</div>
+                            <div className="value">
+                              {InvalidDateToDefault(
+                                selected_record?.assign_dept_consult_date,
                                 "To be decided"
                               )}
                             </div>
-                          </Grid>
-                          <Grid item xs={12} md={3}>
-                            <div className="info-group-column">
-                              <div className="label">Assigned Doctor: </div>
-                              {StringEmptyToDefault(
-                                selected_record?.assign_res_desc,
+                          </div>
+                        </Grid>
+                        <Grid item xs={12} md={3}>
+                          <div className="info-group-column">
+                            <div className="label ">Assigned Dept. On: </div>
+                            <div className="value">
+                              {InvalidDateTimeToDefault(
+                                selected_record?.assign_dept_at,
                                 "To be decided"
                               )}
                             </div>
-                          </Grid>
-                          <Grid item xs={12} md={3}>
-                            <div className="info-group-column">
-                              <div className="label ">
-                                Expected Consult. Date:{" "}
-                              </div>
-                              <div className="value">
-                                {InvalidDateToDefault(
-                                  selected_record?.assign_dept_consult_date,
-                                  "To be decided"
-                                )}
-                              </div>
-                            </div>
-                          </Grid>
-                          <Grid item xs={12} md={3}>
-                            <div className="info-group-column">
-                              <div className="label ">Assigned Dept. On: </div>
-                              <div className="value">
-                                {InvalidDateTimeToDefault(
-                                  selected_record?.assign_dept_at,
-                                  "To be decided"
-                                )}
-                              </div>
-                            </div>
-                          </Grid>
+                          </div>
                         </Grid>
                       </Grid>
                     </Grid>
-                  </div>
-                </Grid>
+                  </Grid>
+                </div>
+              </Grid>
 
-                {/* <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                   <div className="panel-container">
                     <ConsultRoom selected_row={selected_record} />
                   </div>
                 </Grid> */}
+            </Grid>
 
-                <Grid item xs={12}>
-                  <div className="panel-container">
-                    {!!selected_record?.consult_req_pk && !!user_type && (
-                      <LinkTabs tabs={GenerateTabLinks()} />
-                    )}
-                  </div>
-                </Grid>
-              </Grid>
+            {!!selected_record?.consult_req_pk && open_decline_dialog && (
+              <DialogDeclineConsultReq
+                open={open_decline_dialog}
+                handleCloseDialog={() => {
+                  set_open_decline_dialog(false);
+                }}
+                successCallback={() => {
+                  handleReloadRecord();
+                }}
+                consult_req_pk={selected_record?.consult_req_pk}
+              />
+            )}
 
-              {!!selected_record?.consult_req_pk && open_decline_dialog && (
-                <DialogDeclineConsultReq
-                  open={open_decline_dialog}
+            {!!selected_record?.consult_req_pk && open_assign_dept_dialog && (
+              <DialogAssignConsultDept
+                open={open_assign_dept_dialog}
+                handleCloseDialog={() => {
+                  set_open_assign_dept_dialog(false);
+                }}
+                successCallback={() => {
+                  handleReloadRecord();
+                }}
+                selected_consultation={selected_record}
+              />
+            )}
+
+            {/* {!!selected_record?.consult_req_pk &&
+              open_change_consult_cost_dialog && (
+                <DialogChangeConsultCost
+                  open={open_change_consult_cost_dialog}
                   handleCloseDialog={() => {
-                    set_open_decline_dialog(false);
-                  }}
-                  successCallback={() => {
-                    handleReloadRecord();
-                  }}
-                  consult_req_pk={selected_record.consult_req_pk}
-                />
-              )}
-
-              {!!selected_record?.consult_req_pk && open_assign_dept_dialog && (
-                <DialogAssignConsultDept
-                  open={open_assign_dept_dialog}
-                  handleCloseDialog={() => {
-                    set_open_assign_dept_dialog(false);
+                    set_open_change_consult_cost_dialog(false);
                   }}
                   successCallback={() => {
                     handleReloadRecord();
                   }}
                   selected_consultation={selected_record}
                 />
-              )}
+              )} */}
 
-              {!!selected_record?.consult_req_pk &&
-                open_change_consult_cost_dialog && (
-                  <DialogChangeConsultCost
-                    open={open_change_consult_cost_dialog}
-                    handleCloseDialog={() => {
-                      set_open_change_consult_cost_dialog(false);
-                    }}
-                    successCallback={() => {
-                      handleReloadRecord();
-                    }}
-                    selected_consultation={selected_record}
-                  />
-                )}
+            {!!selected_record?.consult_req_pk && open_map_consult_dialog && (
+              <DialogMapConsultPatient
+                open={open_map_consult_dialog}
+                handleCloseDialog={() => {
+                  set_open_map_consult_dialog(false);
+                }}
+                successCallback={() => {
+                  handleReloadRecord();
+                }}
+                selected_record={selected_record}
+              />
+            )}
 
-              {!!selected_record?.consult_req_pk && open_map_consult_dialog && (
-                <DialogMapConsultPatient
-                  open={open_map_consult_dialog}
-                  handleCloseDialog={() => {
-                    set_open_map_consult_dialog(false);
-                  }}
-                  successCallback={() => {
-                    handleReloadRecord();
-                  }}
-                  selected_record={selected_record}
-                />
-              )}
+            {!!selected_record?.consult_req_pk && open_start_consult_dialog && (
+              <DialogStartConsult
+                open={open_start_consult_dialog}
+                handleCloseDialog={() => {
+                  set_open_start_consult_dialog(false);
+                }}
+                successCallback={() => {
+                  handleReloadRecord();
+                }}
+                selected_record={selected_record}
+              />
+            )}
 
-              {!!selected_record?.consult_req_pk && open_start_consult_dialog && (
-                <DialogStartConsult
-                  open={open_start_consult_dialog}
-                  handleCloseDialog={() => {
-                    set_open_start_consult_dialog(false);
-                  }}
-                  successCallback={() => {
-                    handleReloadRecord();
-                  }}
-                  selected_record={selected_record}
-                />
-              )}
-
-              {!!preview_soa && (
-                <PreviewPDF
-                  file={preview_soa}
-                  doc_title={`SOA-${selected_record?.consult_req_pk}.pdf`}
-                  handleClose={() => {
-                    set_preview_soa(null);
-                  }}
-                  actions={
-                    <>
-                      <Tooltip title="Email this document to the patient.">
-                        <Badge
-                          badgeContent={selected_record.soa_sent_count}
-                          color="secondary"
+            {!!preview_soa && (
+              <PreviewPDF
+                file={preview_soa}
+                doc_title={`SOA-${selected_record?.consult_req_pk}.pdf`}
+                handleClose={() => {
+                  set_preview_soa(null);
+                }}
+                actions={
+                  <>
+                    <Tooltip title="Email this document to the patient.">
+                      <Badge
+                        badgeContent={selected_record?.soa_sent_count}
+                        color="secondary"
+                      >
+                        <IconButton
+                          className="btn-pdf-preview"
+                          onClick={() => {
+                            handleEmailSoa();
+                          }}
                         >
-                          <IconButton
-                            className="btn-pdf-preview"
-                            onClick={() => {
-                              handleEmailSoa();
-                            }}
-                          >
-                            <EmailRoundedIcon />
-                          </IconButton>
-                        </Badge>
-                      </Tooltip>
-                    </>
-                  }
-                />
-              )}
+                          <EmailRoundedIcon />
+                        </IconButton>
+                      </Badge>
+                    </Tooltip>
+                  </>
+                }
+              />
+            )}
 
-              {!!preview_med_presc && (
-                <PreviewPDF
-                  file={preview_med_presc}
-                  doc_title={`Medical-Prescription-${selected_record?.consult_req_pk}.pdf`}
-                  handleClose={() => {
-                    set_preview_med_presc(null);
-                  }}
-                  actions={
-                    <>
-                      <Tooltip title="Email this document to the patient.">
-                        <Badge
-                          badgeContent={selected_record.med_pres_sent}
-                          color="secondary"
+            {!!preview_med_presc && (
+              <PreviewPDF
+                file={preview_med_presc}
+                doc_title={`Medical-Prescription-${selected_record?.consult_req_pk}.pdf`}
+                handleClose={() => {
+                  set_preview_med_presc(null);
+                }}
+                actions={
+                  <>
+                    <Tooltip title="Email this document to the patient.">
+                      <Badge
+                        badgeContent={selected_record?.med_pres_sent}
+                        color="secondary"
+                      >
+                        <IconButton
+                          className="btn-pdf-preview"
+                          onClick={() => {
+                            handleEmailMedPrescrip();
+                          }}
                         >
-                          <IconButton
-                            className="btn-pdf-preview"
-                            onClick={() => {
-                              handleEmailMedPrescrip();
-                            }}
-                          >
-                            <EmailRoundedIcon />
-                          </IconButton>
-                        </Badge>
-                      </Tooltip>
-                    </>
-                  }
-                />
-              )}
+                          <EmailRoundedIcon />
+                        </IconButton>
+                      </Badge>
+                    </Tooltip>
+                  </>
+                }
+              />
+            )}
 
-              {!!preview_proc_presc && (
-                <PreviewPDF
-                  file={preview_proc_presc}
-                  doc_title={`Procedure-Prescription-${selected_record?.consult_req_pk}.pdf`}
-                  handleClose={() => {
-                    set_preview_proc_presc(null);
-                  }}
-                  actions={
-                    <>
-                      <Tooltip title="Email this document to the patient.">
-                        <Badge
-                          badgeContent={selected_record.proc_pres_sent}
-                          color="secondary"
+            {!!preview_proc_presc && (
+              <PreviewPDF
+                file={preview_proc_presc}
+                doc_title={`Procedure-Prescription-${selected_record?.consult_req_pk}.pdf`}
+                handleClose={() => {
+                  set_preview_proc_presc(null);
+                }}
+                actions={
+                  <>
+                    <Tooltip title="Email this document to the patient.">
+                      <Badge
+                        badgeContent={selected_record?.proc_pres_sent}
+                        color="secondary"
+                      >
+                        <IconButton
+                          className="btn-pdf-preview"
+                          onClick={() => {
+                            handleEmailProcPrescrip();
+                          }}
                         >
-                          <IconButton
-                            className="btn-pdf-preview"
-                            onClick={() => {
-                              handleEmailProcPrescrip();
-                            }}
-                          >
-                            <EmailRoundedIcon />
-                          </IconButton>
-                        </Badge>
-                      </Tooltip>
-                    </>
-                  }
-                />
-              )}
-            </Container>
-          )
+                          <EmailRoundedIcon />
+                        </IconButton>
+                      </Badge>
+                    </Tooltip>
+                  </>
+                }
+              />
+            )}
+          </PatientManageUi>
         )
-      ) : (
-        <BodyLoader />
       )}
     </>
   );

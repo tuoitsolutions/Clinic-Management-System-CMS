@@ -47,15 +47,15 @@ const useQontoStepIconStyles = makeStyles({
     color: "#784af4",
   },
   circle: {
-    width: 8,
-    height: 8,
+    width: 12,
+    height: 12,
     borderRadius: "50%",
     backgroundColor: "currentColor",
   },
   completed: {
     color: "#784af4",
     zIndex: 1,
-    fontSize: 18,
+    // fontSize: 18,
   },
 });
 
@@ -120,7 +120,9 @@ const CustomStepper: React.FC<CustomStepperProps> = ({
         {steps?.map((step, key) => (
           <Step key={key}>
             <StepLabel StepIconComponent={QontoStepIcon}>
-              <div style={{ fontWeight: 600 }}>{step.label}</div>
+              <div style={{ fontWeight: 600, fontSize: `1em` }}>
+                {step.label}
+              </div>
               {!!step.subtitle && (
                 <div>
                   <small

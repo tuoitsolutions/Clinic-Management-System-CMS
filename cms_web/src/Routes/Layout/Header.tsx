@@ -69,7 +69,7 @@ const Header: React.FC<IHeader> = memo(
               className="brand-logo"
               alt={hospital_name}
               isBlob
-              spacing={10}
+              spacing={6}
             />
             <div className="brand-name">{hospital_name}</div>
             <div className="app-name">{APP_NAME}</div>

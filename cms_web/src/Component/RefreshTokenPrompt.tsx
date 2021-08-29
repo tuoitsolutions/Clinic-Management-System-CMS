@@ -54,9 +54,8 @@ export const RefreshTokenPrompt = memo(() => {
   const [refreshingToken, setRefreshingToken] = useState<boolean>(false);
   const latestChat = useRef(null);
 
-  const [openMaintenanceDialog, setOpenMaintenanceDialog] = useState<boolean>(
-    false
-  );
+  const [openMaintenanceDialog, setOpenMaintenanceDialog] =
+    useState<boolean>(false);
 
   const [maintenanceInfo, setMaintenanceInfo] = useState<Date | null>();
 
@@ -129,13 +128,6 @@ export const RefreshTokenPrompt = memo(() => {
 
     task();
   }, 5000);
-
-  // console.log(
-  //   `latestChat?.current < 60`,
-  //   latestChat?.current < 60,
-  //   latestChat?.current,
-  //   60
-  // );
 
   if (latestChat?.current && latestChat?.current <= 0) {
     removeToken();

@@ -1,7 +1,7 @@
 import { PostFetch } from "../../Hooks/UseFetch";
 import ResponseModel from "../Models/ServerResponseModel";
 
-const BASE = `api/def/`;
+const BASE = `api/defval/`;
 
 const getHospitalNameApi = async (): Promise<ResponseModel> => {
   const response = await PostFetch(BASE + "getHospitalName", null);
@@ -18,8 +18,20 @@ const getHospitalLogoApi = async (): Promise<ResponseModel> => {
   return response;
 };
 
+const GetConsultDefRegion = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetConsultDefRegion", null);
+  return response;
+};
+
+const GetConsultDefZipcode = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetConsultDefZipcode", null);
+  return response;
+};
+
 export default {
   getHospitalNameApi,
   getHospitalTaglineApi,
   getHospitalLogoApi,
+  GetConsultDefRegion,
+  GetConsultDefZipcode,
 };

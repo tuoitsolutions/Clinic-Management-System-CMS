@@ -36,8 +36,8 @@ namespace cms_server.Repositories
                 using var tran = con.BeginTransaction();
                 try
                 {
-                    payload.otp_code = UseOtp.create();
-
+                    //payload.otp_code = UseOtp.create();
+                    payload.otp_code = "111111";
 
                     con.Execute($@"delete from otp where mob_no=@mob_no;",
                                payload, transaction: tran);

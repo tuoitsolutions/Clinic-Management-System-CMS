@@ -27,17 +27,17 @@ interface IAdminDialogCreate {
 }
 
 const form_schema = yup.object({
-  emp_id: yup.string().required().label("Employee Id"),
-  prefix: yup.string().label("Prefix"),
-  first_name: yup.string().required().label("First Name"),
-  middle_name: yup.string().label("Middle Name"),
-  last_name: yup.string().required().label("Last Name"),
-  suffix: yup.string().label("Name Extension"),
-  position: yup.string().required().label("Position"),
-  gender: yup.string().required().label("Gender"),
-  mob_no: yup.string().required().label("Mobile Number"),
-  tel_no: yup.string().label("Telephone Number"),
-  email: yup.string().email().required().label("Email Address"),
+  emp_id: yup.string().nullable().required().label("Employee Id"),
+  prefix: yup.string().nullable().label("Prefix"),
+  first_name: yup.string().nullable().required().label("First Name"),
+  middle_name: yup.string().nullable().label("Middle Name"),
+  last_name: yup.string().nullable().required().label("Last Name"),
+  suffix: yup.string().nullable().label("Name Extension"),
+  position: yup.string().nullable().required().label("Position"),
+  gender: yup.string().nullable().required().label("Gender"),
+  mob_no: yup.string().nullable().required().label("Mobile Number"),
+  tel_no: yup.string().nullable().label("Telephone Number"),
+  email: yup.string().nullable().email().required().label("Email Address"),
 });
 
 export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
@@ -94,7 +94,7 @@ export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
       <FormDialog
         open={props.open}
         title="Fill up all the required fields to register a new administrator"
-        minWidth={400}
+        minWidth={500}
         body={
           <>
             <FormProvider {...form_instance}>

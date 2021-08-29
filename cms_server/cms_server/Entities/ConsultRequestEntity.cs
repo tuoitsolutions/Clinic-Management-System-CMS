@@ -28,7 +28,9 @@ namespace cms_server.Entities
         public string symptoms { get; set; }
         public string notes { get; set; }
         public string line1 { get; set; }
-        public string line2 { get; set; }
+        public string is_charity { get; set; }
+        public string is_agree_priv_pol { get; set; }
+        //public string line2 { get; set; }
         public string brgy_pk { get; set; }
         public string prov_pk { get; set; }
         public string citymun_pk { get; set; }

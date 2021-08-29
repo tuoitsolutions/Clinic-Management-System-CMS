@@ -1,14 +1,9 @@
-﻿using AngleSharp;
-using cms_server.Entities;
+﻿using cms_server.Entities;
 using cms_server.Hooks;
 using SelectPdf;
-using SmartFormat;
-using SmartFormat.Core.Settings;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace cms_server.Pdf
 {
@@ -26,7 +21,7 @@ namespace cms_server.Pdf
             using (ms = new MemoryStream())
             {
                 string dir = Directory.GetCurrentDirectory();
-                var path = dir + "\\Pdf\\main.css";
+                var path = dir + "\\Pdf\\pdf.css";
 
                 string css_instance = File.ReadAllText(path);
 
@@ -98,7 +93,7 @@ namespace cms_server.Pdf
                                         </div>
 
                                         <div class='address'>
-                                            {consult_request.line1},  {consult_request.line2},  {consult_request.psgcaddress} {consult_request.zip_code}
+                                            {consult_request.line1},   {consult_request.psgcaddress} {consult_request.zip_code}
                                         </div>
                                     </div>
                                     <div class='qr'>
@@ -140,7 +135,6 @@ namespace cms_server.Pdf
                                             </div>
                                             <div class='value'>
                                                 {consult_request.line1},
-                                                {consult_request.line2},
                                                 {consult_request.citymundesc},
                                                 {consult_request.provincedesc},
                                                 {consult_request.regiondesc} 

@@ -4,12 +4,12 @@ import PageLoader from "../Component/PageLoader";
 import PagePrompt from "../Component/PagePrompt";
 import PageSnackbar from "../Component/PageSnackbar";
 import PageSuccessPrompt from "../Component/PageSuccessPrompt";
-import RefreshTokenPrompt from "../Component/RefreshTokenPrompt";
 import ConsultRequestView from "../Views/ConsultRequestView";
 import LoginPortal from "../Views/LoginPortal/LoginPortal";
 import OnlineConsultLinkView from "../Views/OnlineConsulLinkView/OnlineConsulLinkView";
 import PaymentView from "../Views/PaymentView";
 import PaymentFeedback from "../Views/PaymentView/PaymentFeedback";
+import PrivacyPolicyView from "../Views/PrivacyPolicyView";
 import AdminRoutes from "./AdminRoutes";
 import Layout from "./Layout/Layout";
 
@@ -23,11 +23,8 @@ const Routes = memo(() => {
         <PageSuccessPrompt />
         <Switch>
           <Route path="/login" exact component={LoginPortal} />
-          <Route
-            path="/consultation-request"
-            exact
-            component={ConsultRequestView}
-          />
+          <Route path="/" exact component={ConsultRequestView} />
+          <Route path="/privacy-policy" exact component={PrivacyPolicyView} />
           <Route path="/payment/:feedback" exact component={PaymentFeedback} />
 
           <Route
@@ -43,7 +40,7 @@ const Routes = memo(() => {
             component={OnlineConsultLinkView}
           />
           <Layout>
-            <RefreshTokenPrompt />
+            {/* <RefreshToksenPrompt /> */}
             <AdminRoutes />
           </Layout>
         </Switch>

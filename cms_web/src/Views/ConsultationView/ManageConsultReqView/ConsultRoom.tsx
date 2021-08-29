@@ -23,6 +23,7 @@ import SendRoundedIcon from "@material-ui/icons/SendRounded";
 import CustomAvatar from "../../../Component/CustomAvatar";
 import { setPageSnackbar } from "../../../Services/Actions/PageActions";
 import moment from "moment";
+import { ConsoleLogger } from "@microsoft/signalr/dist/esm/Utils";
 
 interface IConsultRoom {
   selected_row: ConsultRequestEntity;
@@ -94,6 +95,7 @@ const ConsultRoom: FC<IConsultRoom> = memo(({ selected_row }) => {
       connection
         .start()
         .then((result) => {
+          console.log(`result`, result);
           connection.on("GetConsultMessage", async () => {
             const res = await ChatConsultApi.GetConsultChat(
               selected_row.consult_req_pk
@@ -146,7 +148,7 @@ const ConsultRoom: FC<IConsultRoom> = memo(({ selected_row }) => {
       }
     };
 
-    mounted && fetch_initial_data();
+    mounted && !!selected_row?.consult_req_pk && fetch_initial_data();
 
     return () => {
       mounted = false;
@@ -161,142 +163,146 @@ const ConsultRoom: FC<IConsultRoom> = memo(({ selected_row }) => {
   }, [chat_messages, connection]);
 
   return (
-    !!user?.full_name &&
-    !!selected_row?.consult_link_hash &&
-    !!connection?.connectionId && (
+    !!user?.full_name && (
       <>
         <StyledConsultRoom>
-          <div className="video-ctnr">
-            <Jutsu
-              roomName={selected_row.hash_key + selected_row.consult_link_hash}
-              displayName={user?.full_name}
-              subject={selected_row.consult_req_pk}
-              containerStyles={{
-                height: `100%`,
-                width: `100%`,
-                border: `none`,
-              }}
-              loadingComponent={<BodyLoader />}
-              errorComponent={
-                <Alert severity="error">The video could not be loaded.</Alert>
-              }
-              configOverwrite={{
-                enableWelcomePage: false,
-                prejoinPageEnabled: false,
-                disableLogCollector: true,
-                defaultLogLevel: "error",
-                startWithVideoMuted: true,
-                startWithAudioMuted: true,
-              }}
-              onJitsi={(e) => {
-                console.log(`jitsi details -> `, e);
-              }}
-              loggerConfigOverwrite={{
-                disableLogCollector: true,
-              }}
-              interfaceConfigOverwrite={{
-                disableLogCollector: true,
-                defaultLogLevel: "error",
-                prejoinPageEnabled: false,
-                DISPLAY_WELCOME_FOOTER: false,
-                GENERATE_ROOMNAMES_ON_WELCOME_PAGE: false,
-                HIDE_INVITE_MORE_HEADER: true,
-                HIDE_DEEP_LINKING_LOGO: true,
-                SHOW_JITSI_WATERMARK: false,
-                SHOW_WATERMARK_FOR_GUESTS: false,
-                // JITSI_WATERMARK_LINK: "",
-                TOOLBAR_BUTTONS: [
-                  "microphone",
-                  "camera",
-                  "desktop",
-                  "fullscreen",
-                  "fodeviceselection",
-                  "hangup",
-                  "profile",
-                  "etherpad",
-                  "settings",
-                  "raisehand",
-                  "stats",
-                  "shortcuts",
-                  "tileview",
-                  "videobackgroundblur",
-                  "mute-everyone",
-                ],
-              }}
-            />
-          </div>
-          <div className="chat-ctnr">
-            <div className="cntr-title">
-              <div className="main">Chat</div>
-              <div className="sub">
-                You can communicate with each other here.
-              </div>
-            </div>
-
-            <div className="chat-content">
-              <div className="sent-msg-ctnr" id="msg-ctnr">
-                {chat_messages.map((msg, i) => (
-                  <div
-                    key={i}
-                    // ref={}
-                    className="sent-msg-item"
-                  >
-                    <CustomAvatar
-                      className="img"
-                      src=""
-                      alt={msg.sender_name.charAt(1)}
-                      spacing={7}
-                      // src={msg.picture}
-                    />
-                    <div className="name">{msg.sender_name}</div>
-                    <div className="time">
-                      {InvalidDateTimeToDefault(msg.sent_at, "-")}
-                    </div>
-                    <div className="message">{msg.msg_body}</div>
-                  </div>
-                ))}
-                <div ref={message_textfield_ref} />
-              </div>
-              <form
-                id="hook-form"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSubmitMessage();
+          {!!!!selected_row?.consult_link_hash && (
+            <div className="video-ctnr">
+              <Jutsu
+                roomName={
+                  selected_row.hash_key + selected_row.consult_link_hash
+                }
+                displayName={user?.full_name}
+                subject={selected_row.consult_req_pk}
+                containerStyles={{
+                  height: `100%`,
+                  width: `100%`,
+                  border: `none`,
                 }}
-                className="write-msg-ctnr"
-                ref={chat_form_ref}
-              >
-                <TextField
-                  value={message_body}
-                  onChange={handleSetMessageBody}
-                  fullWidth
-                  variant="outlined"
-                  placeholder="Write your message here..."
-                  multiline
-                  rowsMax={2}
-                  rows={2}
-                  className="write-btn"
-                  onKeyDown={(
-                    event: React.KeyboardEvent<HTMLDivElement>
-                  ): void => {
-                    if (event.key === "Enter" && !event.shiftKey) {
-                      if (chat_form_ref.current) {
-                        handleSubmitMessage();
-                      }
-                    }
-                  }}
-                  InputProps={{
-                    style: {
-                      backgroundColor: `#f1f3f8`,
-                    },
-                  }}
-                />
-                <IconButton form="hook-form" type="submit" color="primary">
-                  <SendRoundedIcon />
-                </IconButton>
-              </form>
+                loadingComponent={<BodyLoader />}
+                errorComponent={
+                  <Alert severity="error">The video could not be loaded.</Alert>
+                }
+                configOverwrite={{
+                  enableWelcomePage: false,
+                  prejoinPageEnabled: false,
+                  disableLogCollector: true,
+                  defaultLogLevel: "error",
+                  startWithVideoMuted: true,
+                  startWithAudioMuted: true,
+                }}
+                onJitsi={(e) => {
+                  console.log(`jitsi details -> `, e);
+                }}
+                loggerConfigOverwrite={{
+                  disableLogCollector: true,
+                }}
+                interfaceConfigOverwrite={{
+                  disableLogCollector: true,
+                  defaultLogLevel: "error",
+                  prejoinPageEnabled: false,
+                  DISPLAY_WELCOME_FOOTER: false,
+                  GENERATE_ROOMNAMES_ON_WELCOME_PAGE: false,
+                  HIDE_INVITE_MORE_HEADER: true,
+                  HIDE_DEEP_LINKING_LOGO: true,
+                  SHOW_JITSI_WATERMARK: false,
+                  SHOW_WATERMARK_FOR_GUESTS: false,
+                  // JITSI_WATERMARK_LINK: "",
+                  TOOLBAR_BUTTONS: [
+                    "microphone",
+                    "camera",
+                    "desktop",
+                    "fullscreen",
+                    "fodeviceselection",
+                    "hangup",
+                    "profile",
+                    "etherpad",
+                    "settings",
+                    "raisehand",
+                    "stats",
+                    "shortcuts",
+                    "tileview",
+                    "videobackgroundblur",
+                    "mute-everyone",
+                  ],
+                }}
+              />
             </div>
-          </div>
+          )}
+          {!!connection?.connectionId && (
+            <div className="chat-ctnr">
+              <div className="cntr-title">
+                <div className="main">Chat</div>
+                <div className="sub">
+                  You can communicate with each other here.
+                </div>
+              </div>
+
+              <div className="chat-content">
+                <div className="sent-msg-ctnr" id="msg-ctnr">
+                  {chat_messages.map((msg, i) => (
+                    <div
+                      key={i}
+                      // ref={}
+                      className="sent-msg-item"
+                    >
+                      <CustomAvatar
+                        className="img"
+                        src=""
+                        alt={msg.sender_name.charAt(1)}
+                        spacing={7}
+                        // src={msg.picture}
+                      />
+                      <div className="name">{msg.sender_name}</div>
+                      <div className="time">
+                        {InvalidDateTimeToDefault(msg.sent_at, "-")}
+                      </div>
+                      <div className="message">{msg.msg_body}</div>
+                    </div>
+                  ))}
+                  <div ref={message_textfield_ref} />
+                </div>
+                <form
+                  id="hook-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmitMessage();
+                  }}
+                  className="write-msg-ctnr"
+                  ref={chat_form_ref}
+                >
+                  <TextField
+                    value={message_body}
+                    onChange={handleSetMessageBody}
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Write your message here..."
+                    multiline
+                    rowsMax={2}
+                    rows={2}
+                    className="write-btn"
+                    onKeyDown={(
+                      event: React.KeyboardEvent<HTMLDivElement>
+                    ): void => {
+                      if (event.key === "Enter" && !event.shiftKey) {
+                        if (chat_form_ref.current) {
+                          handleSubmitMessage();
+                        }
+                      }
+                    }}
+                    InputProps={{
+                      style: {
+                        backgroundColor: `#f1f3f8`,
+                      },
+                    }}
+                  />
+                  <IconButton form="hook-form" type="submit" color="primary">
+                    <SendRoundedIcon />
+                  </IconButton>
+                </form>
+              </div>
+            </div>
+          )}
         </StyledConsultRoom>
       </>
     )

@@ -29,5 +29,9 @@ namespace cms_server.Entities
         //
         public string specialty { get; set; }
         public IFormFile img_attach { get; set; }
+        public int? total_consult { get; set; }
+
+
+
     }
 }

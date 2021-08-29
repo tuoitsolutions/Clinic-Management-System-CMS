@@ -4,6 +4,29 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 -->
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <_PublishTargetUrl>C:\Users\Public\Software Development\PRODUCTION\CF4</_PublishTargetUrl>
+    <_PublishTargetUrl>C:\Users\Public\Software Development\PRODUCTION\CMS</_PublishTargetUrl>
   </PropertyGroup>
+  <ItemGroup>
+    <File Include="Pdf/main.css">
+      <publishTime>08/24/2021 20:53:59</publishTime>
+    </File>
+    <File Include="Pdf/MedPrescripPdf/MedPrescripPdf.cs">
+      <publishTime>08/26/2021 18:53:18</publishTime>
+    </File>
+    <File Include="Pdf/pdf.css">
+      <publishTime>08/27/2021 01:18:56</publishTime>
+    </File>
+    <File Include="Pdf/ProcPrescripPdf/ProcPrescrip.cs">
+      <publishTime>08/26/2021 18:53:13</publishTime>
+    </File>
+    <File Include="Pdf/SoaPdf/SoaPdf.cs">
+      <publishTime>08/26/2021 18:53:16</publishTime>
+    </File>
+    <File Include="Pdf/SoaPdf/SoaPdf.css">
+      <publishTime>08/21/2021 22:14:08</publishTime>
+    </File>
+    <File Include="Pdf/SoaPdf/SoaPdf.html">
+      <publishTime>08/24/2021 20:52:49</publishTime>
+    </File>
+  </ItemGroup>
 </Project>

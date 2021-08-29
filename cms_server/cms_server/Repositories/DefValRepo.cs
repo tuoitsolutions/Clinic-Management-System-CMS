@@ -160,6 +160,71 @@ namespace claim_form_server.Repositories
             }
         }
 
+        public ResponseModel GetConsultDefRegion()
+        {
+            try
+            {
+                using (var con = new MySqlConnection(DatabaseConfig.GetConnection()))
+                {
+                    con.Open();
+                    using (var tran = con.BeginTransaction())
+                    {
+                        var data = con.QuerySingle<string>($@"
+                                        SELECT val FROM `def_val` WHERE remarks = 'consult_def_region'
+                                        "
+                                         , null, transaction: tran);
+                        return new ResponseModel
+                        {
+                            success = true,
+                            data = data
+                        };
+                    }
+                }
+
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = err.Message
+                };
+            }
+        }
+        public ResponseModel GetConsultDefZipcode()
+        {
+            try
+            {
+                using (var con = new MySqlConnection(DatabaseConfig.GetConnection()))
+                {
+                    con.Open();
+                    using (var tran = con.BeginTransaction())
+                    {
+                        var data = con.QuerySingle<string>($@"
+                                        SELECT val FROM `def_val` WHERE remarks = 'consult_def_zipcode'
+                                        "
+                                         , null, transaction: tran);
+                        return new ResponseModel
+                        {
+                            success = true,
+                            data = data
+                        };
+                    }
+                }
+
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = err.Message
+                };
+            }
+        }
+
 
         public DateTime getCf4MaintenanceDateTime()
         {

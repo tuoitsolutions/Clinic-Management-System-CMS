@@ -389,7 +389,12 @@ export const TabProcRecord: FC<ITabProcRecord> = memo(({ consult_req_pk }) => {
                             ]}
                           />
                         </TableCell>
-                        <TableCell>{row.proc_desc}</TableCell>
+                        <TableCell>
+                          <div>{row.proc_desc}</div>
+                          <small>
+                            <i>{row.notes}</i>
+                          </small>
+                        </TableCell>
 
                         <TableCell align="center">
                           <Chip

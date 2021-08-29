@@ -72,6 +72,9 @@ namespace cms_server.Repositories
                             mob_no=@mob_no,
                             chief_complaint=@chief_complaint,
                             symptoms=@symptoms,
+                            is_charity=@is_charity,
+                            is_agree_priv_pol=@is_agree_priv_pol,
+                            assign_dept_pk=@assign_dept_pk,
                             notes=@notes,
                             brgy_pk=@brgy_pk,
                             prov_pk=@prov_pk,
@@ -79,7 +82,6 @@ namespace cms_server.Repositories
                             region_pk=@region_pk,
                             zip_code=@zip_code,
                             line1=@line1,
-                            line2=@line2,
                             request_at = NOW(),
                             sts_pk = 'fa';
                             ",
@@ -87,55 +89,59 @@ namespace cms_server.Repositories
 
                 if (add_consult_request > 0)
                 {
-                    foreach (var f in payload.attach_req_files)
+                    if (payload?.attach_req_files != null)
                     {
 
-                        FileResponseModel file_upload_response = new FileResponseModel
+                        foreach (var f in payload.attach_req_files)
                         {
-                            success = true
-                        };
 
-                        var proc_file_payload = new ConsultRequestFileEntity()
-                        {
-                            consult_req_pk = payload.consult_req_pk
-                        };
-
-                        file_upload_response = UseFtp.UploadFtp(f, DefaultConfig.ftp_ip + "/" + DefaultConfig.app_name + "/Uploads/ConsultationFiles/", DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
-                        if (!file_upload_response.success)
-                        {
-                            return new ResponseModel
+                            FileResponseModel file_upload_response = new FileResponseModel
                             {
-                                success = false,
-                                message = file_upload_response.message
+                                success = true
                             };
-                        }
-                        else
-                        {
-                            proc_file_payload.file_dest = file_upload_response.data.path;
-                            proc_file_payload.file_name = file_upload_response.data.name;
-                        }
+
+                            var proc_file_payload = new ConsultRequestFileEntity()
+                            {
+                                consult_req_pk = payload.consult_req_pk
+                            };
+
+                            file_upload_response = UseFtp.UploadFtp(f, DefaultConfig.ftp_ip + "/" + DefaultConfig.app_name + "/Uploads/ConsultationFiles/", DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                            if (!file_upload_response.success)
+                            {
+                                return new ResponseModel
+                                {
+                                    success = false,
+                                    message = file_upload_response.message
+                                };
+                            }
+                            else
+                            {
+                                proc_file_payload.file_dest = file_upload_response.data.path;
+                                proc_file_payload.file_name = file_upload_response.data.name;
+                            }
 
 
-                        int add_file = con.Execute(@"
+                            int add_file = con.Execute(@"
                                 INSERT INTO `consult_request_file` 
                                 SET 
                                 consult_req_pk=@consult_req_pk, 
                                 file_dest=@file_dest,
                                 file_name=@file_name,
                                 encoded_at=NOW();",
-                            proc_file_payload, transaction: tran);
+                                proc_file_payload, transaction: tran);
 
-                        if (add_file <= 0)
-                        {
-                            tran.Rollback();
-                            return new ResponseModel
+                            if (add_file <= 0)
                             {
-                                success = false,
-                                message = $"The {f.FileName} could not be saved! Please try again!"
-                            };
+                                tran.Rollback();
+                                return new ResponseModel
+                                {
+                                    success = false,
+                                    message = $"The {f.FileName} could not be saved! Please try again!"
+                                };
+                            }
                         }
-                    }
 
+                    }
                     tran.Commit();
                     return new ResponseModel
                     {
@@ -205,7 +211,8 @@ namespace cms_server.Repositories
                     if (insert_logs_affected_rows > 0)
                     {
 
-                        string otp_code = UseOtp.create();
+                        //string otp_code = UseOtp.create();
+                        string otp_code = "111111";
 
                         string full_body = $@"This is {def_val_repo.GetHospitalName().data}. Dear {selected_row.last_name}, {selected_row.ended_at}, your Consultation Request Payment Link OTP is: {otp_code}. This is only valid within 24 hours.";
 
@@ -333,7 +340,8 @@ namespace cms_server.Repositories
                     if (insert_logs_affected_rows > 0)
                     {
 
-                        string otp_code = UseOtp.create();
+                        //string otp_code = UseOtp.create();
+                        string otp_code = "111111";
 
                         bool send_to_sms = payload.send_to.FirstOrDefault(x => x == "sms") == null ? false : true;
                         bool send_to_email = payload.send_to.FirstOrDefault(x => x == "email") == null ? false : true;
@@ -687,24 +695,24 @@ namespace cms_server.Repositories
                 }
                 else
                 {
-                    //sql_query = $@"SELECT * FROM (
-                    //  SELECT cr.*,MD5(cr.consult_req_pk) hash_key
-                    //  ,r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc
-                    //  ,psg.`citymundesc`,psg.`provincedesc`,psg.`barangaydesc`,psg.`regiondesc`,psg.`completeaddress` psgcaddress
-                    //  ,CONCAT(d.dept_code,'-',d.dept_name) AS `assign_dept_desc`
-                    //  ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
-                    //  FROM `consult_request` cr
-                    //  LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
-                    //  LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
-                    //  LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
-                    //  LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`
-                    //  LEFT JOIN `department` d ON d.`dept_pk` = cr.`assign_dept_pk`
-                    //  LEFT JOIN `hosp_resident` hr ON hr.`res_pk` = cr.`assign_res_pk`
-                    //  ) AS tmp
-                    //  WHERE hash_key=@hash_key LIMIT 1 ;";
+                    sql_query = $@"SELECT * FROM (
+                      SELECT cr.*,MD5(cr.consult_req_pk) hash_key
+                      ,r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc
+                      ,psg.`citymundesc`,psg.`provincedesc`,psg.`barangaydesc`,psg.`regiondesc`,psg.`completeaddress` psgcaddress
+                      ,CONCAT(d.dept_code,'-',d.dept_name) AS `assign_dept_desc`
+                      ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
+                      FROM `consult_request` cr
+                      LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                      LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                      LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                      LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`
+                      LEFT JOIN `department` d ON d.`dept_pk` = cr.`assign_dept_pk`
+                      LEFT JOIN `hosp_resident` hr ON hr.`res_pk` = cr.`assign_res_pk`
+                      ) AS tmp
+                      WHERE hash_key=@hash_key LIMIT 1 ;";
 
-                    //table_data = con.Query<ConsultRequestEntity>(sql_query
-                    //            , new { hash_key }, transaction: tran).ToList();
+                    table_data = con.Query<ConsultRequestEntity>(sql_query
+                                , new { hash_key }, transaction: tran).ToList();
                 }
 
                 if (table_data.Count > 0)
@@ -932,7 +940,8 @@ namespace cms_server.Repositories
                                                    WHERE md5(consult_req_pk)=@consult_req_pk limit 1 ;",
                                                  new { payload.consult_req_pk }, transaction: tran);
 
-                string otp_code = UseOtp.create();
+                //string otp_code = UseOtp.create();
+                string otp_code = "111111";
 
                 string full_body = $@"This is {def_val_repo.GetHospitalName().data}. Dear {selected_row.last_name}, {selected_row.ended_at}, your Consultation Request Payment Link OTP is: {otp_code}. This is only valid within 10 minutes.";
 
@@ -1347,7 +1356,8 @@ namespace cms_server.Repositories
 
                 int patient_success = 0;
 
-                string consult_link_pass = UseOtp.create();
+                //string consult_link_pass = UseOtp.create();
+                string consult_link_pass = "111111";
                 string consult_link_hash = UseHash.Sha256(consult_link_pass);
 
                 int update_consult = con.Execute($@"

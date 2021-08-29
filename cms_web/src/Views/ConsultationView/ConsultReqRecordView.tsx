@@ -151,7 +151,7 @@ const initial_filter = {
   request_from: null,
 };
 
-export const ConsultReqRecordView: FC<ConsultReqRecordViewProps> = memo(() => {
+const ConsultReqRecordView: FC<ConsultReqRecordViewProps> = memo(() => {
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -455,7 +455,7 @@ export const ConsultReqRecordView: FC<ConsultReqRecordViewProps> = memo(() => {
 
                       {data_table?.table?.map((row, index) => (
                         <TableRow key={index}>
-                          <TableCell>
+                          <TableCell align="center">
                             <IconButtonPopper
                               buttons={[
                                 {
@@ -463,7 +463,7 @@ export const ConsultReqRecordView: FC<ConsultReqRecordViewProps> = memo(() => {
                                   color: "primary",
                                   handleClick: () => {
                                     history.push(
-                                      `/request/${row.hash_key}/file`
+                                      `/request/${row.hash_key}/general`
                                     );
                                   },
                                 },
@@ -495,7 +495,10 @@ export const ConsultReqRecordView: FC<ConsultReqRecordViewProps> = memo(() => {
                             />
                           </TableCell>
                           <TableCell>
-                            {InvalidDateTimeToDefault(row?.request_at, "-")}
+                            <small>
+                              {" "}
+                              {InvalidDateTimeToDefault(row?.request_at, "-")}
+                            </small>
                           </TableCell>
                         </TableRow>
                       ))}

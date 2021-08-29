@@ -1,7 +1,7 @@
 const StringEmptyToDefault = (
   originalString: string,
-  defaultString: string
-): string | undefined => {
+  defaultString: any
+): any => {
   if (!originalString) {
     return defaultString;
   }

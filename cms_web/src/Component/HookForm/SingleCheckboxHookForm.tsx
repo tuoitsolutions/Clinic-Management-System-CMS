@@ -17,7 +17,7 @@ interface RadioItems {
 interface SingleCheckboxHookFormProps {
   //extends Partial<> {
   name: string;
-  label: string;
+  label: any;
   variant?: "standard" | "outlined" | "filled";
   size?: "small" | "medium";
 }

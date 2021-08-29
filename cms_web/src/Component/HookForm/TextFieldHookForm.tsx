@@ -22,10 +22,10 @@ export const TextFieldHookForm: FC<TextFieldProps> = memo((props) => {
         <TextField
           {...props}
           {...ctrlProps}
-          autoComplete="off"
           value={!!ctrlProps.value ? ctrlProps.value : ""}
           error={error}
           helperText={error_message}
+          autoComplete="off"
           onKeyPress={(event) => {
             if (props.type === "text") {
               if (!/^[A-Za-z ]+$/.test(event.key)) {

@@ -63,6 +63,7 @@ const DateFieldHookForm: React.FC<DateFieldHookFormProps> = React.memo(
                     required={props.required}
                     disabled={props.disabled}
                     readOnly={props.readOnly}
+                    autoComplete="off"
                   />
                 )}
 
@@ -83,12 +84,12 @@ const DateFieldHookForm: React.FC<DateFieldHookFormProps> = React.memo(
                     helperText={
                       !!props.helperText ? props.helperText : error_message
                     }
-                    placeholder={
-                      !!props.placeholder ? props.placeholder : "MM/DD/YYYY"
-                    }
+                    mask={props.mask}
+                    placeholder={"MM/DD/YYYY"}
                     required={props.required}
                     disabled={props.disabled}
                     readOnly={props.readOnly}
+                    autoComplete="off"
                     onBlur={ctrl_props.onBlur}
                     value={!!ctrl_props.value ? ctrl_props.value : null}
                     onChange={(date: Date, value: string) => {
@@ -131,6 +132,7 @@ const DateFieldHookForm: React.FC<DateFieldHookFormProps> = React.memo(
                     required={props.required}
                     disabled={props.disabled}
                     readOnly={props.readOnly}
+                    autoComplete="off"
                   />
                 )}
 
@@ -158,6 +160,7 @@ const DateFieldHookForm: React.FC<DateFieldHookFormProps> = React.memo(
                     required={props.required}
                     disabled={props.disabled}
                     readOnly={props.readOnly}
+                    autoComplete="off"
                   />
                 )}
 
@@ -194,6 +197,7 @@ const DateFieldHookForm: React.FC<DateFieldHookFormProps> = React.memo(
                     required={props.required}
                     disabled={props.disabled}
                     readOnly={props.readOnly}
+                    autoComplete="off"
                   />
                 )}
               </>

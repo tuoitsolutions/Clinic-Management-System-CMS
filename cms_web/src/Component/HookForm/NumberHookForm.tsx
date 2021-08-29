@@ -37,6 +37,7 @@ export const NumberHookForm: FC<TextFieldProps> = memo((props: any) => {
           allowNegative={false}
           thousandSeparator={","}
           customInput={TextField}
+          autoComplete="off"
         />
       )}
     />

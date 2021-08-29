@@ -16,7 +16,7 @@ import { AuthUserPayload } from "../../Services/Payloads/AuthUserPayloads";
 import { RootStore } from "../../Services/Store";
 import FieldPassword from "./FieldPassword";
 import FieldUsername from "./FieldUsername";
-import PrivacyPolicy from "./PrivacyPolicy";
+import PrivacyPolicy from "./PrivacyPolicyDialog";
 import { LoginStyles, StyledImageBackground } from "./styles";
 
 interface ILoginPortal {}
@@ -80,8 +80,7 @@ export const LoginPortal: FC<ILoginPortal> = memo(() => {
             rememberme: response.data.rememberme,
           })
         );
-        console.log(`response`, response.data);
-        window.location.href = "/admission";
+        window.location.href = "/dashboard";
         // dispatch(setCurrentUserAction());
       } else {
         if (typeof response.message === "string") {

@@ -1,3 +1,4 @@
+import { Container } from "@material-ui/core";
 import styled from "styled-components";
 
 export const StyledConsultRoom = styled.div`
@@ -5,6 +6,7 @@ export const StyledConsultRoom = styled.div`
   grid-auto-flow: column;
   grid-auto-columns: 1fr 300px;
   grid-gap: 1em;
+
   .video-ctnr {
     border-radius: 5px !important;
     min-height: 380px;
@@ -94,5 +96,76 @@ export const StyledConsultRoom = styled.div`
     }
 
     /* } */
+  }
+`;
+
+export const PatientManageUi = styled(Container)`
+  display: grid;
+  grid-gap: 1.5em;
+  max-width: 100%;
+  align-content: start;
+  align-items: start;
+
+  @media all and (min-width: ${(props) =>
+      props.theme.breakpoints.values.xs}px) {
+    grid-template-areas: "profile" "notes" "tabs";
+    /* grid-auto-columns: 1fr; */
+    justify-content: start;
+    justify-items: start;
+  }
+
+  @media all and (min-width: ${(props) =>
+      props.theme.breakpoints.values.sm}px) {
+    grid-template-areas: "profile notes" "tabs tabs";
+    grid-auto-columns: 1fr;
+    grid-auto-columns: 300px 1fr;
+  }
+
+  @media all and (min-width: ${(props) =>
+      props.theme.breakpoints.values.md}px) {
+    grid-template-areas: "profile tabs" "notes tabs";
+    grid-auto-columns: 300px 1fr;
+    grid-auto-rows: auto 1fr;
+  }
+  .patient-profile {
+    grid-area: profile;
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    align-items: start;
+    grid-gap: 0.5em;
+    .patient-name {
+      padding: 0.3em;
+      font-size: 1em;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .personal-info-ctnr {
+      margin-top: 1em;
+      padding: 0 0.5em;
+      display: grid;
+      align-content: start;
+      width: 100%;
+      /* grid-gap: 0.5em; */
+      .info-group-column {
+        display: grid;
+        padding: 0.5em 0;
+        grid-auto-columns: 1fr 1fr;
+      }
+    }
+  }
+
+  .link-tabs {
+    grid-area: tabs;
+    overflow: hidden;
+  }
+
+  .doctor-notes {
+    grid-area: notes;
+    .content {
+      margin-top: 1em;
+      font-size: 0.83em;
+    }
   }
 `;

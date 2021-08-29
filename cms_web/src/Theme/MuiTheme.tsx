@@ -86,12 +86,13 @@ let theme = createMuiTheme({
   typography: {
     button: {
       textTransform: "unset",
-      fontFamily: "Nunito",
-      fontWeight: 600,
-      // fontSize: `.87em`,
+      letterSpacing: `.3pt`,
+      wordSpacing: `.3pt`,
+      fontWeight: 900,
+      fontSize: `.78em`,
     },
     fontFamily: [
-      "Nunito",
+      "nunito",
       "-apple-system",
       "BlinkMacSystemFont",
       '"Segoe UI"',
@@ -120,7 +121,7 @@ let theme = createMuiTheme({
     backgroundColor: "unset",
     color: `black`,
   },
-  spacing: 4,
+  // spacing: 4,
 });
 
 theme = responsiveFontSizes(theme);

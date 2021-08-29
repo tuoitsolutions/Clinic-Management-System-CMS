@@ -38,7 +38,7 @@ const UserProfile: React.FC<IUserProfile> = memo(({ variant, user }) => {
         <CustomAvatar
           className="profile-image"
           alt={user?.full_name?.charAt(0)}
-          spacing={10}
+          spacing={6}
         />
         {open ? (
           <ExpandLessIcon className="icon" fontSize="small" />
@@ -49,7 +49,10 @@ const UserProfile: React.FC<IUserProfile> = memo(({ variant, user }) => {
         {variant === "mobile" ? null : (
           <div className="user">
             <div className="fullname">{user?.full_name}</div>
-            <div className="designation">{user?.user_type}</div>
+            <div className="designation">
+              {user?.user_type === "hosp_resident" && "Resident"}
+              {user?.user_type === "admin" && "Administrator"}
+            </div>
           </div>
         )}
       </div>
@@ -71,12 +74,16 @@ const UserProfile: React.FC<IUserProfile> = memo(({ variant, user }) => {
           <div className="content-header">
             <CustomAvatar
               className="content-header-image"
-              spacing={10}
+              spacing={6}
               alt={user?.full_name?.charAt(0)}
             />
             <div className="content-header-user">
               <div className="name">{user?.full_name}</div>
-              <div className="designation">{user?.user_type}</div>
+              <div className="designation">
+                {" "}
+                {user?.user_type === "hosp_resident" && "Resident"}
+                {user?.user_type === "admin" && "Administrator"}
+              </div>
             </div>
           </div>
           <div className="content-body">

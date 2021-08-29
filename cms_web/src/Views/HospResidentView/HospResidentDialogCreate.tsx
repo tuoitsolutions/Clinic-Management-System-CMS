@@ -31,17 +31,17 @@ interface IAdminDialogCreate {
 }
 
 const form_schema = yup.object({
-  doc_id: yup.string().required().label("Employee Id"),
-  spclty_pk: yup.string().required().label("Employee Id"),
-  prefix: yup.string().label("Prefix"),
-  first_name: yup.string().required().label("First Name"),
-  middle_name: yup.string().label("Middle Name"),
-  last_name: yup.string().required().label("Last Name"),
-  suffix: yup.string().label("Name Extension"),
-  gender: yup.string().required().label("Gender"),
-  mob_no: yup.string().required().label("Mobile Number"),
+  doc_id: yup.string().required().nullable().label("Employee Id"),
+  spclty_pk: yup.string().required().nullable().label("Employee Id"),
+  prefix: yup.string().nullable().label("Prefix"),
+  first_name: yup.string().required().nullable().label("First Name"),
+  middle_name: yup.string().nullable().label("Middle Name"),
+  last_name: yup.string().required().nullable().label("Last Name"),
+  suffix: yup.string().nullable().label("Name Extension"),
+  gender: yup.string().required().nullable().label("Gender"),
+  mob_no: yup.string().required().nullable().label("Mobile Number"),
   tel_no: yup.string().label("Telephone Number"),
-  email: yup.string().email().required().label("Email Address"),
+  email: yup.string().email().required().nullable().label("Email Address"),
 });
 
 export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
@@ -132,7 +132,7 @@ export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
       <FormDialog
         open={props.open}
         title="Fill up all the required fields to register a new hospital resident"
-        minWidth={400}
+        minWidth={500}
         body={
           <>
             {!loading_initial_data ? (

@@ -231,7 +231,10 @@ export const PaymentView: FC<PaymentViewProps> = memo(() => {
                               <div className="soa-info-group">
                                 <div className="soa-label">Requestor Name</div>
                                 <div className="soa-value">
-                                  {`${selected_consult_req?.first_name} ${selected_consult_req?.middle_name} ${selected_consult_req?.last_name} ${selected_consult_req?.suffix}`}
+                                  {selected_consult_req?.first_name}{" "}
+                                  {selected_consult_req?.middle_name}{" "}
+                                  {selected_consult_req?.last_name}{" "}
+                                  {selected_consult_req?.suffix}
                                 </div>
                               </div>
                               <div className="soa-info-group">
