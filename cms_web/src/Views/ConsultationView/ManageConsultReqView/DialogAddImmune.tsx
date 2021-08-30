@@ -59,7 +59,11 @@ const form_schema = yup.object({
     .required()
     .nullable()
     .label(form_structure.vac_desc.label),
-  vac_type: yup.string().nullable().label(form_structure.vac_type.label),
+  vac_type: yup
+    .string()
+    .required()
+    .nullable()
+    .label(form_structure.vac_type.label),
   date_given: yup.string().nullable().label(form_structure.date_given.label),
   next_dose: yup.string().nullable().label(form_structure.next_dose.label),
   administered_by: yup
@@ -98,7 +102,11 @@ const DialogAddImmune: FC<IDialogAddImmune> = memo((props) => {
       payload.consult_req_pk = props.consult_req_pk;
 
       payload.date_given = moment(payload.date_given).format();
-      payload.next_dose = moment(payload.next_dose).format();
+
+      const next_dose = moment(payload?.next_dose);
+      if (next_dose.isValid() || !!payload?.next_dose) {
+        payload.next_dose = next_dose.format();
+      }
 
       if (!!payload.consult_req_pk) {
         dispatch(
@@ -212,7 +220,6 @@ const DialogAddImmune: FC<IDialogAddImmune> = memo((props) => {
                           shrink: true,
                         }}
                         fullWidth
-                        required
                         placeholder={`Enter the ${form_structure.next_dose.label}`}
                         type="date"
                       />
@@ -226,7 +233,6 @@ const DialogAddImmune: FC<IDialogAddImmune> = memo((props) => {
                           shrink: true,
                         }}
                         fullWidth
-                        required
                         placeholder={`Enter the ${form_structure.administered_by.label}`}
                       />
                     </Grid>

@@ -41,7 +41,7 @@ const form_structure = {
   },
   notes: {
     name: "notes",
-    label: "notes",
+    label: "Notes",
   },
   is_active: {
     name: "is_active",
@@ -56,12 +56,8 @@ const form_schema = yup.object({
     .nullable()
     .label(form_structure.substance.label),
   reaction: yup.string().nullable().label(form_structure.reaction.label),
-  first_occur: yup
-    .string()
-    .required()
-    .nullable()
-    .label(form_structure.first_occur.label),
-  notes: yup.string().required().nullable().label(form_structure.notes.label),
+  first_occur: yup.string().nullable().label(form_structure.first_occur.label),
+  notes: yup.string().nullable().label(form_structure.notes.label),
   is_active: yup
     .string()
     .required()
@@ -83,7 +79,11 @@ const DialogUpdateAllergy: FC<IDialogUpdateAllergy> = memo((props) => {
   const handleSubmitForm = useCallback(
     async (payload: ConsultAllergyEntity) => {
       payload.cr_allergy_pk = props.selected_record.cr_allergy_pk;
-      payload.first_occur = moment(payload.first_occur).format();
+
+      const first_occur = moment(payload?.first_occur);
+      if (first_occur.isValid() || !!payload?.first_occur) {
+        payload.first_occur = first_occur.format();
+      }
 
       if (!!payload.cr_allergy_pk) {
         dispatch(
@@ -180,7 +180,6 @@ const DialogUpdateAllergy: FC<IDialogUpdateAllergy> = memo((props) => {
                           shrink: true,
                         }}
                         fullWidth
-                        required
                         placeholder={`Enter the ${form_structure.first_occur.label}`}
                         type="date"
                         disableFuture

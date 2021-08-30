@@ -195,7 +195,7 @@ namespace cms_server.Repositories
                 if (update_sts_affected_rows > 0)
                 {
                     int insert_logs_affected_rows = con.Execute($@"
-                                         insert into the logs set
+                                         insert into `logs` set
                                          ref_pk=@ref_pk,
                                          ref_table=@ref_table,
                                          activity=@activity,
@@ -219,7 +219,7 @@ namespace cms_server.Repositories
                         string full_body = $@"This is {def_val_repo.GetHospitalName().data}. Dear {selected_row.last_name}, {selected_row.ended_at}, your Consultation Request Payment Link OTP is: {otp_code}. This is only valid within 24 hours.";
 
                         int message_affected_rows = con.Execute($@"INSERT INTO messageout SET
-                                                                messageto='${selected_row.mob_no}',
+                                                                messageto='{selected_row.mob_no}',
                                                                 messagetext=@full_body;"
                                                        , new { full_body }, transaction: tran);
 
@@ -284,7 +284,7 @@ namespace cms_server.Repositories
                 return new ResponseModel
                 {
                     success = false,
-                    message = "Some error occured during the process."
+                    message = "The proccess has been terminated. Unidentified internal server has occured."
                 };
 
             }
@@ -357,7 +357,8 @@ namespace cms_server.Repositories
                                 int message_sent = con.Execute($@"INSERT INTO messageout SET
                                                               encoded_by='{user_pk}',
                                                               messageto='{selected_row.mob_no}',
-                                                              messagetext=@messagetext;",
+                                                              messagetext=@messagetext,
+                                                              encoded_by='{user_pk}';",
                                                                   new { messageto = selected_row.mob_no, messagetext = full_body }, transaction: tran);
 
                                 if (message_sent < 1)
@@ -409,7 +410,7 @@ namespace cms_server.Repositories
                 return new ResponseModel
                 {
                     success = false,
-                    message = "Some error occured during the process."
+                    message = "The proccess has been terminated. Unidentified internal server has occured."
                 };
 
             }
@@ -483,7 +484,8 @@ namespace cms_server.Repositories
                                 int message_sent = con.Execute($@"INSERT INTO messageout SET
                                                               encoded_by='{user_pk}',
                                                               messageto='{selected_row.mob_no}',
-                                                              messagetext=@messagetext;",
+                                                              messagetext=@messagetext,
+                                                              encoded_by='{user_pk}';",
                                                                   new { messageto = selected_row.mob_no, messagetext = full_body }, transaction: tran);
 
                                 if (message_sent < 1)
@@ -535,7 +537,7 @@ namespace cms_server.Repositories
                 return new ResponseModel
                 {
                     success = false,
-                    message = "Some error occured during the process."
+                    message = "The proccess has been terminated. Unidentified internal server has occured."
                 };
 
             }
@@ -552,7 +554,7 @@ namespace cms_server.Repositories
 
 
 
-        public ResponseModel GetTableConsultRequest(ConsultRequestTablePayload payload, string user_pk, string user_type)
+        public ResponseModel GetTableConsultRequest(ConsultRequestTablePayload payload, string user_pk)
         {
             try
             {
@@ -560,9 +562,14 @@ namespace cms_server.Repositories
                 con.Open();
                 using var tran = con.BeginTransaction();
 
+                UserEntity user_info = con.QuerySingle<UserEntity>(
+                   $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                   , new { user_pk }
+                   , transaction: tran);
+
                 string tbl_sql_query = "";
 
-                if (user_type.Equals("admin"))
+                if (user_info.user_type.Equals("admin"))
                 {
                     tbl_sql_query = $@"
                                        SELECT * FROM (
@@ -585,9 +592,9 @@ namespace cms_server.Repositories
                                        {UseFilter.GenTablePagination(payload.sort, payload.page)}
                                     ";
                 }
-                else if (user_type.Equals("hosp_resident"))
+                else if (user_info.user_type.Equals("hosp_resident"))
                 {
-                    payload.filters.res_depts = user_repo.HospResidentDepts(user_pk);
+                    payload.filters.resident_dept = user_repo.HospResidentDepts(user_pk);
 
                     tbl_sql_query = $@"
                                        SELECT * FROM (
@@ -606,8 +613,7 @@ namespace cms_server.Repositories
                                        AND COALESCE(symptoms,'') LIKE CONCAT('%',@symptoms,'%')
                                        {UseFilter.GenerateSearchEqualOrDefault("AND", "consult_req_pk", "@consult_req_pk")}
                                        AND sts_pk IN @sts_pk
-                                       AND assign_dept_pk IN @res_depts
-                                       AND sts_pk NOT IN ('x','fa')
+                                       AND assign_dept_pk IN @resident_dept
                                        {UseFilter.GenWhereDateClause("request_at", ">=", payload.filters.request_from)} 
                                        {UseFilter.GenWhereDateClause("request_at", "<=", payload.filters.request_to)} 
                                        {UseFilter.GenTablePagination(payload.sort, payload.page)}
@@ -694,7 +700,7 @@ namespace cms_server.Repositories
                 }
                 else if (user_type.Equals("hosp_resident"))
                 {
-                    payload.filters.res_depts = user_repo.HospResidentDepts(user_pk);
+                    payload.filters.resident_dept = user_repo.HospResidentDepts(user_pk);
 
                     tbl_sql_query = $@"
                                        SELECT * FROM (
@@ -1062,7 +1068,7 @@ namespace cms_server.Repositories
                 string full_body = $@"This is {def_val_repo.GetHospitalName().data}. Dear {selected_row.last_name}, {selected_row.ended_at}, your Consultation Request Payment Link OTP is: {otp_code}. This is only valid within 10 minutes.";
 
                 int message_affected_rows = con.Execute($@"INSERT INTO messageout SET
-                                                                messageto='${selected_row.mob_no}',
+                                                                messageto='{selected_row.mob_no}',
                                                                 messagetext=@full_body;"
                                                , new { full_body }, transaction: tran);
 
@@ -1117,7 +1123,7 @@ namespace cms_server.Repositories
             }
         }
 
-        public ResponseModel AssignDeptConsult(ConsultRequestEntity payload, string user_pk)
+        public ResponseModel SetConsultDeptSched(ConsultRequestEntity payload, string user_pk)
         {
             try
             {
@@ -1134,22 +1140,55 @@ namespace cms_server.Repositories
                                                    LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
                                                    WHERE consult_req_pk=@consult_req_pk limit 1 ;",
                                                   new { payload.consult_req_pk }, transaction: tran);
-
-                int update_sts_affected_rows = con.Execute($@"
-                                        UPDATE `consult_request` SET 
-                                        assign_dept_pk =@assign_dept_pk,
-                                        assign_res_pk =@assign_res_pk,
-                                        assign_dept_consult_date=@assign_dept_consult_date,
-                                        assign_dept_at=NOW()
-                                        WHERE consult_req_pk=@consult_req_pk;
-                            ", payload, transaction: tran);
-
-                DepartmentEntity dept_info = con.QuerySingle<DepartmentEntity>(
-                    $@"SELECT * FROM `department` where `dept_pk`=@dept_pk;"
-                    , new { dept_pk = payload.assign_dept_pk }, transaction: tran);
-
-                if (update_sts_affected_rows > 0)
+                // { "fa", "pd" }
+                var arr_sts = new List<string>() { "fa", "pd" };
+                if (!arr_sts.Any(selected_row.sts_pk.Contains))
                 {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "The department and/or resident of this consultation can no longer changed!"
+                    };
+                }
+                int update_consult = 0;
+                string consult_link_pass = "111111";
+                string consult_link_hash = UseHash.Sha256(consult_link_pass);
+
+                if (payload.is_send_consult_link)
+                {
+                    update_consult = con.Execute($@"
+                        UPDATE `consult_request` SET
+                        assign_dept_pk=@assign_dept_pk,
+                        assign_res_pk=@assign_res_pk,
+                        est_start_at=@est_start_at,
+                        assign_dept_at=NOW(),
+                        consult_link_pass='{consult_link_pass}',
+                        consult_link_hash='{consult_link_hash}',
+                        consult_link_sent_count=(consult_link_sent_count+1)
+                        WHERE consult_req_pk = @consult_req_pk;"
+                        , payload,
+                        transaction: tran);
+                }
+                else
+                {
+                    update_consult = con.Execute($@"
+                         UPDATE `consult_request` SET 
+                         assign_dept_pk=@assign_dept_pk,
+                         assign_res_pk=@assign_res_pk,
+                         est_start_at=@est_start_at,
+                         assign_dept_at=NOW()
+                         WHERE consult_req_pk=@consult_req_pk;"
+                        , payload
+                        , transaction: tran);
+                }
+
+
+                if (update_consult > 0)
+                {
+                    DepartmentEntity dept_info = con.QuerySingle<DepartmentEntity>(
+                   $@"SELECT * FROM `department` where `dept_pk`=@dept_pk;"
+                   , new { dept_pk = payload.assign_dept_pk }, transaction: tran);
+
                     LogModel log_payload = new LogModel
                     {
                         activity = $"the consultation request {selected_row.consult_req_pk} has been assigned to {dept_info.dept_code} - {dept_info.dept_name}!",
@@ -1160,7 +1199,7 @@ namespace cms_server.Repositories
 
 
                     int insert_logs_affected_rows = con.Execute(
-                            $@"INSERT into the logs set
+                            $@"INSERT into `logs` set
                              ref_pk=@ref_pk,
                              ref_table=@ref_table,
                              activity=@activity,
@@ -1170,6 +1209,38 @@ namespace cms_server.Repositories
 
                     if (insert_logs_affected_rows > 0)
                     {
+                        if (payload.is_send_consult_link)
+                        {
+                            string brand_name = def_val_repo.GetHospitalName().data.ToString();
+
+                            string msg_body = $@"This is {brand_name}. Dear {selected_row.last_name}, {selected_row.first_name}. Your online consultation will start {(payload.est_start_at == null ? "soon" : "at " + payload.est_start_at?.ToString("MMM. dd, yyyy hh:mm tt"))}.
+                                                 You can attend at {DefaultConfig._clientBaseUrl}online-consultation/{selected_row.hash_key} using the password {consult_link_pass}.";
+
+
+
+                            int message_sent = con.Execute($@"INSERT INTO messageout SET
+                                                              messageto='{selected_row.mob_no}',
+                                                              messagetext=@messagetext,
+                                                              encoded_by='{user_pk}';",
+                                                              new { messageto = selected_row.mob_no, messagetext = msg_body }, transaction: tran);
+
+                            if (message_sent < 1)
+                            {
+                                return new ResponseModel
+                                {
+                                    success = false,
+                                    message = "An error has occured when trying to send the message. Please try again!"
+                                };
+                            }
+
+                            ResponseModel email_response = UseEmail.SendEmail(brand_name, selected_row.email, msg_body, "Online Consultation Link");
+
+                            if (!email_response.success)
+                            {
+                                return email_response;
+                            }
+                        }
+
                         tran.Commit();
                         return new ResponseModel
                         {
@@ -1179,20 +1250,101 @@ namespace cms_server.Repositories
 
                     }
                 }
-                else
-                {
-                    return new ResponseModel
-                    {
-                        success = false,
-                        message = "No affected rows in the process."
-                    };
-                }
-
 
                 return new ResponseModel
                 {
                     success = false,
-                    message = "Some error occured during the process."
+                    message = "The proccess has been terminated. Unidentified internal server has occured."
+                };
+
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = err.Message
+                };
+            }
+        }
+
+        public ResponseModel SendConsultLink(string consult_req_pk, string user_pk)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+                ConsultRequestEntity selected_row = con.QuerySingle<ConsultRequestEntity>(
+                                                  $@"SELECT * FROM (
+                                                   SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgcaddress
+                                                   FROM `consult_request` cr
+                                                   LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                                   LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                                   LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                                   LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
+                                                   WHERE consult_req_pk=@consult_req_pk limit 1 ;",
+                                                  new { consult_req_pk }, transaction: tran);
+                var arr_sts = new List<string>() { "fa", "pd" };
+                if (!arr_sts.Any(selected_row.sts_pk.Contains))
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "The online consultation link can no longer sent!"
+                    };
+                }
+                string consult_link_pass = "111111";
+                string consult_link_hash = UseHash.Sha256(consult_link_pass);
+
+                int update_consult = con.Execute($@"
+                        UPDATE `consult_request` SET 
+                        consult_link_sent_count=(consult_link_sent_count+1)
+                        WHERE consult_req_pk = @consult_req_pk;"
+                       , new { consult_req_pk },
+                       transaction: tran);
+
+                if (update_consult > 0)
+                {
+                    string brand_name = def_val_repo.GetHospitalName().data.ToString();
+                    string msg_body = $@"This is {brand_name}. Dear {selected_row.last_name}, {selected_row.first_name}. Your online consultation will start {(selected_row.est_start_at == null ? "soon" : "at " + selected_row.est_start_at?.ToString("MMM. dd, yyyy hh:mm tt"))}.
+                                                 You can attend at {DefaultConfig._clientBaseUrl}online-consultation/{selected_row.hash_key} using the password {consult_link_pass}.";
+
+                    int message_sent = con.Execute($@"INSERT INTO messageout SET
+                                                              messageto='{selected_row.mob_no}',
+                                                              messagetext=@messagetext,
+                                                              encoded_by='{user_pk}';",
+                                                      new { messageto = selected_row.mob_no, messagetext = msg_body }, transaction: tran);
+
+                    if (message_sent < 1)
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "An error has occured when trying to send the message. Please try again!"
+                        };
+                    }
+
+                    ResponseModel email_response = UseEmail.SendEmail(brand_name, selected_row.email, msg_body, "Online Consultation Link");
+
+                    if (!email_response.success)
+                    {
+                        return email_response;
+                    }
+
+                    tran.Commit();
+                    return new ResponseModel
+                    {
+                        message = $"The online consultation link has been sent to the requester.",
+                        success = true
+                    };
+                }
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The proccess has been terminated. Unidentified internal server has occured."
                 };
 
             }
@@ -1291,7 +1443,7 @@ namespace cms_server.Repositories
 
 
                     int insert_logs_affected_rows = con.Execute(
-                            $@"INSERT into the logs set
+                            $@"INSERT into `logs` set
                              ref_pk=@ref_pk,
                              ref_table=@ref_table,
                              activity=@activity,
@@ -1341,7 +1493,7 @@ namespace cms_server.Repositories
                 return new ResponseModel
                 {
                     success = false,
-                    message = "Some error occured during the process."
+                    message = "The proccess has been terminated. Unidentified internal server has occured."
                 };
 
             }
@@ -1394,7 +1546,7 @@ namespace cms_server.Repositories
 
 
                         int insert_logs_affected_rows = con.Execute(
-                                $@"INSERT into the logs set
+                                $@"INSERT into `logs` set
                                  ref_pk=@ref_pk,
                                  ref_table=@ref_table,
                                  activity=@activity,
@@ -1436,7 +1588,7 @@ namespace cms_server.Repositories
                 return new ResponseModel
                 {
                     success = false,
-                    message = "Some error occured during the process."
+                    message = "The proccess has been terminated. Unidentified internal server has occured."
                 };
 
             }
@@ -1470,24 +1622,25 @@ namespace cms_server.Repositories
                                                    WHERE consult_req_pk=@consult_req_pk limit 1 ;",
                                              new { payload.consult_req_pk }, transaction: tran);
 
-                int patient_success = 0;
+                string user_res_pk = con.QuerySingle<string>(
+                                           $@"SELECT get_user_res_pk('55')",
+                                           new { payload.consult_req_pk }, transaction: tran);
 
-                //string consult_link_pass = UseOtp.create();
-                string consult_link_pass = "111111";
-                string consult_link_hash = UseHash.Sha256(consult_link_pass);
 
-                int update_consult = con.Execute($@"
+                if (selected_row?.assign_res_pk == user_res_pk)
+                {
+                    int patient_success = 0;
+
+                    int update_consult = con.Execute($@"
                         UPDATE `consult_request` SET
                         sts_pk='s',
-                        consult_link_pass='{consult_link_pass}',
-                        consult_link_hash='{consult_link_hash}',
                         consult_at=NOW()
                         WHERE consult_req_pk = @consult_req_pk;
                         ", payload, transaction: tran);
 
-                if (selected_row.hospital_no != null)
-                {
-                    patient_success = con.Execute(@"
+                    if (selected_row.hospital_no != null)
+                    {
+                        patient_success = con.Execute(@"
                         UPDATE `hosp_patient` SET
                         prefix=@prefix,
                         first_name=@first_name,
@@ -1502,7 +1655,6 @@ namespace cms_server.Repositories
                         email=@email,
                         mob_no=@mob_no,
                         line1=@line1,
-                        line2=@line2,
                         brgy_pk=@brgy_pk,
                         citymun_pk=@citymun_pk,
                         prov_pk=@prov_pk,
@@ -1514,14 +1666,14 @@ namespace cms_server.Repositories
                         last_updated_by=@last_updated_by
                         WHERE hospital_no=@hospital_no;
                         ", payload, transaction: tran);
-                }
-                else
-                {
-                    payload.hospital_no = con.QuerySingle<string>($@"
+                    }
+                    else
+                    {
+                        payload.hospital_no = con.QuerySingle<string>($@"
                                     SELECT next_hospital_no(NULL);
                                     ", null, transaction: tran);
 
-                    patient_success = con.Execute(@"
+                        patient_success = con.Execute(@"
                         INSERT INTO `hosp_patient` SET
                         hospital_no=@hospital_no,
                         prefix=@prefix,
@@ -1547,47 +1699,20 @@ namespace cms_server.Repositories
                         last_updated_at=NOW(),
                         last_updated_by=@last_updated_by;
                         ", payload, transaction: tran);
-                }
+                    }
 
-
-                if (update_consult > 0 && patient_success > 0)
-                {
-                    string brand_name = def_val_repo.GetHospitalName().data.ToString();
-                    string msg_body = $@"This is {brand_name}. Dear {selected_row.last_name}, {selected_row.first_name}, 
-                                         kindly attend your online consultation at {DefaultConfig._clientBaseUrl}online-consultation/{selected_row.hash_key} using the password {consult_link_pass}.";
-
-                    int message_sent = con.Execute($@"INSERT INTO messageout SET
-                                                              messageto='${selected_row.mob_no}',
-                                                              messagetext=@messagetext;",
-                                                      new { messageto = selected_row.mob_no, messagetext = msg_body }, transaction: tran);
-
-                    if (message_sent < 1)
+                    if (update_consult > 0 && patient_success > 0)
                     {
-                        return new ResponseModel
+                        LogModel log_payload = new LogModel
                         {
-                            success = false,
-                            message = "An error has occured when trying to send the message. Please try again!"
+                            activity = $"the consultation {selected_row.consult_req_pk} has been started",
+                            encoded_by = payload.last_updated_by,
+                            ref_pk = selected_row.consult_req_pk,
+                            ref_table = "consult_request"
                         };
-                    }
 
-                    ResponseModel email_response = UseEmail.SendEmail(brand_name, selected_row.email, msg_body, "Online Consultation Link");
-
-                    if (!email_response.success)
-                    {
-                        return email_response;
-
-                    }
-
-                    LogModel log_payload = new LogModel
-                    {
-                        activity = $"the consultation {selected_row.consult_req_pk} has been started",
-                        encoded_by = payload.last_updated_by,
-                        ref_pk = selected_row.consult_req_pk,
-                        ref_table = "consult_request"
-                    };
-
-                    int insert_log = con.Execute(
-                            $@"INSERT into the logs set
+                        int insert_log = con.Execute(
+                                $@"INSERT into `logs` set
                                  ref_pk=@ref_pk,
                                  ref_table=@ref_table,
                                  activity=@activity,
@@ -1595,30 +1720,40 @@ namespace cms_server.Repositories
                                  encoded_by=@encoded_by;
                             ", log_payload, transaction: tran);
 
-                    if (insert_log > 0)
-                    {
-                        tran.Commit();
-                        return new ResponseModel
+                        if (insert_log > 0)
                         {
-                            success = true,
-                            message = "The consultation has been started. The online consultation link has been sent to the patient. "
-                        };
-                    }
-                    else
-                    {
-                        return new ResponseModel
+                            tran.Commit();
+                            return new ResponseModel
+                            {
+                                success = true,
+                                message = "The consultation has been started. The online consultation link has been sent to the patient. "
+                            };
+                        }
+                        else
                         {
-                            success = false,
-                            message = "There were no rows affected when trying log the event."
-                        };
+                            return new ResponseModel
+                            {
+                                success = false,
+                                message = "There were no rows affected when trying log the event."
+                            };
+                        }
                     }
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "The process has been terminated. The consultation has not been started."
+                    };
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "The assigned resident is the only user allowed to start this consultation!"
+                    };
                 }
 
-                return new ResponseModel
-                {
-                    success = false,
-                    message = "The process has been terminated. The consultation has not been started."
-                };
+
             }
             catch (Exception err)
             {
@@ -1740,7 +1875,6 @@ namespace cms_server.Repositories
             }
         }
 
-
         public ResponseModel EndConsult(ConsultRequestEntity payload)
         {
             try
@@ -1781,7 +1915,7 @@ namespace cms_server.Repositories
                         };
 
                         int insert_log = con.Execute(
-                                $@"INSERT into the logs set
+                                $@"INSERT into `logs` set
                                  ref_pk=@ref_pk,
                                  ref_table=@ref_table,
                                  activity=@activity,
@@ -1880,7 +2014,7 @@ namespace cms_server.Repositories
                             };
 
                             int insert_log = con.Execute(
-                                    $@"INSERT into the logs set
+                                    $@"INSERT into `logs` set
                                        ref_pk=@ref_pk,
                                        ref_table=@ref_table,
                                        activity=@activity,
@@ -1965,6 +2099,7 @@ namespace cms_server.Repositories
                                              new { payload.consult_req_pk }, transaction: tran);
 
 
+
                 int update_consult = con.Execute(@"
                         UPDATE `consult_request` SET
                         hospital_no=@hospital_no
@@ -1986,7 +2121,6 @@ namespace cms_server.Repositories
                         email=@email,
                         mob_no=@mob_no,
                         line1=@line1,
-                        line2=@line2,
                         brgy_pk=@brgy_pk,
                         citymun_pk=@citymun_pk,
                         prov_pk=@prov_pk,
@@ -2010,7 +2144,7 @@ namespace cms_server.Repositories
                     };
 
                     int insert_logs_affected_rows = con.Execute(
-                            $@"INSERT into the logs set
+                            $@"INSERT into `logs` set
                                  ref_pk=@ref_pk,
                                  ref_table=@ref_table,
                                  activity=@activity,
@@ -2432,83 +2566,72 @@ namespace cms_server.Repositories
                 con.Open();
                 using var tran = con.BeginTransaction();
 
-                if (payload.attach_profile_pic != null)
+                List<ConsultRequestEntity> tbl_consult = con.Query<ConsultRequestEntity>(
+                    $@"SELECT * FROM `consult_request` WHERE MD5(consult_req_pk) = @hash_key LIMIT 1;"
+                    , payload
+                    , transaction: tran).ToList();
+
+                UserEntity user_info = con.QuerySingle<UserEntity>(
+                    $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                    , new { payload.user_pk }
+                    , transaction: tran);
+
+                if (!user_info.user_type.Equals("hosp_resident"))
                 {
-                    List<ConsultRequestEntity> tbl_consult = con.Query<ConsultRequestEntity>(
-                        $@"SELECT * FROM `consult_request` WHERE MD5(consult_req_pk) = @hash_key LIMIT 1;"
-                        , payload
-                        , transaction: tran).ToList();
-
-                    UserEntity user_info = con.QuerySingle<UserEntity>(
-                        $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
-                        , new { payload.user_pk }
-                        , transaction: tran);
-
-                    if (!user_info.user_type.Equals("hosp_resident"))
+                    return new ResponseModel
                     {
-                        return new ResponseModel
-                        {
-                            success = false,
-                            message = "Only residents are allowed to do this action."
-                        };
-                    }
+                        success = false,
+                        message = "Only residents are allowed to do this action."
+                    };
+                }
 
-                    if (tbl_consult.Count > 0)
-                    {
-                        ConsultRequestEntity selected_consult = tbl_consult[0];
+                if (tbl_consult.Count > 0)
+                {
+                    ConsultRequestEntity selected_consult = tbl_consult[0];
 
-                        int edited_pic = con.Execute(
-                            @"UPDATE `consult_request` 
+                    int edited_pic = con.Execute(
+                        @"UPDATE `consult_request` 
                              SET 
                              doctor_notes=@doctor_notes
                              WHERE MD5(consult_req_pk) = @hash_key"
-                             , payload
-                             , transaction: tran);
+                         , payload
+                         , transaction: tran);
 
-                        if (edited_pic > 0)
+                    if (edited_pic > 0)
+                    {
+                        LogModel log_payload = new LogModel
                         {
-                            LogModel log_payload = new LogModel
-                            {
-                                activity = $"The doctor notes of the consultation {selected_consult.consult_req_pk} has been edited by {user_info.full_name}",
-                                encoded_by = payload.user_pk,
-                                ref_pk = selected_consult.consult_req_pk,
-                                ref_table = "consult_request"
-                            };
+                            activity = $"The doctor notes of the consultation {selected_consult.consult_req_pk} has been edited by {user_info.full_name}",
+                            encoded_by = payload.user_pk,
+                            ref_pk = selected_consult.consult_req_pk,
+                            ref_table = "consult_request"
+                        };
 
-                            int added_logs = con.Execute(
-                                    $@"INSERT INTO `logs` SET
+                        int added_logs = con.Execute(
+                                $@"INSERT INTO `logs` SET
                                      ref_pk=@ref_pk,
                                      ref_table=@ref_table,
                                      activity=@activity,
                                      encoded_at = NOW(),
                                      encoded_by=@encoded_by;"
-                                    , log_payload
-                                    , transaction: tran);
+                                , log_payload
+                                , transaction: tran);
 
-                            if (added_logs > 0)
+                        if (added_logs > 0)
+                        {
+                            tran.Commit();
+                            return new ResponseModel
                             {
-                                tran.Commit();
-                                return new ResponseModel
-                                {
-                                    success = true,
-                                    message = "The doctor notes has been updated successfully."
-                                };
-                            }
-                            else
-                            {
-                                return new ResponseModel
-                                {
-                                    success = false,
-                                    message = "There are no affected rows when trying to audit the action to the logs!"
-                                };
-                            }
+                                success = true,
+                                message = "The doctor notes has been updated successfully."
+                            };
                         }
                         else
                         {
                             return new ResponseModel
                             {
                                 success = false,
-                                message = "There are no affected rows when trying to save the record!"
+                                message = "There are no affected rows when trying to audit the action to the logs!"
                             };
                         }
                     }
@@ -2517,19 +2640,20 @@ namespace cms_server.Repositories
                         return new ResponseModel
                         {
                             success = false,
-                            message = "We could not find the consultation request that you are trying to manage!"
+                            message = "There are no affected rows when trying to save the record!"
                         };
                     }
-
                 }
                 else
                 {
                     return new ResponseModel
                     {
                         success = false,
-                        message = "We could not find an image to upload! Kindly make sure to attach an image file."
+                        message = "We could not find the consultation request that you are trying to manage!"
                     };
                 }
+
+
             }
             catch (Exception err)
             {

@@ -171,6 +171,8 @@ export const PatientManageUi = styled(Container)`
     .content {
       margin-top: 1em;
       font-size: 0.83em;
+      background-color: #fafafa;
+      padding: 1em 0.5em;
     }
   }
 `;

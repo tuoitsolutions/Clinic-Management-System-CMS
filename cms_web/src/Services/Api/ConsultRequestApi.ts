@@ -99,10 +99,19 @@ const EmailConsultRequestSoa = async (
   return response;
 };
 
-const AssignDeptConsult = async (
+const SetConsultDeptSched = async (
   payload: ConsultRequestEntity
 ): Promise<ResponseModel> => {
-  const response = await PostFetch(BASE + "AssignDeptConsult", payload);
+  const response = await PostFetch(BASE + "SetConsultDeptSched", payload);
+  return response;
+};
+
+const SendConsultLink = async (
+  consult_req_pk: string
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "SendConsultLink", {
+    value: consult_req_pk,
+  });
   return response;
 };
 
@@ -236,7 +245,8 @@ export default {
   ResendPayOtp,
   PreviewConsultSoa,
   EmailConsultRequestSoa,
-  AssignDeptConsult,
+  SetConsultDeptSched,
+  SendConsultLink,
   ChangeConsultationCost,
   StartConsultation,
   MapConsultationToPatient,

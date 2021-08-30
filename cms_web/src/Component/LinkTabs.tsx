@@ -136,7 +136,9 @@ const StyledLinkTabs = styled.div`
     }
 
     .MuiTab-wrapper {
-      font-weight: 500 !important;
+      font-weight: 700 !important;
+      padding: 0.5em 0 !important;
+      font-size: 1.05em !important;
     }
   }
   .body {
@@ -165,6 +167,7 @@ const AntTab = withStyles((theme: Theme) =>
       minWidth: 20,
       fontWeight: theme.typography.fontWeightRegular,
       marginRight: theme.spacing(3),
+
       "&:hover": {
         color: "#40a9ff",
         opacity: 1,

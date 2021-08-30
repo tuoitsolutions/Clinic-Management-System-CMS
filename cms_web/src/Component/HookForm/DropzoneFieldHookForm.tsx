@@ -133,6 +133,7 @@ const DropzoneFieldHookForm: React.FC<IDropzoneFieldHookForm> = ({
 export default DropzoneFieldHookForm;
 
 const StyledListFiles = styled.div`
+  margin-top: 1em;
   display: grid;
   font-size: 0.87em;
   grid-gap: 0.5em;
@@ -157,6 +158,7 @@ const StyledListFiles = styled.div`
     align-content: center;
     grid-gap: 1em;
     grid-auto-columns: auto 1fr auto;
+    max-width: 100% !important;
     .file-icon {
       grid-area: icon;
       justify-self: start;
@@ -164,6 +166,7 @@ const StyledListFiles = styled.div`
     .file-name {
       grid-area: name;
       justify-self: start;
+      word-break: break-all !important;
       .file-name-main {
         font-size: 1em;
       }

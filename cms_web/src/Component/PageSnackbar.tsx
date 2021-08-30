@@ -16,9 +16,9 @@ const PageSnackbar = memo(() => {
     const triggerSnackbar = () => {
       if (message) {
         if (options) {
-          enqueueSnackbar(message, { ...options });
+          enqueueSnackbar(message, { ...options, persist: true });
         } else {
-          enqueueSnackbar(message);
+          enqueueSnackbar(message, { persist: true });
         }
       }
     };

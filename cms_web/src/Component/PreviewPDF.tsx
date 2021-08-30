@@ -94,35 +94,37 @@ const PreviewPDF: FC<IPreviewPDF> = memo(
           </div>
           {(file_type === "img" || file_type === "pdf") && (
             <div className="footer">
-              <div className="pages"># of pages: {numPages}</div>
-              <div className="actions">
-                <div className="action-item">
-                  <IconButton
-                    disabled={scale === 1}
-                    onClick={() => {
-                      set_scale((s) => {
-                        if (s > 1) {
-                          s = s - 0.1;
-                        }
-                        return s;
-                      });
-                    }}
-                  >
-                    <ZoomOutRoundedIcon />
-                  </IconButton>
-                  <IconButton
-                    disabled={scale === 2.5}
-                    onClick={() => {
-                      set_scale((s) => {
-                        if (s < 2.5) {
-                          s = s + 0.1;
-                        }
-                        return s;
-                      });
-                    }}
-                  >
-                    <ZoomInRoundedIcon />
-                  </IconButton>
+              <div className="footer-content">
+                <div className="pages"># of pages: {numPages}</div>
+                <div className="actions">
+                  <div className="action-item">
+                    <IconButton
+                      disabled={scale === 1}
+                      onClick={() => {
+                        set_scale((s) => {
+                          if (s > 1) {
+                            s = s - 0.1;
+                          }
+                          return s;
+                        });
+                      }}
+                    >
+                      <ZoomOutRoundedIcon />
+                    </IconButton>
+                    <IconButton
+                      disabled={scale === 2.5}
+                      onClick={() => {
+                        set_scale((s) => {
+                          if (s < 2.5) {
+                            s = s + 0.1;
+                          }
+                          return s;
+                        });
+                      }}
+                    >
+                      <ZoomInRoundedIcon />
+                    </IconButton>
+                  </div>
                 </div>
               </div>
             </div>
@@ -206,7 +208,7 @@ const StyledPdfPreview = styled(Backdrop)`
 
     .footer {
       color: #fff;
-      border-radius: 10px;
+      border-radius: 7px;
       grid-auto-flow: column;
       position: fixed;
       bottom: 0;
@@ -215,30 +217,38 @@ const StyledPdfPreview = styled(Backdrop)`
       left: auto;
       background-color: rgba(0, 0, 0, 0.65);
 
-      display: grid;
-
-      align-items: center;
-      align-content: center;
-      width: 300px;
       left: 50%;
 
       transform: translate(-50%, 0);
       padding: 0.3em 3em;
 
-      .pages {
-        font-weight: 600;
-        display: grid;
-        justify-self: start;
-        justify-content: start;
-      }
+      .footer-content {
+        /* display: grid !important; */
+        /* align-items: center !important;
+        align-content: center !important;
+        justify-items: center !important;
+        justify-content: center !important; */
+        /* min-width: 400px !important; */
+        /* grid-auto-flow: column !important;
+        grid-auto-columns: 1fr 1fr;
+        grid-gap: 1em !important; */
+        .pages {
+          font-weight: 500;
+          display: grid;
+          justify-self: start;
+          justify-content: start;
+          align-self: start;
+          align-content: start;
+        }
 
-      .actions {
-        justify-self: end;
-        grid-auto-flow: column;
-        display: grid;
-        justify-self: end;
-        justify-content: end;
-        grid-gap: 0.5em;
+        .actions {
+          justify-self: end;
+          grid-auto-flow: column;
+          display: grid;
+          justify-self: end;
+          justify-content: end;
+          grid-gap: 0.5em;
+        }
       }
     }
   }

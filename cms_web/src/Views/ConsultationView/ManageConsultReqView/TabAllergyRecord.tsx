@@ -156,8 +156,7 @@ export const TabAllergyRecord: FC<ITabAllergyRecord> = memo(
     }, []);
     const handleCloseAddDialog = useCallback(() => {
       set_open_add_dialog(false);
-      handleReloadDataTable();
-    }, [handleReloadDataTable]);
+    }, []);
 
     const handleSetRecord = useCallback(
       async (payload: ConsultAllergyEntity) => {
@@ -196,8 +195,6 @@ export const TabAllergyRecord: FC<ITabAllergyRecord> = memo(
           filters
         );
 
-        console.log(`table_response`, table_response);
-
         if (table_response.success) {
           mounted && set_data_table(table_response.data);
         } else {
@@ -215,7 +212,7 @@ export const TabAllergyRecord: FC<ITabAllergyRecord> = memo(
 
     return (
       <>
-        <Grid container spacing={6}>
+        <Grid container spacing={2}>
           <Grid item xs={12}>
             <Grid container justify="flex-end">
               <Grid item>
@@ -241,13 +238,13 @@ export const TabAllergyRecord: FC<ITabAllergyRecord> = memo(
                   alignContent="center"
                   alignItems="center"
                 >
-                  <Grid item xs={12} md={6}>
+                  <Grid item md={"auto"}>
                     <Grid
                       container
                       justify="flex-start"
                       alignContent="center"
                       alignItems="center"
-                      spacing={2}
+                      spacing={1}
                     >
                       <Grid item>
                         <TablePagination
@@ -264,10 +261,10 @@ export const TabAllergyRecord: FC<ITabAllergyRecord> = memo(
                     </Grid>
                   </Grid>
 
-                  <Grid xs={12} md={6} item>
+                  <Grid item md={"auto"}>
                     <Grid
                       container
-                      spacing={2}
+                      spacing={1}
                       alignContent="center"
                       alignItems="center"
                       justify="flex-end"
@@ -400,6 +397,7 @@ export const TabAllergyRecord: FC<ITabAllergyRecord> = memo(
                   </Grid>
                 </Grid>
               </Grid>
+
               <Grid item xs={12}>
                 <TableContainer
                   style={{

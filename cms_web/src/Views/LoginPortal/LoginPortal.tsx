@@ -11,6 +11,7 @@ import { APP_NAME } from "../../Helpers/AppConfig";
 import importImagesFromFolder from "../../Helpers/importImagesFromFolder";
 import UseInterval from "../../Hooks/UseInterval";
 import DefaultValuesActions from "../../Services/Actions/DefaultValuesActions";
+import { setCurrentUserAction } from "../../Services/Actions/UserActions";
 import UserApi from "../../Services/Api/UserApi";
 import { AuthUserPayload } from "../../Services/Payloads/AuthUserPayloads";
 import { RootStore } from "../../Services/Store";
@@ -70,6 +71,8 @@ export const LoginPortal: FC<ILoginPortal> = memo(() => {
     ) => {
       setIsAuthenticating(true);
       const response = await UserApi.authUserApi(values);
+
+      console.log(`auth res`, response);
       setIsAuthenticating(false);
       if (response.success) {
         localStorage.setItem(
@@ -103,6 +106,7 @@ export const LoginPortal: FC<ILoginPortal> = memo(() => {
     const fetchHospDefValues = () => {
       dispatch(DefaultValuesActions.setHospitalNameAction());
       dispatch(DefaultValuesActions.setHospitalLogoAction());
+      dispatch(setCurrentUserAction());
     };
 
     mounted && fetchHospDefValues();
@@ -135,7 +139,7 @@ export const LoginPortal: FC<ILoginPortal> = memo(() => {
               alt={hospital_name}
               className="brand-logo"
               isBlob={true}
-              spacing={23}
+              spacing={14}
             />
             <div className="brand-name">{hospital_name}</div>
           </section>

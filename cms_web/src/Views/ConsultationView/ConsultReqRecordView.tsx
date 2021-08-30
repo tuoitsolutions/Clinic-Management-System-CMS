@@ -29,7 +29,6 @@ import useFilter from "../../Hooks/useFilter";
 import { setPageLinksAction } from "../../Services/Actions/PageActions";
 import ConsultRequestApi from "../../Services/Api/ConsultRequestApi";
 import { ConsultRequestTableModel } from "../../Services/Entities/ConsultRequestEntity";
-import DepartmentEntity from "../../Services/Entities/DepartmentEntity";
 import { PaginationModel } from "../../Services/Models/PaginationModel";
 import {
   TblColumnModel,
@@ -128,13 +127,13 @@ const tableColumns: Array<TblColumnModel> = [
   },
   {
     label: "Status",
-    width: 80,
+    width: 100,
     fixedWidth: true,
     align: "center",
   },
   {
-    label: "Encoded On",
-    width: 100,
+    label: "Requested On",
+    width: 150,
     fixedWidth: true,
   },
 ];
@@ -146,7 +145,7 @@ const initial_filter = {
   email: "",
   chief_complaint: "",
   symptoms: "",
-  sts_pk: ["x", "fa", "a", "pd", "s", "e"],
+  sts_pk: ["x", "fa", "pd", "s", "e"],
   request_to: null,
   request_from: null,
 };
@@ -283,7 +282,7 @@ const ConsultReqRecordView: FC<ConsultReqRecordViewProps> = memo(() => {
                               <FormikInputField
                                 fullWidth
                                 name="consult_req_pk"
-                                label="Consult Request Code"
+                                label="Code"
                                 InputLabelProps={{
                                   shrink: true,
                                 }}
@@ -345,10 +344,6 @@ const ConsultReqRecordView: FC<ConsultReqRecordViewProps> = memo(() => {
                                     label: "For Approval",
                                   },
                                   {
-                                    id: "a",
-                                    label: "Approved",
-                                  },
-                                  {
                                     id: "pd",
                                     label: "Paid",
                                   },
@@ -357,8 +352,8 @@ const ConsultReqRecordView: FC<ConsultReqRecordViewProps> = memo(() => {
                                     label: "Started",
                                   },
                                   {
-                                    id: "f",
-                                    label: "Finished",
+                                    id: "e",
+                                    label: "Ended",
                                   },
                                 ]}
                                 name="sts_pk"

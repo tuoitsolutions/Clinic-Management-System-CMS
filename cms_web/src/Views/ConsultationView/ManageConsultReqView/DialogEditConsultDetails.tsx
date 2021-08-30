@@ -28,8 +28,6 @@ const form_schema = yup.object({
   notes: yup.string().nullable().label("Notes"),
   assign_dept_pk: yup.string().required().nullable().label("Department"),
   assign_res_pk: yup.string().nullable().label("Resident"),
-  est_start_date: yup.string().nullable().label("Est. Start Date"),
-  est_start_time: yup.string().nullable().label("Est. Start Time"),
 });
 
 const DialogUpdateConsultDetails: FC<IDialogUpdateConsultDetails> = memo(
@@ -39,11 +37,7 @@ const DialogUpdateConsultDetails: FC<IDialogUpdateConsultDetails> = memo(
     const form_instance = useForm<any>({
       resolver: yupResolver(form_schema),
       mode: "onChange",
-      defaultValues: {
-        ...consult_info,
-        est_start_date: moment(consult_info.est_start_date),
-        est_start_time: moment(consult_info.est_start_time),
-      },
+      defaultValues: consult_info,
     });
 
     const [loading_initial_data, set_loading_initial_data] =
@@ -295,11 +289,7 @@ const DialogUpdateConsultDetails: FC<IDialogUpdateConsultDetails> = memo(
                 type="reset"
                 disabled={loading_initial_data}
                 onClick={async () => {
-                  form_instance.reset({
-                    ...consult_info,
-                    est_start_date: moment(consult_info.est_start_date),
-                    est_start_time: moment(consult_info.est_start_time),
-                  });
+                  form_instance.reset(consult_info);
                 }}
               >
                 Reset

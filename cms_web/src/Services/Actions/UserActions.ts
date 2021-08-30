@@ -13,14 +13,23 @@ export const setCurrentUserAction =
       });
       const response: ResponseModel = await UserApi.currentUserApi();
 
-      console.log(`response`, response);
-
       if (response.success) {
         dispatch({
           type: "set_user",
           user: response.data,
         });
+
+        if (window.location.pathname === "/login" && !!response?.data) {
+          window.location.href = "/dashboard";
+        }
+      } else {
+        console.log(
+          `user action response`,
+          response.data,
+          window.location.pathname
+        );
       }
+
       dispatch({
         type: "set_fetch_user",
         fetch_user: false,

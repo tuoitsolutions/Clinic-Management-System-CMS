@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 
 namespace cms_server.Entities
 {
@@ -10,6 +11,7 @@ namespace cms_server.Entities
         public string file_dest { get; set; }
         public string file_name { get; set; }
         public string file_type { get; set; }
+        public string file_ext { get; set; }
         public string notes { get; set; }
         public string is_active { get; set; }
         public DateTime? encoded_at { get; set; }

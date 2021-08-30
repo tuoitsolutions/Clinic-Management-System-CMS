@@ -135,10 +135,22 @@ Axios.interceptors.response.use(
               alert(
                 `It looks like your session has expired, please login again!`
               );
-              window.location.href = "/login";
+              if (
+                window.location.pathname !== "/login" &&
+                window.location.pathname !== "/"
+              ) {
+                window.location.href = "/login";
+              }
+              //
             });
         } else {
-          window.location.href = "/login";
+          if (
+            window.location.pathname !== "/login" &&
+            window.location.pathname !== "/"
+          ) {
+            window.location.href = "/login";
+          }
+          // window.location.href = "/login";
         }
       }
 

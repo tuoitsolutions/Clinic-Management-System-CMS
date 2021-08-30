@@ -1,7 +1,7 @@
 import {
   Button,
+  Chip,
   Grid,
-  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -15,9 +15,9 @@ import { Form, Formik } from "formik";
 import React, { FC, memo, useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import BoxLoader from "../../../Assets/loaders/BoxLoader";
+import BodyLoader from "../../../Component/BodyLoader";
 import DataTableSearch from "../../../Component/DataTableSearch";
 import DataTableSort from "../../../Component/DataTableSort";
-import FormikCheckbox from "../../../Component/Formik/FormikCheckbox";
 import FormikDateField from "../../../Component/Formik/FormikDateField";
 import FormikInputField from "../../../Component/Formik/FormikInputField";
 import IconButtonPopper from "../../../Component/IconButtonPopper/IconButtonPopper";
@@ -25,9 +25,13 @@ import LinearLoadingProgress from "../../../Component/LinearLoadingProgress";
 import PreviewPDF from "../../../Component/PreviewPDF";
 import { InvalidDateTimeToDefault } from "../../../Hooks/UseDateParser";
 import useFilter from "../../../Hooks/useFilter";
-import { setPageSnackbar } from "../../../Services/Actions/PageActions";
+import { StringEmptyToDefault } from "../../../Hooks/UseStringFormatter";
+import {
+  closePageLoading,
+  setPageSnackbar,
+  showPageLoading,
+} from "../../../Services/Actions/PageActions";
 import ConsultRequestFileApi from "../../../Services/Api/ConsultRequestFileApi";
-import DeptResidentApi from "../../../Services/Api/DeptResidentApi";
 import ConsultRequestFileEntity, {
   ConsultRequestFileTableModel,
 } from "../../../Services/Entities/ConsultRequestFileEntity";
@@ -36,6 +40,8 @@ import {
   TblColumnModel,
   TblInitialSortModel,
 } from "../../../Services/Models/TableModels";
+import DialogConsultAddFile from "./DialogConsultFileAdd";
+import DialogConsultFileUpdate from "./DialogConsultFileUpdate";
 
 interface ITabDeptResident {
   consult_req_pk: string;
@@ -85,8 +91,18 @@ const tableColumns: Array<TblColumnModel> = [
     width: 200,
   },
   {
+    label: "Type",
+    width: 100,
+  },
+  {
+    label: "Validity",
+    width: 100,
+    fixedWidth: true,
+    align: "center",
+  },
+  {
     label: "Encoded On",
-    width: 80,
+    width: 150,
     fixedWidth: true,
   },
 ];
@@ -101,6 +117,9 @@ export const TabDeptResident: FC<ITabDeptResident> = memo(
       date_to: null,
     });
 
+    const [fetch_initial_data, set_fetch_initial_data] =
+      useState<boolean>(false);
+
     const [data_table, set_data_table] =
       useState<null | ConsultRequestFileTableModel>(null);
     const [fetch_data_table, set_fetch_data_table] = useState<boolean>(false);
@@ -109,27 +128,27 @@ export const TabDeptResident: FC<ITabDeptResident> = memo(
     const [selected_record, set_selected_record] =
       useState<null | ConsultRequestFileEntity>(null);
 
-    const handleReloadDataTable = useCallback(() => {
-      set_reload_data_table((p) => p + 1);
-    }, []);
-
     const [open_add_dialog, set_open_add_dialog] = useState(false);
+    const [open_manage_dialog, set_open_manage_dialog] = useState(false);
+    const [open_preview_file, set_open_preview_file] = useState(false);
     const handleOpenAddDialog = useCallback(() => {
       set_open_add_dialog(true);
     }, []);
-    const handleCloseAddDialog = useCallback(() => {
-      set_open_add_dialog(false);
-      handleReloadDataTable();
-    }, [handleReloadDataTable]);
 
     const handleSetRecord = useCallback(
       async (cs_file_pk: number) => {
+        dispatch(
+          showPageLoading({
+            show: true,
+            loading_message:
+              "Loading file preview, thank you for your patience.",
+          })
+        );
         const response = await ConsultRequestFileApi.GetConsultReqFileByPk(
           cs_file_pk
         );
 
-        console.log(`response`, response);
-
+        dispatch(closePageLoading());
         if (response.success) {
           set_selected_record(response.data);
         } else {
@@ -151,6 +170,26 @@ export const TabDeptResident: FC<ITabDeptResident> = memo(
       handleChagenSelectedSortIndex,
     ] = useFilter(initial_filter, initialTableSort, 50);
 
+    const handleReloadDataTable = useCallback(async () => {
+      const filters: PaginationModel = {
+        page: {
+          begin: tablePage,
+          limit: tableLimit,
+        },
+        sort: activeSort,
+        filters: tableSearch,
+      };
+      set_fetch_data_table(true);
+      const table_response = await ConsultRequestFileApi.GetTableConsultReqFile(
+        filters
+      );
+
+      if (table_response.success) {
+        set_data_table(table_response.data);
+      }
+      set_fetch_data_table(false);
+    }, [activeSort, tableLimit, tablePage, tableSearch]);
+
     useEffect(() => {
       let mounted = true;
       const fetchTableData = async () => {
@@ -163,16 +202,14 @@ export const TabDeptResident: FC<ITabDeptResident> = memo(
           filters: tableSearch,
         };
 
-        mounted && set_fetch_data_table(true);
+        mounted && set_fetch_initial_data(true);
         const table_response =
           await ConsultRequestFileApi.GetTableConsultReqFile(filters);
-
-        console.log(`table_response`, table_response);
 
         if (table_response.success) {
           mounted && set_data_table(table_response.data);
         }
-        mounted && set_fetch_data_table(false);
+        mounted && set_fetch_initial_data(false);
       };
 
       mounted && !!tableSearch && !!activeSort && fetchTableData();
@@ -184,8 +221,8 @@ export const TabDeptResident: FC<ITabDeptResident> = memo(
 
     return (
       <>
-        <Grid container spacing={6}>
-          {/* <Grid item xs={12}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
             <Grid container justify="flex-end">
               <Grid item>
                 <Button
@@ -193,13 +230,13 @@ export const TabDeptResident: FC<ITabDeptResident> = memo(
                   variant="contained"
                   onClick={handleOpenAddDialog}
                 >
-                  Add Dept. Resident
+                  Add File
                 </Button>
               </Grid>
             </Grid>
-          </Grid> */}
+          </Grid>
 
-          {!!data_table ? (
+          {!fetch_initial_data ? (
             <>
               <Grid item xs={12}>
                 <Grid
@@ -208,13 +245,13 @@ export const TabDeptResident: FC<ITabDeptResident> = memo(
                   alignContent="center"
                   alignItems="center"
                 >
-                  <Grid item xs={12} md={6}>
+                  <Grid item md={"auto"}>
                     <Grid
                       container
                       justify="flex-start"
                       alignContent="center"
                       alignItems="center"
-                      spacing={2}
+                      spacing={1}
                     >
                       <Grid item>
                         <TablePagination
@@ -231,10 +268,10 @@ export const TabDeptResident: FC<ITabDeptResident> = memo(
                     </Grid>
                   </Grid>
 
-                  <Grid xs={12} md={6} item>
+                  <Grid item md={"auto"}>
                     <Grid
                       container
-                      spacing={2}
+                      spacing={1}
                       alignContent="center"
                       alignItems="center"
                       justify="flex-end"
@@ -301,7 +338,7 @@ export const TabDeptResident: FC<ITabDeptResident> = memo(
                                   <Grid item xs={12}>
                                     <Grid
                                       container
-                                      spacing={2}
+                                      spacing={1}
                                       justify="flex-end"
                                     >
                                       <Grid item>
@@ -371,13 +408,40 @@ export const TabDeptResident: FC<ITabDeptResident> = memo(
                                 {
                                   color: "primary",
                                   text: "Preview File",
-                                  handleClick: () =>
-                                    handleSetRecord(row.cr_file_pk),
+                                  handleClick: () => {
+                                    handleSetRecord(row.cr_file_pk);
+                                    set_open_preview_file(true);
+                                  },
+                                },
+                                {
+                                  color: "primary",
+                                  text: "Manage File",
+                                  handleClick: () => {
+                                    set_selected_record(row);
+                                    set_open_manage_dialog(true);
+                                  },
                                 },
                               ]}
                             />
                           </TableCell>
                           <TableCell>{row.file_name}</TableCell>
+                          <TableCell>
+                            <span style={{ textTransform: `capitalize` }}>
+                              {row.file_type}
+                            </span>
+                          </TableCell>
+
+                          <TableCell align="center">
+                            <Chip
+                              size="small"
+                              label={
+                                row.is_active === "y" ? "Active" : "Not active"
+                              }
+                              color={
+                                row.is_active === "y" ? "primary" : "secondary"
+                              }
+                            />
+                          </TableCell>
 
                           <TableCell>
                             <small>
@@ -391,43 +455,52 @@ export const TabDeptResident: FC<ITabDeptResident> = memo(
                 </TableContainer>
               </Grid>
 
-              {!!selected_record?.file_dest && (
+              {!!selected_record?.file_dest && open_preview_file && (
                 <>
                   <PreviewPDF
                     file={selected_record?.file_dest}
-                    doc_title={`${selected_record?.file_name}`}
+                    doc_title={StringEmptyToDefault(
+                      selected_record?.file_name + selected_record?.file_ext,
+                      selected_record?.file_dest
+                    )}
                     handleClose={() => {
+                      set_open_preview_file(false);
                       set_selected_record(null);
                     }}
-                    actions={
-                      <>
-                        <IconButton
-                        // onClick={() => {
-                        //   UsePdf.downloadFile(
-                        //     selected_emp_doc.file_download,
-                        //     selected_emp_doc.edo_file_name
-                        //   );
-                        // }}
-                        >
-                          {/* <GetAppRoundedIcon /> */}
-                        </IconButton>
-                        {/*
-              <IconButton
-                onClick={(file: any) => {
-                  alert(`edit`);
-                }}
-              >
-                <EditRoundedIcon />
-              </IconButton> */}
-                      </>
-                    }
+                    actions={<></>}
                   />
                 </>
+              )}
+
+              {!!consult_req_pk && open_add_dialog && (
+                <DialogConsultAddFile
+                  consult_req_pk={consult_req_pk}
+                  open={open_add_dialog}
+                  successCallback={() => {
+                    handleReloadDataTable();
+                  }}
+                  handleCloseDialog={() => {
+                    set_open_add_dialog(false);
+                  }}
+                />
+              )}
+              {!!selected_record && open_manage_dialog && (
+                <DialogConsultFileUpdate
+                  selected_consult_file={selected_record}
+                  open={open_manage_dialog}
+                  successCallback={() => {
+                    handleReloadDataTable();
+                  }}
+                  handleCloseDialog={() => {
+                    set_open_manage_dialog(false);
+                    set_selected_record(null);
+                  }}
+                />
               )}
             </>
           ) : (
             <div className="centered-item">
-              <BoxLoader />
+              <BodyLoader message="Loading initial data, thank you for patience." />
             </div>
           )}
         </Grid>

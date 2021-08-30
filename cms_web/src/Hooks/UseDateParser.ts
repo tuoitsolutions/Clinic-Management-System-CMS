@@ -97,3 +97,18 @@ export const InvalidDateTimeToDefault = (
   }
   return d;
 };
+
+export const DateFormatOrNull = (
+  date: Date | null | string,
+  replacement: any
+): any => {
+  if (!date) {
+    return replacement;
+  }
+
+  if (moment(date).isValid()) {
+    return moment(date).format();
+  } else {
+    return replacement;
+  }
+};

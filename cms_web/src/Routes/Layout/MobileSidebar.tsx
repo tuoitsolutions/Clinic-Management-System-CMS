@@ -70,7 +70,7 @@ const MobileSidebar: React.FC<IMobileSidebar> = memo(
             src={hospital_logo}
             className="brand-logo"
             isBlob
-            spacing={10}
+            spacing={6}
             alt={hospital_name?.charAt(0)}
           />
           <div className="brand-name">{hospital_name}</div>
@@ -130,17 +130,16 @@ export const StyledMobileSidebar = styled(Drawer)`
       align-items: center;
       justify-items: start;
       justify-content: start;
-      grid-gap: 0.5em;
+      /* grid-gap: 0.5em; */
       padding: 0 0.5em;
       background-color: ${(p) => p.theme.palette.primary.main};
       color: ${(p) => p.theme.palette.primary.contrastText};
       grid-template-areas: "logo name icon" "logo app icon";
-      grid-auto-columns: 40px 1fr 40px;
+      grid-auto-columns: auto 1fr 40px;
 
       .brand-logo {
         grid-area: logo;
-        height: 40px;
-        width: 40px;
+        margin-right: 5px;
       }
 
       .brand-name {
@@ -148,8 +147,8 @@ export const StyledMobileSidebar = styled(Drawer)`
         align-self: start;
         white-space: pre-wrap;
         text-transform: capitalize;
-        font-weight: 600;
-        font-size: 0.78em;
+        font-weight: 900;
+        font-size: 0.9em;
       }
 
       .app-name {
@@ -161,8 +160,8 @@ export const StyledMobileSidebar = styled(Drawer)`
         white-space: pre-wrap;
         text-transform: capitalize;
 
-        font-weight: 600;
-        font-size: 0.8em;
+        font-weight: 500;
+        font-size: 0.7em;
         white-space: pre-wrap;
       }
 

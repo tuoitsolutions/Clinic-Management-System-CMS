@@ -246,13 +246,13 @@ export const TabPatHistoryRecord: FC<ITabPatHistoryRecord> = memo(
                   alignContent="center"
                   alignItems="center"
                 >
-                  <Grid item xs={12} md={6}>
+                  <Grid item md={"auto"}>
                     <Grid
                       container
                       justify="flex-start"
                       alignContent="center"
                       alignItems="center"
-                      spacing={2}
+                      spacing={1}
                     >
                       <Grid item>
                         <TablePagination
@@ -269,10 +269,10 @@ export const TabPatHistoryRecord: FC<ITabPatHistoryRecord> = memo(
                     </Grid>
                   </Grid>
 
-                  <Grid xs={12} md={6} item>
+                  <Grid item md={"auto"}>
                     <Grid
                       container
-                      spacing={2}
+                      spacing={1}
                       alignContent="center"
                       alignItems="center"
                       justify="flex-end"
@@ -377,8 +377,8 @@ export const TabPatHistoryRecord: FC<ITabPatHistoryRecord> = memo(
                                           label: "Started",
                                         },
                                         {
-                                          id: "f",
-                                          label: "Finished",
+                                          id: "e",
+                                          label: "Ended",
                                         },
                                       ]}
                                       name="sts_pk"
@@ -437,6 +437,8 @@ export const TabPatHistoryRecord: FC<ITabPatHistoryRecord> = memo(
                   </Grid>
                 </Grid>
               </Grid>
+
+              {/* // */}
               <Grid item xs={12}>
                 <TableContainer
                   style={{

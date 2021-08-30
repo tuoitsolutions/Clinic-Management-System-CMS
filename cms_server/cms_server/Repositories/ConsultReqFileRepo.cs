@@ -84,7 +84,7 @@ namespace cms_server.Repositories
                 {
                     ConsultRequestFileEntity selected_admin = table_data[0];
 
-                    byte[] img_byte_arr = UseFtp.DownloadFtp(selected_admin.file_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                    byte[] img_byte_arr = UseFtp.DownloadFtp(DefaultConfig.ftp_ip + selected_admin.file_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
                     if (img_byte_arr != null)
                     {
                         selected_admin.file_dest = Convert.ToBase64String(img_byte_arr);
@@ -126,18 +126,30 @@ namespace cms_server.Repositories
                 using var tran = con.BeginTransaction();
 
                 List<ConsultReqChatEntity> tbl_consult = con.Query<ConsultReqChatEntity>(
-                       $@"SELECT * FROM `consult_request` WHERE MD5(consult_req_pk) = @hash_key LIMIT 1;"
+                       $@"SELECT * FROM `consult_request` WHERE consult_req_pk = @consult_req_pk LIMIT 1;"
                        , payload
                        , transaction: tran).ToList();
 
                 UserEntity user_info = con.QuerySingle<UserEntity>(
                     $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
-                    , new { user_pk = payload.encoded_at }
+                    , new { user_pk = payload.encoded_by }
                     , transaction: tran);
 
                 if (tbl_consult.Count > 0)
                 {
                     ConsultReqChatEntity selected_consult = tbl_consult[0];
+
+
+                    if (payload?.attach_file == null)
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "No file has been attached in this request."
+                        };
+                    }
+
+
                     FileResponseModel file_upload_response = new FileResponseModel
                     {
                         success = true
@@ -156,14 +168,17 @@ namespace cms_server.Repositories
                     {
                         payload.file_dest = file_upload_response.data.path;
                         payload.file_name = file_upload_response.data.name;
+                        payload.file_ext = file_upload_response.data.ext;
                     }
 
                     int add_file = con.Execute(@"
                                     INSERT INTO `consult_request_file` 
                                     SET 
+                                    consult_req_pk=@consult_req_pk, 
                                     file_dest=@file_dest, 
                                     file_name=@file_name, 
                                     file_type=@file_type, 
+                                    file_ext=@file_ext, 
                                     notes=@notes, 
                                     is_active='y', 
                                     encoded_at=NOW(), 
@@ -173,6 +188,7 @@ namespace cms_server.Repositories
 
                     if (add_file > 0)
                     {
+                        tran.Commit();
                         return new ResponseModel
                         {
                             success = true,
@@ -223,7 +239,7 @@ namespace cms_server.Repositories
 
                 UserEntity user_info = con.QuerySingle<UserEntity>(
                     $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
-                    , new { user_pk = payload.encoded_at }
+                    , new { user_pk = payload.updated_by }
                     , transaction: tran);
 
                 if (tbl_consult.Count > 0)
@@ -245,6 +261,7 @@ namespace cms_server.Repositories
 
                     if (add_file > 0)
                     {
+                        tran.Commit();
                         return new ResponseModel
                         {
                             success = true,

@@ -64,6 +64,7 @@ const DateFieldHookForm: React.FC<DateFieldHookFormProps> = React.memo(
                     disabled={props.disabled}
                     readOnly={props.readOnly}
                     autoComplete="off"
+                    mask={props.mask}
                   />
                 )}
 

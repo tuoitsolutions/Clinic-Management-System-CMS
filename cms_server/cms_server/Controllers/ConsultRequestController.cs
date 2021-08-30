@@ -3,6 +3,7 @@ using cms_server.Hooks;
 using cms_server.Models;
 using cms_server.Repositories;
 using hrms_server.Payloads;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using static pos_server.Payloads.ConsultRequestPayloads;
@@ -44,11 +45,11 @@ namespace cms_server.Controllers
         }
 
 
+        [Authorize]
         [HttpPost]
         public IActionResult GetTableConsultRequest(ConsultRequestTablePayload payload)
         {
-            string user_type = UseClaims.GetUserType((ClaimsIdentity)User.Identity);
-            return Ok(consult_req_repo.GetTableConsultRequest(payload, User.Identity.Name, user_type));
+            return Ok(consult_req_repo.GetTableConsultRequest(payload, User.Identity.Name));
         }
 
         [HttpPost]
@@ -101,10 +102,18 @@ namespace cms_server.Controllers
             return Ok(consult_req_repo.EmailConsultRequestSoa(payload, User.Identity.Name));
         }
 
+        [Authorize]
         [HttpPost]
-        public IActionResult AssignDeptConsult(ConsultRequestEntity payload)
+        public IActionResult SetConsultDeptSched(ConsultRequestEntity payload)
         {
-            return Ok(consult_req_repo.AssignDeptConsult(payload, User.Identity.Name));
+            return Ok(consult_req_repo.SetConsultDeptSched(payload, User.Identity.Name));
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult SendConsultLink(SingleValuePayload payload)
+        {
+            return Ok(consult_req_repo.SendConsultLink(payload.value, User.Identity.Name));
         }
 
         [HttpPost]

@@ -20,7 +20,7 @@ namespace pos_server.Payloads
             public DateTime? request_from { get; set; }
 
             //ext
-            public List<string> res_depts { get; set; }
+            public List<string> resident_dept { get; set; }
         }
         public class ConsultRequestTablePayload
         {

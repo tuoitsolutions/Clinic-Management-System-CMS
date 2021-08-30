@@ -132,25 +132,9 @@ export const TabPaymentLog: FC<ITabPaymentLog> = memo(({ consult_req_pk }) => {
   const [reload_data_table, set_reload_data_table] = useState(0);
   const [page_error_message, set_page_error_message] = useState("");
 
-  const [selected_record, set_selected_record] =
-    useState<null | BillPaymongoEntity>(null);
-
-  const handleReloadDataTable = useCallback(() => {
-    set_reload_data_table((p) => p + 1);
-  }, []);
-
-  const [open_view_details_dialog, set_open_view_details_dialog] =
-    useState(false);
-  const handleOpenAddDialog = useCallback(() => {
-    set_open_view_details_dialog(true);
-  }, []);
-  const handleCloseAddDialog = useCallback(() => {
-    set_open_view_details_dialog(false);
-  }, []);
-
   const handleSetRecord = useCallback(
     async (selected_bill?: BillPaymongoEntity) => {
-      set_selected_record(selected_bill);
+      // set_selected_record(selected_bill);
     },
     []
   );
@@ -215,13 +199,13 @@ export const TabPaymentLog: FC<ITabPaymentLog> = memo(({ consult_req_pk }) => {
                     alignContent="center"
                     alignItems="center"
                   >
-                    <Grid item xs={12} md={6}>
+                    <Grid item md={"auto"}>
                       <Grid
                         container
                         justify="flex-start"
                         alignContent="center"
                         alignItems="center"
-                        spacing={2}
+                        spacing={1}
                       >
                         <Grid item>
                           <TablePagination
@@ -238,10 +222,10 @@ export const TabPaymentLog: FC<ITabPaymentLog> = memo(({ consult_req_pk }) => {
                       </Grid>
                     </Grid>
 
-                    <Grid xs={12} md={6} item>
+                    <Grid item md={"auto"}>
                       <Grid
                         container
-                        spacing={2}
+                        spacing={1}
                         alignContent="center"
                         alignItems="center"
                         justify="flex-end"

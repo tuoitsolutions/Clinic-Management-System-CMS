@@ -69,7 +69,7 @@ const IconButtonPopper: React.FC<IIconButtonPopper> = memo(
                 key={index}
                 color={btn.color}
                 className="btn"
-                size="small"
+                // size="small"
                 onClick={() => {
                   handleClose();
                   if (typeof btn.handleClick !== "undefined") {
@@ -92,14 +92,14 @@ const IconButtonPopper: React.FC<IIconButtonPopper> = memo(
 export default IconButtonPopper;
 
 export const PopperContent = styled(Paper)`
-  padding: 1em 0.5em;
+  padding: 1.5em 2em;
   display: grid;
   grid-gap: 0.5em;
   min-width: 150px;
 
   .btn {
   }
-  .MuiButton-label {
+  /* .MuiButton-label {
     display: grid;
     grid-auto-flow: column;
     grid-gap: 0.5em;
@@ -107,5 +107,5 @@ export const PopperContent = styled(Paper)`
     justify-items: start;
     align-items: center;
     align-content: center;
-  }
+  } */
 `;

@@ -25,7 +25,7 @@ namespace cms_server.Controllers
         }
 
         [HttpPost]
-        public IActionResult InsertConsultFile(ConsultRequestFileEntity payload)
+        public IActionResult InsertConsultFile([FromForm] ConsultRequestFileEntity payload)
         {
             payload.encoded_by = User.Identity.Name;
             return Ok(consult_req_file_repo.InsertConsultFile(payload));

@@ -130,7 +130,7 @@ const DialogUpdateVitalSign: FC<IDialogUpdateVitalSign> = memo((props) => {
                       <Grid item xs={6}>
                         <TextFieldHookForm
                           name="heart_rate"
-                          label="Hearte Rate"
+                          label="Heart Rate"
                           InputLabelProps={{
                             shrink: true,
                           }}

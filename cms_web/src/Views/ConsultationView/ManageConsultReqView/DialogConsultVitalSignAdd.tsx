@@ -1,6 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Grid } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
 import React, { FC, memo, useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -140,7 +139,7 @@ const DialogAddVitalSign: FC<IDialogAddVitalSign> = memo((props) => {
                     <Grid item xs={6}>
                       <TextFieldHookForm
                         name="heart_rate"
-                        label="Hearte Rate"
+                        label="Heart Rate"
                         InputLabelProps={{
                           shrink: true,
                         }}

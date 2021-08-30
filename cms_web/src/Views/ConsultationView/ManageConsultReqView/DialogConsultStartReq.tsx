@@ -20,11 +20,10 @@ import {
 import ConsultRequestApi from "../../../Services/Api/ConsultRequestApi";
 import HospPatientApi from "../../../Services/Api/HospPatientApi";
 import LibraryApi from "../../../Services/Api/LibraryApi";
-import ConsultAllergyEntity from "../../../Services/Entities/ConsultAllergyEntity";
 import ConsultRequestEntity from "../../../Services/Entities/ConsultRequestEntity";
 import HospPatientEntity from "../../../Services/Entities/HospPatientEntity";
 
-interface IDialogMapConsultPatient {
+interface IDialogConsultStartReq {
   open: boolean;
   handleCloseDialog: () => void;
   successCallback: () => void;
@@ -32,10 +31,6 @@ interface IDialogMapConsultPatient {
 }
 
 const form_structure = {
-  hospital_no: {
-    name: "hospital_no",
-    label: "Hospital Number",
-  },
   prefix: {
     name: "prefix",
     label: "Prefix",
@@ -88,10 +83,6 @@ const form_structure = {
     name: "line1",
     label: "Line 1",
   },
-  line2: {
-    name: "line2",
-    label: "Line 2",
-  },
   brgy_pk: {
     name: "brgy_pk",
     label: "Barangay",
@@ -115,11 +106,6 @@ const form_structure = {
 };
 
 const form_schema = yup.object({
-  hospital_no: yup
-    .string()
-    .required()
-    .nullable()
-    .label(form_structure.hospital_no.label),
   prefix: yup.string().nullable().label(form_structure.prefix.label),
   first_name: yup
     .string()
@@ -145,7 +131,6 @@ const form_schema = yup.object({
   email: yup.string().required().nullable().label(form_structure.email.label),
   mob_no: yup.string().required().nullable().label(form_structure.mob_no.label),
   line1: yup.string().required().nullable().label(form_structure.line1.label),
-  line2: yup.string().required().nullable().label(form_structure.line2.label),
   brgy_pk: yup
     .string()
     .required()
@@ -173,7 +158,7 @@ const form_schema = yup.object({
     .label(form_structure.zip_code.label),
 });
 
-const DialogMapConsultPatient: FC<IDialogMapConsultPatient> = memo((props) => {
+const DialogConsultStartReq: FC<IDialogConsultStartReq> = memo((props) => {
   const dispatch = useDispatch();
 
   const form_instance = useForm<any>({
@@ -192,6 +177,7 @@ const DialogMapConsultPatient: FC<IDialogMapConsultPatient> = memo((props) => {
   const handleSubmitForm = useCallback(
     async (payload: HospPatientEntity) => {
       payload.consult_req_pk = props.selected_record.consult_req_pk;
+
       payload.hospital_no = hospital_no;
 
       if (!!payload.consult_req_pk) {
@@ -207,7 +193,7 @@ const DialogMapConsultPatient: FC<IDialogMapConsultPatient> = memo((props) => {
                     "Starting the consultation, thank you for your patience",
                 })
               );
-              const response = await ConsultRequestApi.MapConsultationToPatient(
+              const response = await ConsultRequestApi.StartConsultation(
                 payload
               );
 
@@ -224,7 +210,6 @@ const DialogMapConsultPatient: FC<IDialogMapConsultPatient> = memo((props) => {
                 }
                 props.handleCloseDialog();
               } else {
-                set_error_message(response.message.toString());
               }
             },
           })
@@ -428,21 +413,39 @@ const DialogMapConsultPatient: FC<IDialogMapConsultPatient> = memo((props) => {
                       borderRadius: 10,
                     }}
                   >
-                    <Grid container spacing={5}>
+                    <Grid container spacing={3}>
                       <Grid item xs={12}>
-                        <Grid container>
-                          <Grid item xs={6}>
-                            <AutocompleteHookForm
-                              name="hospital_no"
-                              label="Existing Patient"
-                              fullWidth={true}
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
-                              options={hosp_pat_options}
-                            />
+                        <AutocompleteHookForm
+                          name="hospital_no"
+                          label="Choose the name of the patient to SYNC this consultation to an existing patient record (Leave empty if not applicable)"
+                          placeholder="Select the patient that you want to sync/merge"
+                          fullWidth={true}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                          options={hosp_pat_options}
+                        />
+                      </Grid>
+
+                      <Grid item xs={12}>
+                        <div className="ctnr-title-container">
+                          <Grid
+                            container
+                            spacing={1}
+                            alignContent="center"
+                            alignItems="center"
+                          >
+                            <Grid item xs={12}>
+                              <div className="ctnr-title">
+                                <div className="main">Patient Details</div>
+                                <div className="sub">
+                                  You can edit the patient details before
+                                  starting the consultation.
+                                </div>
+                              </div>
+                            </Grid>
                           </Grid>
-                        </Grid>
+                        </div>
                       </Grid>
 
                       <Grid item xs={12} md={2}>
@@ -477,6 +480,7 @@ const DialogMapConsultPatient: FC<IDialogMapConsultPatient> = memo((props) => {
                           InputLabelProps={{
                             shrink: true,
                           }}
+                          fullWidth
                           placeholder={`Enter the ${form_structure.middle_name.label}`}
                         />
                       </Grid>
@@ -714,19 +718,6 @@ const DialogMapConsultPatient: FC<IDialogMapConsultPatient> = memo((props) => {
                           required
                         />
                       </Grid>
-
-                      <Grid item xs={12} md={6}>
-                        <TextFieldHookForm
-                          name={form_structure.line2.name}
-                          label={form_structure.line2.label}
-                          placeholder={`Enter the ${form_structure.line2.label}`}
-                          fullWidth
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          required
-                        />
-                      </Grid>
                     </Grid>
                   </div>
                 </form>
@@ -742,7 +733,7 @@ const DialogMapConsultPatient: FC<IDialogMapConsultPatient> = memo((props) => {
               type="submit"
               form="form_instance"
             >
-              Save Changes
+              Start Consultation Now
             </Button>
             <Button
               variant="contained"
@@ -761,4 +752,4 @@ const DialogMapConsultPatient: FC<IDialogMapConsultPatient> = memo((props) => {
   );
 });
 
-export default DialogMapConsultPatient;
+export default DialogConsultStartReq;

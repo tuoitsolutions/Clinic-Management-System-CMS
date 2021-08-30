@@ -91,7 +91,7 @@ const tbl_columns: Array<TblColumnModel> = [
   },
   {
     label: "Encoded On",
-    width: 80,
+    width: 150,
     fixedWidth: true,
   },
 ];
@@ -127,8 +127,7 @@ export const TabProcRecord: FC<ITabProcRecord> = memo(({ consult_req_pk }) => {
   }, []);
   const handleCloseAddDialog = useCallback(() => {
     set_open_add_dialog(false);
-    handleReloadDataTable();
-  }, [handleReloadDataTable]);
+  }, []);
 
   const handleSetRecord = useCallback(async (payload: ConsultProcEntity) => {
     set_selected_record(payload);
@@ -162,8 +161,6 @@ export const TabProcRecord: FC<ITabProcRecord> = memo(({ consult_req_pk }) => {
       mounted && set_fetch_data_table(true);
       const table_response = await ConsultProcApi.GetTableConsultProc(filters);
 
-      console.log(`table_response`, table_response);
-
       if (table_response.success) {
         mounted && set_data_table(table_response.data);
       } else {
@@ -181,7 +178,7 @@ export const TabProcRecord: FC<ITabProcRecord> = memo(({ consult_req_pk }) => {
 
   return (
     <>
-      <Grid container spacing={6}>
+      <Grid container spacing={2}>
         <Grid item xs={12}>
           <Grid container justify="flex-end">
             <Grid item>
@@ -207,13 +204,13 @@ export const TabProcRecord: FC<ITabProcRecord> = memo(({ consult_req_pk }) => {
                 alignContent="center"
                 alignItems="center"
               >
-                <Grid item xs={12} md={6}>
+                <Grid item md={"auto"}>
                   <Grid
                     container
                     justify="flex-start"
                     alignContent="center"
                     alignItems="center"
-                    spacing={2}
+                    spacing={1}
                   >
                     <Grid item>
                       <TablePagination
@@ -230,10 +227,10 @@ export const TabProcRecord: FC<ITabProcRecord> = memo(({ consult_req_pk }) => {
                   </Grid>
                 </Grid>
 
-                <Grid xs={12} md={6} item>
+                <Grid item md={"auto"}>
                   <Grid
                     container
-                    spacing={2}
+                    spacing={1}
                     alignContent="center"
                     alignItems="center"
                     justify="flex-end"
@@ -342,6 +339,7 @@ export const TabProcRecord: FC<ITabProcRecord> = memo(({ consult_req_pk }) => {
                 </Grid>
               </Grid>
             </Grid>
+
             <Grid item xs={12}>
               <TableContainer
                 style={{

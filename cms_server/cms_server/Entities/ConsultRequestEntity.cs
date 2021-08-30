@@ -59,6 +59,7 @@ namespace cms_server.Entities
         public string payment_source_id { get; set; }
         public int? pay_link_sent_count { get; set; }
         public int? soa_sent_count { get; set; }
+        public int? consult_link_sent_count { get; set; }
         public int? med_pres_sent { get; set; }
         public int? proc_pres_sent { get; set; }
         public string paymongo_src_id { get; set; }
@@ -66,9 +67,7 @@ namespace cms_server.Entities
         public DateTime? paymongo_paid_at { get; set; }
         public string assign_dept_pk { get; set; }
         public string assign_res_pk { get; set; }
-        public DateTime? exp_start_date { get; set; }
-        public DateTime? exp_start_time { get; set; }
-        public DateTime? assign_dept_consult_date { get; set; }
+        public DateTime? est_start_at { get; set; }
         public DateTime? assign_dept_at { get; set; }
         public string consult_link_pass { get; set; }
         public string consult_link_hash { get; set; }
@@ -88,6 +87,7 @@ namespace cms_server.Entities
         public StatusMasterEntity status { get; set; }
         //ext
         public string otp_code { get; set; }
+        public bool is_send_consult_link { get; set; }
         public List<IFormFile> attach_req_files { set; get; }
         public string attach_base64_soa { get; set; }
         public IFormFile attach_profile_pic { get; set; }

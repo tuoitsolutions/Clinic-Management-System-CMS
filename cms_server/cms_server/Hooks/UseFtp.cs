@@ -80,10 +80,11 @@ namespace ddt_server.Hooks
                     string root_file_name = Path.GetFileName(file.FileName);
                     string ext = Path.GetExtension(root_file_name);
 
+
+
                     string unique_file_name = Path.GetFileNameWithoutExtension(root_file_name)
                               + "_"
-                              + Guid.NewGuid().ToString().Substring(0, 4)
-                              + ext;
+                              + Guid.NewGuid().ToString().Substring(0, 4);
 
 
 
@@ -93,7 +94,7 @@ namespace ddt_server.Hooks
 
                     if (root_dir_exists)
                     {
-                        FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(root_dir + "/" + unique_file_name));
+                        FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(root_dir + "/" + unique_file_name + ext));
                         request.Method = WebRequestMethods.Ftp.UploadFile;
                         request.UsePassive = false;
                         request.Credentials = new NetworkCredential(username, password);
@@ -110,8 +111,8 @@ namespace ddt_server.Hooks
                             success = true,
                             data = new FileModel
                             {
-                                name = unique_file_name,
-                                path = file_dest_path + unique_file_name,
+                                name = unique_file_name  ,
+                                path = file_dest_path + unique_file_name + ext,
                                 ext = ext
                             }
                         };

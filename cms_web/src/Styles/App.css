@@ -14,7 +14,7 @@ html {
 }
 
 th {
-  font-weight: 400 !important;
+  font-weight: 600 !important;
 }
 
 body {
@@ -124,6 +124,7 @@ a,
 .link {
   color: blue !important;
   text-decoration: none !important;
+  cursor: pointer;
 }
 
 tr th {
@@ -658,4 +659,8 @@ canvas {
 em {
   font-size: 0.9em !important;
   opacity: 0.7;
+}
+
+.MuiToolbar-gutters {
+  padding: 0 !important;
 }

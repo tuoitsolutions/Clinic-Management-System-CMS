@@ -58,6 +58,7 @@ interface ConsultRequestEntity {
   med_pres_sent?: number;
   proc_pres_sent?: number;
   soa_sent_count?: number;
+  consult_link_sent_count?: number;
   paymongo_src_id?: string;
   paymongo_src_id_enc_at?: string | Date;
   paymongo_charge_at?: string | Date;
@@ -65,8 +66,7 @@ interface ConsultRequestEntity {
   assign_dept_pk?: string;
   assign_res_pk?: string;
   assign_dept_consult_date?: string;
-  est_start_date?: string | Date;
-  est_start_time?: string | Date;
+  est_start_at?: string | Date;
 
   assign_dept_at?: string;
   consult_link_pass?: string;
@@ -88,6 +88,8 @@ interface ConsultRequestEntity {
   attach_base64_soa?: string;
   attach_profile_pic?: string | File;
   age?: string;
+  start_date?: Date | string;
+  start_time?: Date | string;
 }
 
 export interface ConsultRequestTableModel {

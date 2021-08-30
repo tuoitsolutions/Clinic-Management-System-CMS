@@ -3,6 +3,7 @@ using claim_form_server.Payloads;
 using DeliveryRoomWatcher.Models.Common;
 using DeliveryRoomWatcher.Providers;
 using DeliveryRoomWatcher.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
@@ -118,6 +119,7 @@ namespace DeliveryRoomWatcher.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult CurrentUser()
         {

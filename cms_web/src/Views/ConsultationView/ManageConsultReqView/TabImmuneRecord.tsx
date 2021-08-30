@@ -77,14 +77,14 @@ const init_tbl_sort: Array<TblInitialSortModel> = [
   {
     label: "Type (asc)",
     value: {
-      column: "type",
+      column: "vac_type",
       direction: "asc",
     },
   },
   {
     label: "Type (desc)",
     value: {
-      column: "type",
+      column: "vac_type",
       direction: "desc",
     },
   },
@@ -122,11 +122,13 @@ const tbl_columns: Array<TblColumnModel> = [
   },
   {
     label: "First Dose",
-    width: 80,
+    width: 100,
+    fixedWidth: true,
   },
   {
     label: "Next Dose",
-    width: 80,
+    width: 100,
+    fixedWidth: true,
   },
   {
     label: "Administered By",
@@ -140,7 +142,7 @@ const tbl_columns: Array<TblColumnModel> = [
   },
   {
     label: "Encoded On",
-    width: 100,
+    width: 150,
     fixedWidth: true,
   },
 ];
@@ -238,7 +240,7 @@ export const TabImmuneRecord: FC<ITabImmuneRecord> = memo(
 
     return (
       <>
-        <Grid container spacing={6}>
+        <Grid container spacing={2}>
           <Grid item xs={12}>
             <Grid container justify="flex-end">
               <Grid item>
@@ -264,13 +266,13 @@ export const TabImmuneRecord: FC<ITabImmuneRecord> = memo(
                   alignContent="center"
                   alignItems="center"
                 >
-                  <Grid item xs={12} md={6}>
+                  <Grid item md={"auto"}>
                     <Grid
                       container
                       justify="flex-start"
                       alignContent="center"
                       alignItems="center"
-                      spacing={2}
+                      spacing={1}
                     >
                       <Grid item>
                         <TablePagination
@@ -287,10 +289,10 @@ export const TabImmuneRecord: FC<ITabImmuneRecord> = memo(
                     </Grid>
                   </Grid>
 
-                  <Grid xs={12} md={6} item>
+                  <Grid item md={"auto"}>
                     <Grid
                       container
-                      spacing={2}
+                      spacing={1}
                       alignContent="center"
                       alignItems="center"
                       justify="flex-end"
@@ -304,7 +306,6 @@ export const TabImmuneRecord: FC<ITabImmuneRecord> = memo(
                           selectedSortIndex={selectedSortIndex}
                         />
                       </Grid>
-
                       <Grid item>
                         <DataTableSearch width={400}>
                           <Formik
@@ -436,6 +437,7 @@ export const TabImmuneRecord: FC<ITabImmuneRecord> = memo(
                   </Grid>
                 </Grid>
               </Grid>
+
               <Grid item xs={12}>
                 <TableContainer
                   style={{
@@ -490,17 +492,15 @@ export const TabImmuneRecord: FC<ITabImmuneRecord> = memo(
                           <TableCell>{row.vac_desc}</TableCell>
                           <TableCell>{row.vac_type}</TableCell>
                           <TableCell>
-                            <small>
-                              {InvalidDateToDefault(row?.date_given, "-")}
-                            </small>
+                            {InvalidDateToDefault(row?.date_given, "-")}
                           </TableCell>
                           <TableCell>
-                            <small>
-                              {InvalidDateToDefault(row?.next_dose, "-")}
-                            </small>
+                            {InvalidDateToDefault(row?.next_dose, "-")}
                           </TableCell>
 
-                          <TableCell>{row.administered_by}</TableCell>
+                          <TableCell>
+                            <small>{row.administered_by}</small>
+                          </TableCell>
 
                           <TableCell align="center">
                             <Chip

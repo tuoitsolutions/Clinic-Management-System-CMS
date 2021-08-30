@@ -19,12 +19,13 @@ import {
 import ConsultRequestApi from "../../../Services/Api/ConsultRequestApi";
 import ConsultRequestEntity from "../../../Services/Entities/ConsultRequestEntity";
 import { RootStore } from "../../../Services/Store";
+import ConsultActionActions from "./ConsultActionActions";
 import ConsultActionSend from "./ConsultActionSend";
 import ConsultActionStatus from "./ConsultActionStatus";
-import ConsultProfilePic from "./ConsultProfilePic";
-import DialogAssignConsultDept from "./DialogAssignConsultDept";
-import DialogMapConsultPatient from "./DialogMapConsultPatient";
-import DoctorNotesView from "./DoctorNotesView";
+import ConsultProfilePic from "./ContanerConsultProfilePic";
+import DialogAssignConsultDept from "./DialogConsultSetSchedDept";
+import DialogMapConsultPatient from "./DialogConsultSyncPat";
+import DoctorNotesView from "./ContainerDoctorNotes";
 import { PatientManageUi } from "./styles";
 import TabAllergyRecord from "./TabAllergyRecord";
 import TabChatHistoryRecord from "./TabChatHistoryRecord";
@@ -58,17 +59,6 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
     useState<null | ConsultRequestEntity>(null);
   const [error_message, set_error_message] = useState("");
 
-  const [reload_record_count, set_reload_record_count] = useState(0);
-
-  const [open_assign_dept_dialog, set_open_assign_dept_dialog] =
-    useState(false);
-
-  const [open_change_consult_cost_dialog, set_open_change_consult_cost_dialog] =
-    useState(false);
-
-  const [open_map_consult_dialog, set_open_map_consult_dialog] =
-    useState(false);
-
   const handleReloadRecord = useCallback(async () => {
     const hash_key: string = params.hash_key;
 
@@ -98,45 +88,21 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
     }
   }, [dispatch, params.hash_key]);
 
-  const handleTakeOverConsultation = useCallback(async () => {
-    if (!!selected_record?.consult_req_pk) {
-      dispatch(
-        setGeneralPrompt({
-          open: true,
-          custom_title: `Are you sure that you want to end this consultation?`,
-          continue_callback: async () => {
-            dispatch(
-              showPageLoading({
-                show: true,
-                loading_message:
-                  "Ending consultation, thank you for your patience",
-              })
-            );
-            const response = await ConsultRequestApi.TakeOverConsult({
-              consult_req_pk: selected_record?.consult_req_pk,
-            });
-
-            dispatch(closePageLoading());
-            dispatch(
-              setPageSnackbar(
-                response?.message?.toString(),
-                response.success ? "success" : "error"
-              )
-            );
-            if (response.success) {
-              handleReloadRecord();
-            }
-          },
-        })
-      );
-    }
-  }, [dispatch, handleReloadRecord, selected_record]);
-
   const GenerateTabLinks = useCallback(() => {
     let LinkTabRoutes: Array<ILinkTab> = [];
 
     if (user_type === "hosp_resident") {
       LinkTabRoutes = [
+        {
+          label: "General",
+          link: `/request/${params.hash_key}/general`,
+          Component: (
+            <TabGeneralInfo
+              consult_info={selected_record}
+              handleReloadRecord={handleReloadRecord}
+            />
+          ),
+        },
         {
           label: "Files",
           link: `/request/${params.hash_key}/file`,
@@ -220,13 +186,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
             <TabDeptResident consult_req_pk={selected_record?.consult_req_pk} />
           ),
         },
-        {
-          label: "Payment Logs",
-          link: `/request/${params.hash_key}/payment-logs`,
-          Component: (
-            <TabPaymentLog consult_req_pk={selected_record?.consult_req_pk} />
-          ),
-        },
+
         {
           label: "Vital Signs",
           link: `/request/${params.hash_key}/vital-sign`,
@@ -278,6 +238,13 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
           link: `/request/${params.hash_key}/patient-history`,
           Component: <TabPatHistoryRecord selected_row={selected_record} />,
         },
+        {
+          label: "Payment Logs",
+          link: `/request/${params.hash_key}/payment-logs`,
+          Component: (
+            <TabPaymentLog consult_req_pk={selected_record?.consult_req_pk} />
+          ),
+        },
       ];
     }
 
@@ -317,7 +284,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
     return () => {
       mounted = false;
     };
-  }, [params.hash_key, reload_record_count]);
+  }, [params.hash_key]);
 
   useEffect(() => {
     dispatch(
@@ -353,7 +320,11 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                   />
                 </Grid>
                 <Grid item>
-                  <ButtonPopper
+                  <ConsultActionActions
+                    consult_info={selected_record}
+                    handleReloadRecord={handleReloadRecord}
+                  />
+                  {/* <ButtonPopper
                     actionLabel="Actions"
                     variant="contained"
                     buttonColor="primary"
@@ -365,7 +336,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                         },
                       },
                     ]}
-                  />
+                  /> */}
                 </Grid>
                 <Grid item>
                   <ConsultActionSend
@@ -452,32 +423,6 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
             </div>
 
             <DoctorNotesView />
-
-            {!!selected_record?.consult_req_pk && open_assign_dept_dialog && (
-              <DialogAssignConsultDept
-                open={open_assign_dept_dialog}
-                handleCloseDialog={() => {
-                  set_open_assign_dept_dialog(false);
-                }}
-                successCallback={() => {
-                  handleReloadRecord();
-                }}
-                selected_consultation={selected_record}
-              />
-            )}
-
-            {!!selected_record?.consult_req_pk && open_map_consult_dialog && (
-              <DialogMapConsultPatient
-                open={open_map_consult_dialog}
-                handleCloseDialog={() => {
-                  set_open_map_consult_dialog(false);
-                }}
-                successCallback={() => {
-                  handleReloadRecord();
-                }}
-                selected_record={selected_record}
-              />
-            )}
           </PatientManageUi>
         )
       )}

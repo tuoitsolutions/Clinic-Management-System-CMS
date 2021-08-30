@@ -1,19 +1,13 @@
-import { Button, Chip, Grid, IconButton, Tooltip } from "@material-ui/core";
+import { Button, Chip, Grid } from "@material-ui/core";
 import React, { FC, memo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import HelpNumber from "../../../Helpers/HelpNumber";
-import EditRoundedIcon from "@material-ui/icons/EditRounded";
-
 import {
   InvalidDateTimeToDefault,
   InvalidDateToDefault,
 } from "../../../Hooks/UseDateParser";
 import { StringEmptyToDefault } from "../../../Hooks/UseStringFormatter";
 import ConsultRequestEntity from "../../../Services/Entities/ConsultRequestEntity";
-import { RootStore } from "../../../Services/Store";
-import DialogChangeConsultCost from "./DialogChangeConsultCost";
 import DialogUpdateConsultDtls from "./DialogUpdateConsultDtls";
-import DialogUpdateConsultDetails from "./DialogEditConsultDetails";
 
 interface ITabGeneralInfo {
   consult_info: ConsultRequestEntity;
@@ -22,24 +16,9 @@ interface ITabGeneralInfo {
 
 const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
   ({ consult_info, handleReloadRecord }) => {
-    const dispatch = useDispatch();
-
-    const user_type = useSelector(
-      (store: RootStore) => store.UserReducer.user?.user_type
-    );
-
-    const [
-      open_change_consult_cost_dialog,
-      set_open_change_consult_cost_dialog,
-    ] = useState(false);
-
     const [open_edit_pat_details_dialog, set_open_edit_pat_details_dialog] =
       useState(false);
 
-    const [
-      open_update_consult_details_dialog,
-      set_open_update_consult_details_dialog,
-    ] = useState(false);
     return (
       <>
         <Grid container spacing={2}>
@@ -47,7 +26,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
             <div className="ctnr-title-container">
               <Grid
                 container
-                spacing={1}
+                spacing={0}
                 alignContent="center"
                 alignItems="center"
               >
@@ -79,7 +58,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
             </div>
           </Grid>
           <Grid item xs={12}>
-            <Grid container spacing={1}>
+            <Grid container spacing={0}>
               <Grid item xs={12} sm={6} md={2} lg={1}>
                 <div className="info-group">
                   <div className="label">Prefix</div>
@@ -161,7 +140,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
             <div className="ctnr-title-container">
               <Grid
                 container
-                spacing={1}
+                spacing={0}
                 alignContent="center"
                 alignItems="center"
               >
@@ -174,8 +153,8 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
             </div>
           </Grid>
           <Grid item xs={12}>
-            <Grid container spacing={1}>
-              <Grid item xs={12} md={3} lg={2}>
+            <Grid container spacing={0}>
+              <Grid item xs={12} md={6} lg={2}>
                 <div className="info-group">
                   <div className="label">Code</div>
                   <div className="value">
@@ -187,14 +166,18 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                 <div className="info-group">
                   <div className="label">Patient Number</div>
                   <div className="value">
-                    <div>
+                    {StringEmptyToDefault(
+                      consult_info?.hospital_no,
+                      <em>To be decided</em>
+                    )}
+                    {/* <div>
                       {StringEmptyToDefault(
                         consult_info?.hospital_no,
                         <em>To be decided</em>
                       )}
-                    </div>
+                    </div> */}
 
-                    {consult_info?.sts_pk === "pd" && (
+                    {/* {consult_info?.sts_pk === "pd" && (
                       <Tooltip title="Map this consultation to a hospital number (Note: Only for patients that have admitted before)">
                         <IconButton
                           size="small"
@@ -206,7 +189,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                           <EditRoundedIcon fontSize="small" color="primary" />
                         </IconButton>
                       </Tooltip>
-                    )}
+                    )} */}
                   </div>
                 </div>
               </Grid>
@@ -222,24 +205,11 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                         </>
                       }
                     />
-                    {user_type === "admin" && consult_info?.sts_pk === "fa" && (
-                      <Tooltip title="Change the consultation cost">
-                        <IconButton
-                          size="small"
-                          color="primary"
-                          onClick={() => {
-                            set_open_change_consult_cost_dialog(true);
-                          }}
-                        >
-                          <EditRoundedIcon fontSize="small" color="primary" />
-                        </IconButton>
-                      </Tooltip>
-                    )}
                   </div>
                 </div>
               </Grid>
 
-              <Grid item xs={12} md={6} lg={3}>
+              <Grid item xs={12} md={6} lg={2}>
                 <div className="info-group">
                   <div className="label">Department</div>
                   <div className="value">
@@ -250,7 +220,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={12} md={6} lg={3}>
+              <Grid item xs={12} md={6} lg={2}>
                 <div className="info-group">
                   <div className="label"> Resident</div>
                   <div className="value">
@@ -265,8 +235,8 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                 <div className="info-group">
                   <div className="label ">Expected Start On</div>
                   <div className="value">
-                    {InvalidDateToDefault(
-                      consult_info?.assign_dept_consult_date,
+                    {InvalidDateTimeToDefault(
+                      consult_info?.est_start_at,
                       <em>To be decided</em>
                     )}
                   </div>
@@ -304,13 +274,13 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
             <div className="ctnr-title-container">
               <Grid
                 container
-                spacing={1}
+                spacing={0}
                 alignContent="center"
                 alignItems="center"
               >
                 <Grid item xs={12}>
                   <div className="ctnr-title">
-                    <div className="main">Status Timeline</div>
+                    <div className="main">Consultation Status Timeline</div>
                   </div>
                 </Grid>
               </Grid>
@@ -367,37 +337,11 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
           </Grid>
         </Grid>
 
-        {!!consult_info?.consult_req_pk && open_change_consult_cost_dialog && (
-          <DialogChangeConsultCost
-            open={open_change_consult_cost_dialog}
-            handleCloseDialog={() => {
-              set_open_change_consult_cost_dialog(false);
-            }}
-            successCallback={() => {
-              handleReloadRecord();
-            }}
-            selected_consultation={consult_info}
-          />
-        )}
-
         {!!consult_info?.consult_req_pk && open_edit_pat_details_dialog && (
           <DialogUpdateConsultDtls
             open={open_edit_pat_details_dialog}
             handleCloseDialog={() => {
               set_open_edit_pat_details_dialog(false);
-            }}
-            successCallback={() => {
-              handleReloadRecord();
-            }}
-            consult_info={consult_info}
-          />
-        )}
-
-        {!!consult_info?.consult_req_pk && open_update_consult_details_dialog && (
-          <DialogUpdateConsultDetails
-            open={open_update_consult_details_dialog}
-            handleCloseDialog={() => {
-              set_open_update_consult_details_dialog(false);
             }}
             successCallback={() => {
               handleReloadRecord();

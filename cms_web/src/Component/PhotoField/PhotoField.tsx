@@ -82,6 +82,7 @@ const PhotoField: React.FC<IPhotoField> = memo(
               height: theme.spacing(spacing ? spacing : 4),
               width: theme.spacing(spacing ? spacing : 4),
             }}
+            animation="wave"
           />
         ) : (
           <StyledImageField

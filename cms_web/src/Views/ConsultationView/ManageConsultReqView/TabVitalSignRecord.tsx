@@ -15,6 +15,7 @@ import { Form, Formik } from "formik";
 import React, { FC, memo, useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import BoxLoader from "../../../Assets/loaders/BoxLoader";
+import BodyLoader from "../../../Component/BodyLoader";
 import DataTableSearch from "../../../Component/DataTableSearch";
 import DataTableSort from "../../../Component/DataTableSort";
 import FormikCheckbox from "../../../Component/Formik/FormikCheckbox";
@@ -32,8 +33,8 @@ import {
   TblColumnModel,
   TblInitialSortModel,
 } from "../../../Services/Models/TableModels";
-import DialogAddVitalSign from "./DialogAddVitalSign";
-import DialogUpdateVitalSign from "./DialogUpdateVitalSign";
+import DialogAddVitalSign from "./DialogConsultVitalSignAdd";
+import DialogUpdateVitalSign from "./DialogConsultVitalSignUpdate";
 
 interface IVitalSignRecord {
   consult_req_pk: string;
@@ -94,7 +95,7 @@ const tbl_columns: Array<TblColumnModel> = [
   },
   {
     label: "Encoded On",
-    width: 80,
+    width: 150,
     fixedWidth: true,
   },
 ];
@@ -118,10 +119,6 @@ export const VitalSignRecord: FC<IVitalSignRecord> = memo(
     const [selected_record, set_selected_record] =
       useState<null | ConsultVitalSignEntity>(null);
 
-    const handleReloadDataTable = useCallback(() => {
-      set_reload_data_table((p) => p + 1);
-    }, []);
-
     const [open_add_dialog, set_open_add_dialog] = useState(false);
     const [open_update_dialog, set_open_update_dialog] = useState(false);
     const handleOpenAddDialog = useCallback(() => {
@@ -129,8 +126,7 @@ export const VitalSignRecord: FC<IVitalSignRecord> = memo(
     }, []);
     const handleCloseAddDialog = useCallback(() => {
       set_open_add_dialog(false);
-      handleReloadDataTable();
-    }, [handleReloadDataTable]);
+    }, []);
 
     const handleSetRecord = useCallback(
       async (payload: ConsultVitalSignEntity) => {
@@ -152,6 +148,10 @@ export const VitalSignRecord: FC<IVitalSignRecord> = memo(
       handleChagenSelectedSortIndex,
     ] = useFilter(initial_filter, init_tbl_sort, 50);
 
+    const handleReloadDataTable = useCallback(async () => {
+      set_reload_data_table((r) => r + 1);
+    }, []);
+
     useEffect(() => {
       let mounted = true;
       const fetchTableData = async () => {
@@ -167,8 +167,6 @@ export const VitalSignRecord: FC<IVitalSignRecord> = memo(
         mounted && set_fetch_data_table(true);
         const table_response =
           await ConsultVitalSignApi.GetTableConsultVitalSign(filters);
-
-        console.log(`table_response`, table_response);
 
         if (table_response.success) {
           mounted && set_data_table(table_response.data);
@@ -187,7 +185,7 @@ export const VitalSignRecord: FC<IVitalSignRecord> = memo(
 
     return (
       <>
-        <Grid container spacing={6}>
+        <Grid container spacing={2}>
           <Grid item xs={12}>
             <Grid container justify="flex-end">
               <Grid item>
@@ -213,13 +211,13 @@ export const VitalSignRecord: FC<IVitalSignRecord> = memo(
                   alignContent="center"
                   alignItems="center"
                 >
-                  <Grid item xs={12} md={6}>
+                  <Grid item md={"auto"}>
                     <Grid
                       container
                       justify="flex-start"
                       alignContent="center"
                       alignItems="center"
-                      spacing={2}
+                      spacing={1}
                     >
                       <Grid item>
                         <TablePagination
@@ -236,10 +234,10 @@ export const VitalSignRecord: FC<IVitalSignRecord> = memo(
                     </Grid>
                   </Grid>
 
-                  <Grid xs={12} md={6} item>
+                  <Grid item md={"auto"}>
                     <Grid
                       container
-                      spacing={2}
+                      spacing={1}
                       alignContent="center"
                       alignItems="center"
                       justify="flex-end"
@@ -336,6 +334,7 @@ export const VitalSignRecord: FC<IVitalSignRecord> = memo(
                   </Grid>
                 </Grid>
               </Grid>
+
               <Grid item xs={12}>
                 <TableContainer
                   style={{
@@ -444,7 +443,7 @@ export const VitalSignRecord: FC<IVitalSignRecord> = memo(
             </>
           ) : (
             <div className="centered-item">
-              <BoxLoader />
+              <BodyLoader message="Rendering table, thank you for your patience." />
             </div>
           )}
         </Grid>

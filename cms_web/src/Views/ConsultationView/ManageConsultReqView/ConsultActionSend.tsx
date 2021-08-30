@@ -120,7 +120,7 @@ const ConsultActionSend: FC<IConsultActionSend> = memo(
       dispatch(
         setGeneralPrompt({
           open: true,
-          custom_title: `Are you sure that you want to send the payment link the the requestor?`,
+          custom_title: `Are you sure that you want to send the payment link the requestor?`,
           continue_callback: async () => {
             dispatch(
               showPageLoading({
@@ -130,6 +130,38 @@ const ConsultActionSend: FC<IConsultActionSend> = memo(
               })
             );
             const response = await ConsultRequestApi.SendPaymentLink(
+              consult_info?.consult_req_pk
+            );
+
+            dispatch(closePageLoading());
+            dispatch(
+              setPageSnackbar(
+                response?.message?.toString(),
+                response.success ? "success" : "error"
+              )
+            );
+            if (response.success) {
+              handleReloadRecord();
+            }
+          },
+        })
+      );
+    }, [dispatch, handleReloadRecord, consult_info]);
+
+    const handleSendConsultLink = useCallback(async () => {
+      dispatch(
+        setGeneralPrompt({
+          open: true,
+          custom_title: `Are you sure that you want to send the online consultation link to the requestor?`,
+          continue_callback: async () => {
+            dispatch(
+              showPageLoading({
+                show: true,
+                loading_message:
+                  "Sending payment link, thank you for your patience",
+              })
+            );
+            const response = await ConsultRequestApi.SendConsultLink(
               consult_info?.consult_req_pk
             );
 
@@ -266,6 +298,15 @@ const ConsultActionSend: FC<IConsultActionSend> = memo(
               badge_value: consult_info?.pay_link_sent_count,
               handleClick: () => {
                 handleSendPaymentLink();
+              },
+            },
+            {
+              text: `Online Consultation Link`,
+              disabled:
+                consult_info?.sts_pk !== "s" && consult_info?.sts_pk !== "pd",
+              badge_value: consult_info?.consult_link_sent_count,
+              handleClick: () => {
+                handleSendConsultLink();
               },
             },
             {

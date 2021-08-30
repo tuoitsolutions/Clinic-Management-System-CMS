@@ -112,7 +112,7 @@ const tbl_columns: Array<TblColumnModel> = [
   },
   {
     label: "Encoded On",
-    width: 100,
+    width: 150,
     fixedWidth: true,
   },
 ];
@@ -208,7 +208,7 @@ export const TabMedProbRecord: FC<ITabMedProbRecord> = memo(
 
     return (
       <>
-        <Grid container spacing={6}>
+        <Grid container spacing={2}>
           <Grid item xs={12}>
             <Grid container justify="flex-end">
               <Grid item>
@@ -234,13 +234,13 @@ export const TabMedProbRecord: FC<ITabMedProbRecord> = memo(
                   alignContent="center"
                   alignItems="center"
                 >
-                  <Grid item xs={12} md={6}>
+                  <Grid item md={"auto"}>
                     <Grid
                       container
                       justify="flex-start"
                       alignContent="center"
                       alignItems="center"
-                      spacing={2}
+                      spacing={1}
                     >
                       <Grid item>
                         <TablePagination
@@ -257,10 +257,10 @@ export const TabMedProbRecord: FC<ITabMedProbRecord> = memo(
                     </Grid>
                   </Grid>
 
-                  <Grid xs={12} md={6} item>
+                  <Grid item md={"auto"}>
                     <Grid
                       container
-                      spacing={2}
+                      spacing={1}
                       alignContent="center"
                       alignItems="center"
                       justify="flex-end"
@@ -387,6 +387,8 @@ export const TabMedProbRecord: FC<ITabMedProbRecord> = memo(
                   </Grid>
                 </Grid>
               </Grid>
+
+              {/* // */}
               <Grid item xs={12}>
                 <TableContainer
                   style={{

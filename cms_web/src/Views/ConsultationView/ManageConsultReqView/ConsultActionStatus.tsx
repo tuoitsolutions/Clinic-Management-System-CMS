@@ -11,7 +11,7 @@ import {
 import ConsultRequestApi from "../../../Services/Api/ConsultRequestApi";
 import ConsultRequestEntity from "../../../Services/Entities/ConsultRequestEntity";
 import DialogDeclineConsultReq from "./DialogConsultDeclineReq";
-import DialogStartConsult from "./DialogCosnsultStartReq";
+import DialogStartConsult from "./DialogConsultStartReq";
 import DialogUndeclineConsult from "./DialogConsultUndeclineReq";
 
 interface IConsultActionStatus {
