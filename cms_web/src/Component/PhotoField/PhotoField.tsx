@@ -147,34 +147,6 @@ const PhotoField: React.FC<IPhotoField> = memo(
                 />
               </>
             )}
-            {/* <Avatar
-          src={preview}
-          style={{
-           
-            backgroundColor: "#fff",
-            boxShadow: `0 4px 6px -1px rgba(0, 0, 0, 0.1),
-            0 2px 4px -1px rgba(0, 0, 0, 0.06)`,
-            border: ".01em solid rgba(0,0,0,.1)",
-          }}
-          variant={variant ? variant : "circle"}
-
-        >
-          {!preview && (
-            <div
-              style={{
-                display: "grid",
-                justifyContent: "center",
-                textAlign: "center",
-                color: `rgba(0,0,0,.6)`,
-                fontWeight: 600,
-                fontSize: `.87em`,
-              }}
-            >
-              Upload an image
-            </div>
-          )}
-        </Avatar>
-      */}
           </StyledImageField>
         )}
       </div>

@@ -454,6 +454,7 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
                                 zip_code: def_zip_code,
                                 region_pk: def_region_pk,
                               });
+                              set_active_step(0);
                             },
                           })
                         );

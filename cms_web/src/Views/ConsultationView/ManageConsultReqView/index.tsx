@@ -1,4 +1,5 @@
 import { Chip, Grid, IconButton } from "@material-ui/core";
+import DuoRoundedIcon from "@material-ui/icons/DuoRounded";
 import { Alert } from "@material-ui/lab";
 import { useTheme } from "@material-ui/styles";
 import React, { FC, memo, useCallback, useEffect, useState } from "react";
@@ -8,6 +9,7 @@ import BodyLoader from "../../../Component/BodyLoader";
 import LinkTabs, { ILinkTab } from "../../../Component/LinkTabs";
 import { InvalidDateToDefault } from "../../../Hooks/UseDateParser";
 import { StringEmptyToDefault } from "../../../Hooks/UseStringFormatter";
+import UseWindow from "../../../Hooks/UseWindow";
 import {
   closePageLoading,
   setPageLinksAction,
@@ -20,12 +22,13 @@ import { RootStore } from "../../../Services/Store";
 import ConsultActionActions from "./ConsultActionActions";
 import ConsultActionSend from "./ConsultActionSend";
 import ConsultActionStatus from "./ConsultActionStatus";
-import DoctorNotesView from "./ContainerDoctorNotes";
+import ContainerConsultChat from "./ContainerConsultChat";
 import ConsultProfilePic from "./ContainerConsultProfilePic";
+import DoctorNotesView from "./ContainerDoctorNotes";
 import { PatientManageUi } from "./styles";
 import TabAllergyRecord from "./TabAllergyRecord";
-import TabChatHistoryRecord from "./TabChatHistoryRecord";
 import TabDeptResident from "./TabFileRecord";
+import TabGeneralInfo from "./TabGeneralInfo";
 import TabImmuneRecord from "./TabImmuneRecord";
 import TabMedProbRecord from "./TabMedProbRecord";
 import TabMedRecord from "./TabMedRecord";
@@ -33,10 +36,6 @@ import TabPatHistoryRecord from "./TabPatHistoryRecord";
 import TabPaymentLog from "./TabPaymentLog";
 import TabProcRecord from "./TabProcRecord";
 import VitalSignRecord from "./TabVitalSignRecord";
-import DuoRoundedIcon from "@material-ui/icons/DuoRounded";
-import ChatRoundedIcon from "@material-ui/icons/ChatRounded";
-import UseWindow from "../../../Hooks/UseWindow";
-import TabGeneralInfo from "./TabGeneralInfo";
 interface IManageConsultReqView {}
 
 interface IParams {
@@ -56,6 +55,8 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
   const [selected_record, set_selected_record] =
     useState<null | ConsultRequestEntity>(null);
   const [error_message, set_error_message] = useState("");
+
+  const [is_open_chat, set_is_open_chat] = useState(false);
 
   const handleReloadRecord = useCallback(async () => {
     const hash_key: string = params.hash_key;
@@ -155,14 +156,16 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
           ),
         },
         {
-          label: "Chat History",
-          link: `/request/${params.hash_key}/chat-history`,
-          Component: <TabChatHistoryRecord selected_row={selected_record} />,
-        },
-        {
           label: "Patient History",
           link: `/request/${params.hash_key}/patient-history`,
           Component: <TabPatHistoryRecord selected_row={selected_record} />,
+        },
+        {
+          label: "Payment Logs",
+          link: `/request/${params.hash_key}/payment-logs`,
+          Component: (
+            <TabPaymentLog consult_req_pk={selected_record?.consult_req_pk} />
+          ),
         },
       ];
     } else if (user_type === "admin") {
@@ -298,6 +301,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
       ])
     );
   }, [dispatch, selected_record, user_type]);
+
   return (
     <>
       {!!error_message ? (
@@ -358,11 +362,9 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
 
               <div className="profile-actions">
                 <Grid container>
-                  {/* <Grid item>
-                    <IconButton color="primary">
-                      <ChatRoundedIcon />
-                    </IconButton>
-                  </Grid> */}
+                  <Grid item>
+                    <ContainerConsultChat selected_row={selected_record} />
+                  </Grid>
                   <Grid item>
                     <IconButton
                       color="primary"

@@ -248,25 +248,25 @@ const OnlineConsultLinkView: FC<IOnlineConsultLinkView> = memo(() => {
     };
   }, [hash_key, reload_auth]);
 
-  useEffect(() => {
-    let mounted = true;
-    const fetch_initial_data = async () => {
-      const res = await ChatConsultApi.GetConsultChat(
-        selected_consult_req.consult_req_pk
-      );
-      if (res.success) {
-        set_chat_messages(res.data);
-      } else {
-        dispatch(setPageSnackbar(res?.message?.toString(), "error"));
-      }
-    };
+  // useEffect(() => {
+  //   let mounted = true;
+  //   const fetch_initial_data = async () => {
+  //     const res = await ChatConsultApi.GetConsultChat(
+  //       selected_consult_req.consult_req_pk
+  //     );
+  //     if (res.success) {
+  //       set_chat_messages(res.data);
+  //     } else {
+  //       dispatch(setPageSnackbar(res?.message?.toString(), "error"));
+  //     }
+  //   };
 
-    mounted && selected_consult_req?.consult_req_pk && fetch_initial_data();
+  //   mounted && selected_consult_req?.consult_req_pk && fetch_initial_data();
 
-    return () => {
-      mounted = false;
-    };
-  }, [dispatch, selected_consult_req]);
+  //   return () => {
+  //     mounted = false;
+  //   };
+  // }, [dispatch, selected_consult_req]);
 
   useEffect(() => {
     let mounted = true;
@@ -341,7 +341,8 @@ const OnlineConsultLinkView: FC<IOnlineConsultLinkView> = memo(() => {
               <>
                 <BodyLoader message="Loading consultation information, thank you for your patience!" />
               </>
-            ) : selected_consult_req?.sts_pk === "s" &&
+            ) : (selected_consult_req?.sts_pk === "s" ||
+                selected_consult_req?.sts_pk === "pd") &&
               !!selected_consult_req.consult_link_hash ? (
               <>
                 {!localStorage.getItem("jwt_oc") ? (

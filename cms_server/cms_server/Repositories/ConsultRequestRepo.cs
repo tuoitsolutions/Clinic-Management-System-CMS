@@ -758,7 +758,7 @@ namespace cms_server.Repositories
             }
         }
 
-        public ResponseModel GetTablePatConsultHistory(ConsultRequestTablePayload payload, string user_pk, string user_type)
+        public ResponseModel GetTablePatConsultHistory(ConsultRequestTablePayload payload)
         {
             try
             {
@@ -766,11 +766,7 @@ namespace cms_server.Repositories
                 con.Open();
                 using var tran = con.BeginTransaction();
 
-                string tbl_sql_query = "";
-
-                if (user_type.Equals("admin"))
-                {
-                    tbl_sql_query = $@"
+                string tbl_sql_query = $@"
                                        SELECT * FROM (
                                        SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgaddress FROM `consult_request` cr
                                        LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
@@ -791,35 +787,6 @@ namespace cms_server.Repositories
                                        {UseFilter.GenWhereDateClause("request_at", "<=", payload.filters.request_to)} 
                                        {UseFilter.GenTablePagination(payload.sort, payload.page)}
                                     ";
-                }
-                else if (user_type.Equals("hosp_resident"))
-                {
-                    payload.filters.resident_dept = user_repo.GetHospResidentDept(user_pk);
-
-                    tbl_sql_query = $@"
-                                       SELECT * FROM (
-                                       SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgaddress
-                                       ,calc_age(birth_date) AS age FROM `consult_request` cr
-                                       LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
-                                       LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
-                                       LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
-                                       LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`
-                                       WHERE hospital_no = @hospital_no) AS tmp
-                                       WHERE
-                                       COALESCE(last_name,'') LIKE CONCAT('%',@last_name,'%')
-                                       AND COALESCE(last_name,'') LIKE CONCAT('%',@last_name,'%')
-                                       AND COALESCE(first_name,'') LIKE CONCAT('%',@first_name,'%')
-                                       AND COALESCE(email,'') LIKE CONCAT('%',@email,'%')
-                                       AND COALESCE(chief_complaint,'') LIKE CONCAT('%',@chief_complaint,'%')
-                                       AND COALESCE(symptoms,'') LIKE CONCAT('%',@symptoms,'%')
-                                       AND sts_pk = 'e'
-                                       AND assign_dept_pk IN @res_depts
-                                       {UseFilter.GenWhereDateClause("request_at", ">=", payload.filters.request_from)} 
-                                       {UseFilter.GenWhereDateClause("request_at", "<=", payload.filters.request_to)} 
-                                       {UseFilter.GenTablePagination(payload.sort, payload.page)}
-                                    ";
-                }
-
                 List<ConsultRequestEntity> table_data = con.Query<ConsultRequestEntity>(tbl_sql_query, payload.filters, transaction: tran).ToList();
 
                 bool has_more = table_data.Count > payload.page.limit;
@@ -1070,7 +1037,7 @@ namespace cms_server.Repositories
                 using var tran = con.BeginTransaction();
 
                 List<ConsultRequestEntity> table_data = con.Query<ConsultRequestEntity>($@"SELECT * FROM (
-                          SELECT cr.`consult_req_pk`,MD5(cr.`consult_req_pk`) hash_key, cr.prefix,cr.`first_name`,cr.`middle_name`,cr.`last_name`,cr.`suffix`,cr.`symptoms`,cr.`chief_complaint`,cr.`consult_at`,cr.`est_start_at`,MD5(cr.consult_req_pk) hash_key
+                          SELECT cr.`consult_req_pk`,MD5(cr.`consult_req_pk`) hash_key,cr.consult_link_hash,cr.sts_pk, cr.prefix,cr.`first_name`,cr.`middle_name`,cr.`last_name`,cr.`suffix`,cr.`symptoms`,cr.`chief_complaint`,cr.`consult_at`,cr.`est_start_at`
                           ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
                           FROM `consult_request` cr
                           LEFT JOIN `hosp_resident` hr ON hr.`res_pk` = cr.`assign_res_pk`
@@ -1083,7 +1050,7 @@ namespace cms_server.Repositories
                 {
                     ConsultRequestEntity selected_row = table_data[0];
 
-                    if (selected_row.sts_pk.Equals(""))
+                    if (selected_row.sts_pk.Equals("s") || selected_row.sts_pk.Equals("pd"))
                     {
                         tran.Commit();
                         return new ResponseModel
@@ -1097,7 +1064,7 @@ namespace cms_server.Repositories
                         return new ResponseModel
                         {
                             success = false,
-                            message = "This online consultation link is no longer available!"
+                            message = "This online consultation link is not available!"
                         };
                     }
                 }

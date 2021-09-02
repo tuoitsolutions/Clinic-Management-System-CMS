@@ -55,8 +55,7 @@ namespace cms_server.Controllers
         [HttpPost]
         public IActionResult GetTablePatConsultHistory(ConsultRequestTablePayload payload)
         {
-            string user_type = UseClaims.GetUserType((ClaimsIdentity)User.Identity);
-            return Ok(consult_req_repo.GetTablePatConsultHistory(payload, User.Identity.Name, user_type));
+            return Ok(consult_req_repo.GetTablePatConsultHistory(payload));
         }
 
         [HttpPost]

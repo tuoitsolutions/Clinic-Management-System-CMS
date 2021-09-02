@@ -1,13 +1,3 @@
-export const LocalDBPhysicalExam = [
-  "HEENT",
-  "CHEST",
-  "HEART",
-  "ABDOMEN",
-  "GUIE",
-  "SKIN",
-  "NEURO",
-];
-
 export const DbCountryCodes = [
   "AA",
   "AB",

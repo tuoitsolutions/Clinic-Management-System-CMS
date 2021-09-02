@@ -5,6 +5,7 @@ import { setCurrentUserAction } from "../../Services/Actions/UserActions";
 import UserEntity from "../../Services/Entities/UserEntity";
 import { RootStore } from "../../Services/Store";
 import Body from "./Body";
+import FooterLayout from "./FooterLayout";
 import Header from "./Header";
 import MobileSidebar from "./MobileSidebar";
 
@@ -142,6 +143,7 @@ const Layout = memo(({ children }) => {
         user={user}
       />
       <Body isOpenMobileHeader={isOpenMobileHeader}>{children}</Body>
+      <FooterLayout />
     </>
   );
 });
