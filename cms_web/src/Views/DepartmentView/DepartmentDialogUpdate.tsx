@@ -77,6 +77,7 @@ export const DepartmentDialogUpdate: FC<IDepartmentDialogUpdate> = memo(
               if (response.success) {
                 if (typeof props.successCallback === "function") {
                   props.successCallback();
+                  props.handleClose();
                 }
                 form_instance.reset();
               }
@@ -84,7 +85,7 @@ export const DepartmentDialogUpdate: FC<IDepartmentDialogUpdate> = memo(
           })
         );
       },
-      [dispatch, form_instance, props, selected_record?.dept_pk]
+      [dispatch, form_instance, props, selected_record]
     );
 
     useEffect(() => {
@@ -122,6 +123,7 @@ export const DepartmentDialogUpdate: FC<IDepartmentDialogUpdate> = memo(
           open={props.open}
           title="Fill up all the required fields to update the administrator"
           minWidth={500}
+          handleClose={() => props.handleClose()}
           body={
             <>
               {!loading_initial_data ? (
@@ -226,15 +228,6 @@ export const DepartmentDialogUpdate: FC<IDepartmentDialogUpdate> = memo(
                 }}
               >
                 Reset
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={() => {
-                  props.handleClose();
-                }}
-              >
-                Close
               </Button>
             </>
           }

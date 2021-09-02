@@ -30,7 +30,7 @@ const StepContactInfo: FC<IStepContactInfo> = memo(
 
     return (
       <div className="tab-container">
-        <Grid container spacing={4}>
+        <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <TextFieldHookForm
               name="email"

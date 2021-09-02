@@ -3,6 +3,7 @@ using cms_server.Entities;
 using cms_server.Hooks;
 using cms_server.Pdf;
 using Dapper;
+using ddt_server.Config;
 using ddt_server.Hooks;
 using ddt_server.Models;
 using DeliveryRoomWatcher.Config;
@@ -261,6 +262,7 @@ namespace cms_server.Repositories
                                                      ,psg.`citymundesc`,psg.`provincedesc`,psg.`barangaydesc`,psg.`regiondesc`,psg.`completeaddress` psgcaddress
                                                      ,CONCAT(d.dept_code,'-',d.dept_name) AS `assign_dept_desc`
                                                      ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
+                                                     ,hr.esignature_dest AS esignature
                                                      ,calc_age(birth_date) AS age
                                                      FROM `consult_request` cr
                                                      LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
@@ -286,7 +288,14 @@ namespace cms_server.Repositories
 
                 string soa_qr = UseQr.CreateConsultSoaQr(selected_row.hash_key, brand_logo);
 
-                byte[] soa_pdf = MedPrescrip.GenerateSoaPdf(brand_name, brand_logo, brand_address, brand_phone, brand_email, selected_row, soa_qr, prescrip_meds);
+                string resident_esignature_img = "";
+                byte[] img_byte_arr = UseFtp.DownloadFtp(DefaultConfig.ftp_ip + selected_row.esignature, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                if (img_byte_arr != null)
+                {
+                    resident_esignature_img = "data:image/png;base64," + Convert.ToBase64String(img_byte_arr);
+                }
+
+                byte[] soa_pdf = MedPrescrip.GenerateSoaPdf(brand_name, brand_logo, brand_address, brand_phone, brand_email, selected_row, soa_qr, prescrip_meds, resident_esignature_img);
 
                 string pdf_file = Convert.ToBase64String(soa_pdf);
 

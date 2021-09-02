@@ -11,7 +11,7 @@ namespace cms_server.Pdf
     {
         public static Byte[] GenerateSoaPdf(string brand_name, string brand_logo, string brand_address, string brand_phone, string brand_email,
             ConsultRequestEntity consult_request, string qr_code,
-            List<ConsultProcEntity> proc_prescrip
+            List<ConsultProcEntity> proc_prescrip, string resident_esignature_img
             )
         {
 
@@ -69,7 +69,7 @@ namespace cms_server.Pdf
                     tbl_med_prescrip += $@"<tr>
                                                 <td>
                                                     <div>{med.proc_desc}</div>
-                                                    <small><i>{med.notes}</i></small>
+                                                    <small style='padding-top: 1pt;'><i>{med.notes}</i></small>
                                                 </td>
                                           </tr>";
                 }
@@ -169,12 +169,19 @@ namespace cms_server.Pdf
                                     </tbody>
                                 </table>
 
-                                
+
                                 <div class='grid' style='margin-top: 10em; justify-content: end; justify-self: end;'>
                                     <div  class='col-4' >
                                     </div>
                                     <div class='col-4' style='justify-content: end; justify-self: end;'>
-                                         <div class='signature-name'>{consult_request.assign_res_desc}</div>
+                                         <div class='signature'>
+                                             <div class='sign'>
+                                                <img src='{resident_esignature_img}' height='80' /> 
+                                             </div>                  
+                                             <div class='name'>
+                                                 {consult_request.assign_res_desc}
+                                             </div>             
+                                         </div>
                                     </div>
                                 </div>
 

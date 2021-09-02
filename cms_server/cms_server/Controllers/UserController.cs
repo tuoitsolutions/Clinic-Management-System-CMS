@@ -127,5 +127,21 @@ namespace DeliveryRoomWatcher.Controllers
             return Ok(user_repo.GetLoggedUser(username));
         }
 
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult GetUserResidentDtls()
+        {
+            var username = User.Identity.Name;
+            return Ok(user_repo.GetUserResidentDtls(username));
+        }
+        [Authorize]
+        [HttpPost]
+        public IActionResult GetUserResidentPic()
+        {
+            var username = User.Identity.Name;
+            return Ok(user_repo.GetUserResidentPic(username));
+        }
+
     }
 }

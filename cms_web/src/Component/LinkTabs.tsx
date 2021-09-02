@@ -136,7 +136,7 @@ const StyledLinkTabs = styled.div`
     }
 
     .MuiTab-wrapper {
-      font-weight: 700 !important;
+      font-weight: 500 !important;
       padding: 0.5em 0 !important;
       font-size: 1.05em !important;
     }

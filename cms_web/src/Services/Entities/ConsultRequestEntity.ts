@@ -1,4 +1,5 @@
 import ConsultRequestFileEntity from "./ConsultRequestFileEntity";
+import HospResidentEntity from "./HospResidentEntity";
 import StatusMasterEntity from "./StatusMasterEntity";
 
 interface ConsultRequestEntity {
@@ -90,6 +91,8 @@ interface ConsultRequestEntity {
   age?: string;
   start_date?: Date | string;
   start_time?: Date | string;
+
+  assigned_resident_info?: HospResidentEntity;
 }
 
 export interface ConsultRequestTableModel {

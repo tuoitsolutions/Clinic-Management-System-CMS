@@ -1,5 +1,6 @@
 import { FormDataPostFetch, PostFetch } from "../../Hooks/UseFetch";
 import DepartmentEntity from "../Entities/DepartmentEntity";
+import HospResidentEntity from "../Entities/HospResidentEntity";
 import { PaginationModel } from "../Models/PaginationModel";
 import ResponseModel from "../Models/ServerResponseModel";
 
@@ -24,6 +25,15 @@ const UpdateHospResident = async (
   );
   return response;
 };
+const UpdateResidentESign = async (
+  payload: FormData
+): Promise<ResponseModel> => {
+  const response = await FormDataPostFetch(
+    BASE + "UpdateResidentESign",
+    payload
+  );
+  return response;
+};
 
 const GetTableHospResident = async (
   payload: PaginationModel
@@ -41,9 +51,26 @@ const GetHospResidentByHospResidentPk = async (
   return response;
 };
 
+const PreviewResidentPic = async (id?: number): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "PreviewResidentPic", {
+    value: id,
+  });
+  return response;
+};
+
+const PreviewResidentESign = async (
+  payload?: HospResidentEntity
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "PreviewResidentESign", payload);
+  return response;
+};
+
 export default {
   InsertHospResident,
   UpdateHospResident,
   GetTableHospResident,
   GetHospResidentByHospResidentPk,
+  PreviewResidentPic,
+  UpdateResidentESign,
+  PreviewResidentESign,
 };

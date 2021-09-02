@@ -51,7 +51,7 @@ export const dateParseJsToAspDate = (date: Date): any => {
 };
 
 export const InvalidTimeToDefault = (
-  date: Date | null,
+  date: Date | null | string,
   defaultString: string
 ): string => {
   if (!date) {
@@ -110,5 +110,23 @@ export const DateFormatOrNull = (
     return moment(date).format();
   } else {
     return replacement;
+  }
+};
+
+export const DateSqlToNow = (
+  date: Date | null | string,
+  defaultString: any
+): any => {
+  if (!date) {
+    return defaultString;
+  }
+
+  var duration = moment.duration(moment(new Date()).diff(moment(date)));
+  var days = duration.asDays();
+
+  if (days > 7) {
+    return InvalidDateTimeToDefault(date, defaultString);
+  } else {
+    return moment(date).fromNow();
   }
 };

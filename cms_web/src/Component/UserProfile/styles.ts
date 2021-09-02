@@ -36,8 +36,8 @@ export const StyledUserProfile = styled.div`
       max-width: 100px;
 
       .fullname {
-        font-size: 0.8em;
-        font-weight: 600;
+        font-size: 0.87em;
+        font-weight: 900;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -45,7 +45,8 @@ export const StyledUserProfile = styled.div`
         text-transform: capitalize;
       }
       .designation {
-        font-size: 0.8em;
+        font-size: 0.7em;
+        font-weight: 600;
         color: #fff;
         text-transform: capitalize;
       }
@@ -81,21 +82,25 @@ export const StyledPopOverContent = styled.div`
     justify-content: start;
     align-items: center;
     justify-items: start;
-    grid-gap: 1em;
+    grid-gap: 0.5em;
     padding: 1em;
-    grid-auto-columns: 50px 1fr 100px;
-    background-color: #e2f3f5;
+    grid-auto-columns: auto 1fr 100px;
+    background-color: #785ada4a;
 
     .content-header-image {
       height: 50px;
       width: 50px;
     }
     .content-header-user {
-      font-size: 0.8em;
       text-transform: capitalize;
 
       .name {
-        font-weight: 600;
+        font-weight: 900;
+      }
+
+      .designation {
+        font-size: 600;
+        font-size: 0.87em;
       }
     }
 
@@ -105,13 +110,13 @@ export const StyledPopOverContent = styled.div`
   }
 
   .content-body {
-    padding: 1.5em;
-    padding-top: 1em;
-    font-size: 0.87em;
+    padding: 1em;
 
     .content-title {
       font-weight: 900;
-      color: rgba(0, 0, 0, 0.6);
+      color: black;
+      opacity: 0.6;
+      font-size: 0.9em;
     }
     .content-items {
       margin-top: 0.5em;
@@ -119,11 +124,11 @@ export const StyledPopOverContent = styled.div`
       grid-gap: 0.5em;
     }
     .link {
-      padding: 0.5em 0;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-      color: rgba(0, 0, 0, 0.6);
+      padding: 0.2em 0.3em;
+      box-shadow: 0 3px 2px -2px rgba(0, 0, 0, 0.1) !important;
+      color: #333 !important;
       &:hover {
-        color: blue;
+        color: blue !important;
       }
     }
   }

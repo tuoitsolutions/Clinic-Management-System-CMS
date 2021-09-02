@@ -25,6 +25,7 @@ interface IConsultOtpDialog {
   form_payload: ConsultRequestEntity;
   open: boolean;
   handleClose: () => void;
+  successCallback: () => void;
 }
 
 const form_otp_validation = yup.object({
@@ -32,7 +33,7 @@ const form_otp_validation = yup.object({
 });
 
 export const ConsultOtpDialog: FC<IConsultOtpDialog> = memo(
-  ({ form_payload, open, handleClose }) => {
+  ({ form_payload, open, handleClose, successCallback }) => {
     const dispatch = useDispatch();
 
     console.log(`form_values`, form_payload);
@@ -85,6 +86,8 @@ export const ConsultOtpDialog: FC<IConsultOtpDialog> = memo(
           payload.append("attach_req_files", f);
         });
 
+        payload.append("attach_profile_pic", form_payload?.attach_profile_pic);
+
         dispatch(
           setGeneralPrompt({
             open: true,
@@ -113,13 +116,13 @@ export const ConsultOtpDialog: FC<IConsultOtpDialog> = memo(
               );
               if (response.success) {
                 form_instance_consult.reset();
-                handleClose();
+                successCallback();
               }
             },
           })
         );
       },
-      [dispatch, form_instance_consult, form_payload, handleClose]
+      [dispatch, form_instance_consult, form_payload, successCallback]
     );
     return (
       <>
@@ -127,6 +130,7 @@ export const ConsultOtpDialog: FC<IConsultOtpDialog> = memo(
           open={open}
           title="One-Time Passcode (OTP) Verification"
           minWidth={500}
+          handleClose={() => handleClose()}
           body={
             <div style={{ padding: `1em 2em` }}>
               <FormProvider {...form_instance_consult}>

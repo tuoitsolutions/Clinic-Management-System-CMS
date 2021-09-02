@@ -788,17 +788,6 @@
           }
         }
       },
-      "Select.HtmlToPdf/21.1.0": {
-        "type": "package",
-        "contentFiles": {
-          "contentFiles/any/any/Select.Html.dep": {
-            "buildAction": "Content",
-            "codeLanguage": "any",
-            "copyToOutput": true,
-            "outputPath": "Select.Html.dep"
-          }
-        }
-      },
       "Select.HtmlToPdf.NetCore/21.1.0": {
         "type": "package",
         "dependencies": {
@@ -3390,26 +3379,6 @@
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.nuspec",
         "runtimes/ubuntu.16.10-x64/native/System.Security.Cryptography.Native.OpenSsl.so"
-      ]
-    },
-    "Select.HtmlToPdf/21.1.0": {
-      "sha512": "cAXtTAsQXBn74tafX4a7Q2Eq6am4MI51C1iHA7mXiM+MoOHLYG5fHPgpqGWxbmNwyPsXnEP0VqKL8A1uU7weQg==",
-      "type": "package",
-      "path": "select.htmltopdf/21.1.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "contentFiles/any/any/Select.Html.dep",
-        "images/icon.png",
-        "lib/net20/Select.Html.dep",
-        "lib/net20/Select.HtmlToPdf.dll",
-        "lib/net20/Select.HtmlToPdf.xml",
-        "lib/net40/Select.Html.dep",
-        "lib/net40/Select.HtmlToPdf.dll",
-        "lib/net40/Select.HtmlToPdf.xml",
-        "readme.txt",
-        "select.htmltopdf.21.1.0.nupkg.sha512",
-        "select.htmltopdf.nuspec"
       ]
     },
     "Select.HtmlToPdf.NetCore/21.1.0": {
@@ -7608,7 +7577,6 @@
       "Microsoft.AspNetCore.Rewrite >= 2.2.0",
       "MySql.Data >= 8.0.22",
       "QRCoder >= 1.4.1",
-      "Select.HtmlToPdf >= 21.1.0",
       "Select.HtmlToPdf.NetCore >= 21.1.0",
       "SmartFormat.NET >= 2.7.0",
       "Swashbuckle.AspNetCore >= 5.6.3",
@@ -7693,10 +7661,6 @@
           "QRCoder": {
             "target": "Package",
             "version": "[1.4.1, )"
-          },
-          "Select.HtmlToPdf": {
-            "target": "Package",
-            "version": "[21.1.0, )"
           },
           "Select.HtmlToPdf.NetCore": {
             "target": "Package",

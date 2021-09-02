@@ -35,10 +35,18 @@ const GetAdminByAdminPk = async (admin_pk?: number): Promise<ResponseModel> => {
   return response;
 };
 
+const PreviewAdminPic = async (id?: number): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "PreviewAdminPic", {
+    value: id,
+  });
+  return response;
+};
+
 export default {
   InsertAdmin,
   UpdateAdmin,
   GetTableAdmin,
   GetAdminByAdminPk,
   ResetAdminPassword,
+  PreviewAdminPic,
 };

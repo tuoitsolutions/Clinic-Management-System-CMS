@@ -2,6 +2,7 @@ import { Popover, useTheme } from "@material-ui/core";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import React, { memo, useCallback } from "react";
+import { useHistory } from "react-router-dom";
 import { removeToken } from "../../Helpers/AppConfig";
 import UserEntity from "../../Services/Entities/UserEntity";
 import CustomAvatar from "../CustomAvatar";
@@ -14,6 +15,7 @@ interface IUserProfile {
 
 const UserProfile: React.FC<IUserProfile> = memo(({ variant, user }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const history = useHistory();
   const theme = useTheme();
 
   const handleClick = useCallback((event) => {
@@ -38,7 +40,7 @@ const UserProfile: React.FC<IUserProfile> = memo(({ variant, user }) => {
         <CustomAvatar
           className="profile-image"
           alt={user?.full_name?.charAt(0)}
-          spacing={6}
+          spacing={5}
         />
         {open ? (
           <ExpandLessIcon className="icon" fontSize="small" />
@@ -74,7 +76,7 @@ const UserProfile: React.FC<IUserProfile> = memo(({ variant, user }) => {
           <div className="content-header">
             <CustomAvatar
               className="content-header-image"
-              spacing={6}
+              spacing={5}
               alt={user?.full_name?.charAt(0)}
             />
             <div className="content-header-user">
@@ -87,9 +89,18 @@ const UserProfile: React.FC<IUserProfile> = memo(({ variant, user }) => {
             </div>
           </div>
           <div className="content-body">
-            <div className="content-title">MENUS</div>
+            <div className="content-title">Menus</div>
             <div className="content-items">
-              {/* {ProfileLink} */}
+              <div
+                className="link"
+                onClick={() => {
+                  history.push(`/profile/general`);
+                }}
+              >
+                Profile
+              </div>
+            </div>
+            <div className="content-items">
               <div className="link" onClick={handleLogout}>
                 Logout
               </div>

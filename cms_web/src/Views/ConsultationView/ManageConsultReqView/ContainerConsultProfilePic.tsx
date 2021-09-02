@@ -118,19 +118,6 @@ const ConsultProfilePic: FC<IConsultProfilePic> = memo(() => {
         selectedFile={attach_pic_file}
         loading={fetch_profile_pic}
       />
-      {/* {fetch_profile_pic ? (
-        <Skeleton variant="circle" width={130} height={130} />
-      ) : (
-        <PhotoField
-          handleChange={(file) => {
-            handleChangeProfilePic(file);
-          }}
-          name="pat-profile-pic"
-          spacing={16}
-          alt={img_def_patient}
-          selectedFile={attach_pic_file}
-        />
-      )} */}
     </>
   );
 });

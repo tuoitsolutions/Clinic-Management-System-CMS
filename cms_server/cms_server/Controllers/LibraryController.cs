@@ -1,5 +1,6 @@
 ﻿using cms_server.Repositories;
 using hrms_server.Payloads;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace pos_server.Controllers
@@ -68,6 +69,13 @@ namespace pos_server.Controllers
             return Ok(hosp_res_repo.GetHospResidentOptions(payload.value));
         }
 
+        [Authorize]
+        [HttpPost]
+        public IActionResult GetHospResidentOptionsByUserDept()
+        {
+            return Ok(hosp_res_repo.GetHospResidentOptionsByUserDept(User.Identity.Name));
+        }
+
         [HttpPost]
         public IActionResult GetDeptResidentOptions(SingleValuePayload payload)
         {
@@ -79,5 +87,8 @@ namespace pos_server.Controllers
         {
             return Ok(hos_pat_repo.HospitalPatientOptions());
         }
+
+
+
     }
 }

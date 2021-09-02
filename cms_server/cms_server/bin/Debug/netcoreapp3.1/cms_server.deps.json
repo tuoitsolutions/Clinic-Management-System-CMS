@@ -32,7 +32,6 @@
           "Microsoft.AspNetCore.Rewrite": "2.2.0",
           "MySql.Data": "8.0.22",
           "QRCoder": "1.4.1",
-          "Select.HtmlToPdf": "21.1.0",
           "Select.HtmlToPdf.NetCore": "21.1.0",
           "SmartFormat.NET": "2.7.0",
           "Swashbuckle.AspNetCore": "5.6.3",
@@ -877,7 +876,6 @@
       "runtime.ubuntu.14.04-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {},
       "runtime.ubuntu.16.04-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {},
       "runtime.ubuntu.16.10-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.2": {},
-      "Select.HtmlToPdf/21.1.0": {},
       "Select.HtmlToPdf.NetCore/21.1.0": {
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "1.1.0",
@@ -3928,13 +3926,6 @@
       "sha512": "sha512-leXiwfiIkW7Gmn7cgnNcdtNAU70SjmKW3jxGj1iKHOvdn0zRWsgv/l2OJUO5zdGdiv2VRFnAsxxhDgMzofPdWg==",
       "path": "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl/4.3.2",
       "hashPath": "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512"
-    },
-    "Select.HtmlToPdf/21.1.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-cAXtTAsQXBn74tafX4a7Q2Eq6am4MI51C1iHA7mXiM+MoOHLYG5fHPgpqGWxbmNwyPsXnEP0VqKL8A1uU7weQg==",
-      "path": "select.htmltopdf/21.1.0",
-      "hashPath": "select.htmltopdf.21.1.0.nupkg.sha512"
     },
     "Select.HtmlToPdf.NetCore/21.1.0": {
       "type": "package",

@@ -1,4 +1,4 @@
-import { Grid } from "@material-ui/core";
+import { FormHelperText, Grid } from "@material-ui/core";
 import React, { FC, memo } from "react";
 import AutocompleteHookForm from "../../Component/HookForm/AutocompleteHookForm";
 import DropzoneFieldHookForm from "../../Component/HookForm/DropzoneFieldHookForm";
@@ -17,6 +17,10 @@ const StepConsultInfo: FC<IStepConsultInfo> = memo(({ step, dept_options }) => {
     <div className="tab-container">
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
+          <div style={{ color: "#2196f3", fontSize: `.6em`, opacity: 0.7 }}>
+            This is only applicable for a charity patient of the hospital. (If
+            akcnowledged, no payment link will be sent)
+          </div>
           <MultiRadioFieldHookForm
             name="is_charity"
             label="Are you a charity patient?"

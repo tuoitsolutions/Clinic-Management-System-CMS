@@ -1,18 +1,22 @@
-import { CircularProgress, Container, Grid } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
+import { CircularProgress, Grid } from "@material-ui/core";
+import { Skeleton } from "@material-ui/lab";
 import "chartjs-plugin-labels";
 import React, { FC, memo, useEffect, useState } from "react";
-import { Line, Pie } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
-import BodyLoader from "../../Component/BodyLoader";
-import HelpNumber from "../../Helpers/HelpNumber";
-import { setPageLinksAction } from "../../Services/Actions/PageActions";
-import DashboardApi from "../../Services/Api/DashboardApi";
 import {
-  LineDashboardModel,
-  PieDashboardModel,
-} from "../../Services/Models/DashboardModel";
+  setPageLinksAction,
+  setPageSnackbar,
+} from "../../Services/Actions/PageActions";
+import DashboardApi from "../../Services/Api/DashboardApi";
 import { RootStore } from "../../Services/Store";
+import ContainerCharityGraph from "./ContainerCharityGraph";
+import ContainerConsultFinished from "./ContainerConsultFinished";
+import ContainerConsultSumDept from "./ContainerConsultSumDept";
+import ContainerRequestLatestDept from "./ContainerRequestLatestDept";
+import ContainerRequestOtherDept from "./ContainerRequestOtherDept";
+import { DashboardUi } from "./styles";
+
 interface IResidentDashboardView {}
 
 const ResidentDashboardView: FC<IResidentDashboardView> = memo(() => {
@@ -22,53 +26,84 @@ const ResidentDashboardView: FC<IResidentDashboardView> = memo(() => {
     (store: RootStore) => store.UserReducer.user?.user_type
   );
 
-  const [page_error_msg, set_page_error_msg] = useState<string>("");
-  const [loading_page, set_loading_page] = useState(false);
+  const [total_for_approval, set_total_for_approval] = useState("");
+  const [fetch_total_for_approval, set_fetch_total_for_approval] =
+    useState(false);
 
-  const [total_earning, set_total_earning] = useState<number | null>();
+  const [total_paid, set_total_paid] = useState("");
+  const [fetch_total_paid, set_fetch_total_paid] = useState(false);
 
-  const [total_consult, set_total_consult] = useState<string>("");
+  const [total_started, set_total_started] = useState("");
+  const [fetch_total_started, set_fetch_total_started] = useState(false);
 
-  const [chart_daily_earning_30day, set_chart_daily_earning_30day] =
-    useState<Array<LineDashboardModel> | null>();
-
-  const [stats_consult, set_stats_consult] = useState<Array<PieDashboardModel>>(
-    []
-  );
+  const [total_ended, set_total_ended] = useState("");
+  const [fetch_total_ended, set_fetch_total_ended] = useState(false);
 
   useEffect(() => {
     let mounted = true;
-    const load_initial_data = async () => {
-      set_loading_page(true);
-      const total_earning_res = await DashboardApi.TotalEarning();
-      const total_consult_res = await DashboardApi.TotalConsult();
-      const chart_daily_earning_30day_res =
-        await DashboardApi.ChartDailyEarning30days();
-      const stats_consult_res = await DashboardApi.StatsConsult();
+    const fetchData = async () => {
+      mounted && set_fetch_total_for_approval(true);
+      const server_response = await DashboardApi.GetTotalForApproval();
 
-      if (
-        total_earning_res.success &&
-        total_consult_res.success &&
-        chart_daily_earning_30day_res.success &&
-        stats_consult_res.success
-      ) {
-        set_total_earning(total_earning_res.data);
-        set_total_consult(total_consult_res.data);
-        set_chart_daily_earning_30day(chart_daily_earning_30day_res.data);
-        set_stats_consult(stats_consult_res.data);
+      if (server_response.success) {
+        mounted && set_total_for_approval(server_response.data);
       } else {
-        // let err_msg = ``;
-
-        set_page_error_msg(
-          "We could not load the data in the dashboard, please try again later."
-        );
+        dispatch(setPageSnackbar(server_response.message.toString(), "error"));
       }
-
-      set_loading_page(false);
+      mounted && set_fetch_total_for_approval(false);
     };
+    mounted && fetchData();
+    return () => (mounted = false);
+  }, [dispatch, user_type]);
 
-    mounted && load_initial_data();
+  useEffect(() => {
+    let mounted = true;
+    const fetchData = async () => {
+      mounted && set_fetch_total_paid(true);
+      const server_response = await DashboardApi.GetTotalPaid();
 
+      if (server_response.success) {
+        mounted && set_total_paid(server_response.data);
+      } else {
+        dispatch(setPageSnackbar(server_response.message.toString(), "error"));
+      }
+      mounted && set_fetch_total_paid(false);
+    };
+    mounted && fetchData();
+    return () => (mounted = false);
+  }, [dispatch, user_type]);
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchData = async () => {
+      mounted && set_fetch_total_started(true);
+      const server_response = await DashboardApi.GetTotalStarted();
+
+      if (server_response.success) {
+        mounted && set_total_started(server_response.data);
+      } else {
+        dispatch(setPageSnackbar(server_response.message.toString(), "error"));
+      }
+      mounted && set_fetch_total_started(false);
+    };
+    mounted && fetchData();
+    return () => (mounted = false);
+  }, [dispatch, user_type]);
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchData = async () => {
+      mounted && set_fetch_total_ended(true);
+      const server_response = await DashboardApi.GetTotalEnded();
+
+      if (server_response.success) {
+        mounted && set_total_ended(server_response.data);
+      } else {
+        dispatch(setPageSnackbar(server_response.message.toString(), "error"));
+      }
+      mounted && set_fetch_total_ended(false);
+    };
+    mounted && fetchData();
     return () => (mounted = false);
   }, [dispatch, user_type]);
 
@@ -84,145 +119,202 @@ const ResidentDashboardView: FC<IResidentDashboardView> = memo(() => {
   }, [dispatch, user_type]);
   return (
     <>
-      <Container maxWidth="lg">
-        <Grid container spacing={6}>
-          {loading_page ? (
-            <BodyLoader message="Loading dashboard data, thank you for your patience." />
-          ) : !!page_error_msg ? (
-            <>
-              <Alert severity="error">{page_error_msg}</Alert>
-            </>
-          ) : (
-            <>
-              <Grid item xs={12}>
-                <Grid container spacing={6}>
-                  <Grid item xs={4}>
-                    <div className="stats-item">
-                      <div className="value">
-                        {!!total_earning ? (
-                          HelpNumber.NumberToMoney(total_earning)
-                        ) : (
-                          <CircularProgress />
-                        )}
+      <DashboardUi maxWidth="lg">
+        <Grid container spacing={4}>
+          <Grid item xs={12}>
+            <div className="container">
+              <Grid
+                container
+                spacing={2}
+                alignContent="center"
+                alignItems="center"
+              >
+                <Grid item xs={12}>
+                  <div className="ctnr-title">
+                    <div className="main">Consultation Statistics</div>
+                    <div className="sub">
+                      Overview of all the consultation status
+                    </div>
+                  </div>
+                </Grid>
+                <Grid item xs={12} lg={8}>
+                  <Grid container spacing={3} justify="center">
+                    <Grid item xs={12} sm={6} md={3}>
+                      <div className="stats-item">
+                        <div className="value">
+                          {!fetch_total_for_approval ? (
+                            total_for_approval
+                          ) : (
+                            <CircularProgress size="14px" />
+                          )}
+                        </div>
+                        <div className="label">Total For Approval</div>
                       </div>
-                      <div className="label">Total Earnings (PHP)</div>
-                    </div>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <div className="stats-item">
-                      <div className="value">{total_consult}</div>
-                      <div className="label">Total Consultations</div>
-                    </div>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={3}>
+                      <div className="stats-item">
+                        <div className="value">
+                          {!fetch_total_paid ? (
+                            total_paid
+                          ) : (
+                            <CircularProgress size="14px" />
+                          )}
+                        </div>
+                        <div className="label">Total Paid</div>
+                      </div>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={3}>
+                      <div
+                        className="stats-item"
+                        style={{
+                          backgroundColor: `#fafafa7e`,
+                        }}
+                      >
+                        <div className="value">
+                          {!fetch_total_started ? (
+                            total_started
+                          ) : (
+                            <CircularProgress size="14px" />
+                          )}
+                        </div>
+                        <div className="label">Total Started</div>
+                      </div>
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={3}>
+                      <div className="stats-item">
+                        <div className="value">
+                          {!fetch_total_ended ? (
+                            total_ended
+                          ) : (
+                            <CircularProgress size="14px" />
+                          )}
+                        </div>
+                        <div className="label">Total Ended</div>
+                      </div>
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
 
-              <Grid item xs={12} md={6}>
-                <div className="panel-container">
-                  <div className="cntr-title">
-                    <div className="main">
-                      Proportion of Consultation Status
+                <Grid item xs={12} lg={4}>
+                  {fetch_total_for_approval &&
+                  fetch_total_paid &&
+                  fetch_total_started &&
+                  fetch_total_ended ? (
+                    <div
+                      style={{
+                        display: `grid`,
+                        justifyContent: `center`,
+                        justifyItems: `center`,
+                      }}
+                    >
+                      <Skeleton
+                        animation="wave"
+                        variant="circle"
+                        style={{
+                          minHeight: 120,
+                          minWidth: 120,
+                        }}
+                      />
                     </div>
-                  </div>
-                  <Pie
-                    // height={100}
-                    style={{
-                      maxHeight: 250,
-                    }}
-                    data={{
-                      labels: stats_consult.map((a) => a.label),
-                      datasets: [
-                        {
-                          labels: stats_consult.map((a) => a.label),
-                          data: stats_consult.map((a) => a.total),
-                          backgroundColor: stats_consult.map((a) => {
-                            return a.bg_color;
-                          }),
-                          borderColor: "#fff",
-                        },
-                      ],
-                    }}
-                    options={{
-                      responsiveAnimationDuration: 1,
-                      tooltips: {
-                        enabled: false,
-                      },
-                      plugins: {
-                        labels: {
-                          render: "percentage",
-                          precision: 0,
-                          showZero: true,
-                          fontSize: 12,
-                          fontColor: "#fff",
-                        },
-                      },
-                    }}
-                  />
-                </div>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <div className="panel-container">
-                  <div className="cntr-title">
-                    <div className="main">
-                      Daily Earning for the past 30 Days
-                    </div>
-                  </div>
-                  {!!chart_daily_earning_30day && (
-                    <Line
+                  ) : (
+                    <Doughnut
+                      style={{ backgroundColor: `transparent` }}
                       data={{
-                        labels: chart_daily_earning_30day.map((i) => i.x),
+                        labels: ["For Approval", "Paid", "Started", "Ended"],
+
                         datasets: [
                           {
-                            label: "Earnings",
-                            fillColor: "blue",
-                            strokeColor: "blue",
-                            highlightFill: "blue",
-                            highlightStroke: "blue",
-                            borderColor: "blue",
-                            scales: {
-                              yAxes: [
-                                {
-                                  stacked: true,
-                                },
-                              ],
-                            },
-                            data: chart_daily_earning_30day,
+                            labels: [
+                              "For Approval",
+                              "Paid",
+                              "Started",
+                              "Ended",
+                            ],
+                            data: [
+                              total_for_approval,
+                              total_paid,
+                              total_started,
+                              total_ended,
+                            ],
+                            backgroundColor: [
+                              "#ffeb3b",
+                              "#4caf50",
+                              "#2196f3",
+                              "#bdbdbd",
+                            ],
+                            // backgroundColor: stats_consult.map((a) => {
+                            //   return a.bg_color;
+                            // }),
+                            borderColor: "#fff",
                           },
                         ],
                       }}
                       options={{
                         responsiveAnimationDuration: 1,
-                        scales: {
-                          yAxes: [
-                            {
-                              scaleLabel: {
-                                display: true,
-                                labelString: "Population",
-                                lineHeight: 2,
-                                fontColor: `#333`,
-                              },
-                              ticks: {
-                                beginAtZero: true,
-                                userCallback: function (label, index, labels) {
-                                  // when the floored value is the same as the value we have a whole number
-                                  if (Math.floor(label) === label) {
-                                    return label;
-                                  }
-                                },
+                        aspectRatio: 2.7,
+                        maintainAspectRatio: false,
+                        // cutout: 40,
+                        plugins: {
+                          labels: {
+                            render: "percentage",
+                            precision: 0,
+                            showZero: true,
+                            fontSize: 11,
+                            fontColor: "#fff",
+                          },
+                          tooltip: {
+                            enabled: true,
+                            displayColors: false,
+                          },
+                          legend: {
+                            display: true,
+                            position: "bottom",
+                            labels: {
+                              boxWidth: 10,
+                              color: `rgba(0, 0, 0, 0.4)`,
+                              font: {
+                                size: 10,
+                                family: "Nunito",
+                                weight: 900,
                               },
                             },
-                          ],
+
+                            // align: "start",
+                          },
                         },
                       }}
                     />
                   )}
-                </div>
+                </Grid>
               </Grid>
-            </>
+            </div>
+          </Grid>
+
+          {user_type === "hosp_resident" && (
+            <Grid item xs={12} md={6}>
+              <ContainerRequestLatestDept />
+            </Grid>
           )}
+
+          <Grid item xs={12} md={user_type === "hosp_resident" ? 6 : 12}>
+            <ContainerRequestOtherDept />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <ContainerConsultFinished />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <ContainerConsultSumDept />
+          </Grid>
+
+          <Grid item xs={12}>
+            <ContainerCharityGraph />
+          </Grid>
         </Grid>
-      </Container>
+      </DashboardUi>
     </>
   );
 });

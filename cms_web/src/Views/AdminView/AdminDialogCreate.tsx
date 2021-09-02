@@ -80,6 +80,7 @@ export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
             if (response.success) {
               if (typeof props.successCallback === "function") {
                 props.successCallback();
+                props.handleClose();
               }
               form_instance.reset();
             }
@@ -94,7 +95,8 @@ export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
       <FormDialog
         open={props.open}
         title="Fill up all the required fields to register a new administrator"
-        minWidth={500}
+        minWidth={650}
+        handleClose={() => props.handleClose()}
         body={
           <>
             <FormProvider {...form_instance}>
@@ -298,15 +300,6 @@ export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
               }}
             >
               Reset Form
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => {
-                props.handleClose();
-              }}
-            >
-              Close
             </Button>
           </>
         }

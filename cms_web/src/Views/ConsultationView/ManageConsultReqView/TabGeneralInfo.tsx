@@ -1,10 +1,7 @@
 import { Button, Chip, Grid } from "@material-ui/core";
 import React, { FC, memo, useState } from "react";
 import HelpNumber from "../../../Helpers/HelpNumber";
-import {
-  InvalidDateTimeToDefault,
-  InvalidDateToDefault,
-} from "../../../Hooks/UseDateParser";
+import { InvalidDateTimeToDefault } from "../../../Hooks/UseDateParser";
 import { StringEmptyToDefault } from "../../../Hooks/UseStringFormatter";
 import ConsultRequestEntity from "../../../Services/Entities/ConsultRequestEntity";
 import DialogUpdateConsultDtls from "./DialogUpdateConsultDtls";
@@ -200,8 +197,17 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                     <Chip
                       label={
                         <>
-                          &#8369;{" "}
-                          {HelpNumber.NumberToMoney(consult_info?.consult_cost)}{" "}
+                          {consult_info.is_charity === "y" ? (
+                            <em>Not applicable</em>
+                          ) : (
+                            <>
+                              {" "}
+                              &#8369;{" "}
+                              {HelpNumber.NumberToMoney(
+                                consult_info?.consult_cost
+                              )}{" "}
+                            </>
+                          )}
                         </>
                       }
                     />

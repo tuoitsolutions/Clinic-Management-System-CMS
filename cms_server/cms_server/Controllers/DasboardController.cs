@@ -1,5 +1,6 @@
 ﻿using cms_server.Hooks;
 using cms_server.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -13,66 +14,80 @@ namespace cms_server.Controllers
 
 
         [HttpPost]
-        public IActionResult TotalEarning()
+        [Authorize]
+        public IActionResult GetTotalForApproval()
         {
-            string user_type = UseClaims.GetUserType((ClaimsIdentity)User.Identity);
 
-            return Ok(dashboard_repo.TotalEarning(User.Identity.Name, user_type));
-        }
-        [HttpPost]
-        public IActionResult TotalConsult()
-        {
-            string user_type = UseClaims.GetUserType((ClaimsIdentity)User.Identity);
-            return Ok(dashboard_repo.TotalConsult(User.Identity.Name, user_type));
-        }
-        [HttpPost]
-        public IActionResult TotalHospPatient()
-        {
-            string user_type = UseClaims.GetUserType((ClaimsIdentity)User.Identity);
-            return Ok(dashboard_repo.TotalHospPatient());
+            return Ok(dashboard_repo.GetTotalForApproval(User.Identity.Name));
         }
 
         [HttpPost]
-        public IActionResult TotalHospResident()
+        [Authorize]
+        public IActionResult GetTotalPaid()
         {
-            string user_type = UseClaims.GetUserType((ClaimsIdentity)User.Identity);
-            return Ok(dashboard_repo.TotalHospResident());
+
+            return Ok(dashboard_repo.GetTotalPaid(User.Identity.Name));
         }
 
         [HttpPost]
-        public IActionResult TotalDept()
+        [Authorize]
+        public IActionResult GetTotalStarted()
         {
-            return Ok(dashboard_repo.TotalDept());
+
+            return Ok(dashboard_repo.GetTotalStarted(User.Identity.Name));
         }
 
         [HttpPost]
-        public IActionResult ChartDeptEarning()
+        [Authorize]
+        public IActionResult GetTotalEnded()
         {
-            return Ok(dashboard_repo.ChartDeptEarning());
+
+            return Ok(dashboard_repo.GetTotalEnded(User.Identity.Name));
         }
 
         [HttpPost]
-        public IActionResult ChartDailyEarning30days()
+        [Authorize]
+        public IActionResult GetFinishConsult()
         {
-            string user_type = UseClaims.GetUserType((ClaimsIdentity)User.Identity);
-            return Ok(dashboard_repo.ChartDailyEarning30days(User.Identity.Name, user_type));
-        }
-        [HttpPost]
-        public IActionResult StatsConsult()
-        {
-            string user_type = UseClaims.GetUserType((ClaimsIdentity)User.Identity);
-            return Ok(dashboard_repo.StatsConsult(User.Identity.Name, user_type));
-        }
-        [HttpPost]
-        public IActionResult TopResident()
-        {
-            return Ok(dashboard_repo.TopResident());
+
+            return Ok(dashboard_repo.GetFinishConsult(User.Identity.Name));
         }
 
         [HttpPost]
-        public IActionResult TodayForApprovalConsult()
+        [Authorize]
+        public IActionResult GetLatestConsultReqUserDept()
         {
-            return Ok(dashboard_repo.TodayForApprovalConsult());
+
+            return Ok(dashboard_repo.GetLatestConsultReqUserDept(User.Identity.Name));
         }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult GetLatestConsultReqOtherDept()
+        {
+
+            return Ok(dashboard_repo.GetLatestConsultReqOtherDept(User.Identity.Name));
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult GetCharity()
+        {
+
+            return Ok(dashboard_repo.GetCharity(User.Identity.Name));
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult GetConsultPerDept()
+        {
+
+            return Ok(dashboard_repo.GetConsultPerDept());
+        }
+
+
+
+
+
     }
 }

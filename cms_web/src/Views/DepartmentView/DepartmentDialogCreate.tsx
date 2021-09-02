@@ -65,6 +65,7 @@ export const DepartmentDialogCreate: FC<IDepartmentDialogCreate> = memo(
               if (response.success) {
                 if (typeof props.successCallback === "function") {
                   props.successCallback();
+                  props.handleClose();
                 }
                 form_instance.reset();
               }
@@ -79,7 +80,8 @@ export const DepartmentDialogCreate: FC<IDepartmentDialogCreate> = memo(
         <FormDialog
           open={props.open}
           title="Fill up all the required fields to add a new hospital department"
-          minWidth={400}
+          minWidth={500}
+          handleClose={() => props.handleClose()}
           body={
             <>
               <FormProvider {...form_instance}>
@@ -176,15 +178,6 @@ export const DepartmentDialogCreate: FC<IDepartmentDialogCreate> = memo(
                 }}
               >
                 Reset
-              </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={() => {
-                  props.handleClose();
-                }}
-              >
-                Close
               </Button>
             </>
           }

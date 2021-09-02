@@ -73,11 +73,12 @@ const DialogConsultSetSchedDept: FC<IDialogConsultSetSchedDept> = memo(
     const handleSubmitForm = useCallback(
       async (payload: ConsultRequestEntity) => {
         payload.consult_req_pk = props.selected_consultation.consult_req_pk;
+
         var new_date = moment(
           `${moment(payload.start_date).format("YYYY-MM-DD")} ${moment(
-            payload.start_date
-          ).format("HH:mm A")}`,
-          "YYYY-MM-DD HH:mm A"
+            payload.start_time
+          ).format("hh:mm A")}`,
+          "YYYY-MM-DD hh:mm A"
         );
         if (!!payload.consult_req_pk && new_date?.isValid()) {
           payload.est_start_at = new_date.format();
@@ -141,7 +142,7 @@ const DialogConsultSetSchedDept: FC<IDialogConsultSetSchedDept> = memo(
       let mounted = true;
       async function fetchData() {
         mounted && set_fetch_dept_resident_options(true);
-        const dept_res_opt_res = await LibraryApi.GetDeptResidentOptions(
+        const dept_res_opt_res = await LibraryApi.GetHospResidentOptions(
           assign_dept_pk
         );
         if (dept_res_opt_res.success) {

@@ -3,9 +3,11 @@ import styled from "styled-components";
 
 export const StyledPaymentView = styled(Container)`
   min-height: 100vh;
-  /* background-color: gray; */
+  background-color: #fff;
   padding: 1em;
   overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.02) !important;
+
   .header-ctnr {
     display: grid;
     grid-template-areas: "logo name" "logo app" "title title";

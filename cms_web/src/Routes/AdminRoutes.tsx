@@ -5,11 +5,12 @@ import { RootStore } from "../Services/Store";
 import AdminRecordView from "../Views/AdminView/AdminRecordView";
 import ConsultReqRecordView from "../Views/ConsultationView/ConsultReqRecordView";
 import ManageConsultReqView from "../Views/ConsultationView/ManageConsultReqView";
-import AdminDashboardView from "../Views/DashboardView";
 import ResidentDashboardView from "../Views/DashboardView/ResidentDashboardView";
 import DepartmentRecordView from "../Views/DepartmentView/DepartmentRecordView";
 import ManageDepartmentVIew from "../Views/DepartmentView/ManageDepartmentView";
 import HospResidentRecordView from "../Views/HospResidentView/HospResidentRecordView";
+import ResidentConsultRoom from "../Views/ResidentConsultRoomView";
+import ResidentProfile from "../Views/ResidentProfileView";
 
 const AdminRoutes = memo(() => {
   const user_type = useSelector(
@@ -19,15 +20,23 @@ const AdminRoutes = memo(() => {
     <Switch>
       <Route path="/dashboard/" exact>
         <>
-          {user_type === "admin" && <AdminDashboardView />}
-          {user_type === "hosp_resident" && <ResidentDashboardView />}
+          {/* {user_type === "admin" && <AdminDashboardView />} */}
+          {/* {user_type === "hosp_resident" && <ResidentDashboardView />} */}
+          <ResidentDashboardView />
         </>
+      </Route>
+
+      <Route path="/profile/" strict>
+        <>{user_type === "hosp_resident" && <ResidentProfile />}</>
       </Route>
       <Route path="/administrator/" exact>
         <AdminRecordView />
       </Route>
       <Route path="/request/" exact>
         <ConsultReqRecordView />
+      </Route>
+      <Route path="/request/:hash_key/consult-room" exact>
+        <ResidentConsultRoom />
       </Route>
       <Route path="/request/:hash_key" strict>
         <ManageConsultReqView />

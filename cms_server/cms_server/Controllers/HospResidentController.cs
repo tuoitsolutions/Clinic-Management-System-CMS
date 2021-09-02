@@ -28,13 +28,15 @@ namespace cms_server.Controllers
         [HttpPost]
         public IActionResult UpdateHospResident([FromForm] HospResidentEntity payload)
         {
+            payload.encoder_pk = User.Identity.Name;
+
             return Ok(hosp_res_repo.UpdateHospResident(payload));
         }
 
         [HttpPost]
         public IActionResult GetTableHospResident(HospResidentTablePayload payload)
         {
-            return Ok(hosp_res_repo.GetTableHospResident(payload));
+            return Ok(hosp_res_repo.GetTableHospResident(payload, User.Identity.Name));
         }
 
         [HttpPost]
@@ -42,6 +44,30 @@ namespace cms_server.Controllers
         {
             return Ok(hosp_res_repo.GetHospResidentByHospResidentPk(payload.value));
         }
+
+        [HttpPost]
+        public IActionResult PreviewResidentPic(SingleValuePayload payload)
+        {
+            return Ok(hosp_res_repo.PreviewResidentPic(payload.value));
+        }
+
+        [HttpPost]
+        public IActionResult UpdateResidentESign([FromForm] HospResidentEntity payload)
+        {
+            payload.encoder_pk = User.Identity.Name;
+            return Ok(hosp_res_repo.UpdateResidentESign(payload));
+        }
+
+
+        [HttpPost]
+        public IActionResult PreviewResidentESign(HospResidentEntity payload)
+        {
+            payload.encoder_pk = User.Identity.Name;
+            return Ok(hosp_res_repo.PreviewResidentESign(payload));
+        }
+
+
+
 
     }
 }

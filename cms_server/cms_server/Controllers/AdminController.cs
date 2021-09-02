@@ -50,6 +50,11 @@ namespace cms_server.Controllers
         {
             return Ok(admin_repo.GetAdminByAdminPk(payload.value));
         }
+        [HttpPost]
+        public IActionResult PreviewAdminPic(SingleValuePayload payload)
+        {
+            return Ok(admin_repo.PreviewAdminPic(payload.value));
+        }
 
         //GetAdminByAdminPk
 

@@ -294,7 +294,9 @@ const ConsultActionSend: FC<IConsultActionSend> = memo(
           buttons={[
             {
               text: `Payment Link`,
-              disabled: consult_info?.sts_pk !== "fa",
+              disabled:
+                consult_info?.sts_pk !== "fa" ||
+                consult_info?.is_charity === "y",
               badge_value: consult_info?.pay_link_sent_count,
               handleClick: () => {
                 handleSendPaymentLink();
@@ -316,13 +318,13 @@ const ConsultActionSend: FC<IConsultActionSend> = memo(
               },
             },
             {
-              text: "Medical Request",
+              text: "Medical Prescription ",
               handleClick: () => {
                 handlePreviewMedPrescrip();
               },
             },
             {
-              text: "Procedure Prescription",
+              text: "Procedure Request",
               handleClick: () => {
                 handlePreviewProcPrescrip();
               },

@@ -93,5 +93,9 @@ namespace cms_server.Entities
         public IFormFile attach_profile_pic { get; set; }
         public string age { get; set; }
         public string user_pk { get; set; }
+        public string esignature { get; set; }
+        public string pat_name { get; set; }
+
+        public HospResidentEntity assigned_resident_info { get; set; }
     }
 }

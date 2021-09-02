@@ -3,6 +3,7 @@ import React, { FC, memo } from "react";
 import AutocompleteHookForm from "../../Component/HookForm/AutocompleteHookForm";
 import DateFieldHookForm from "../../Component/HookForm/DateFieldHookForm";
 import MultiRadioFieldHookForm from "../../Component/HookForm/MultiRadioFieldHookForm";
+import PhotoHookForm from "../../Component/HookForm/PhotoHookForm";
 import TextFieldHookForm from "../../Component/HookForm/TextFieldHookForm";
 import { OptionItemModel } from "../../Services/Models/OptionModel";
 
@@ -15,7 +16,21 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
   ({ nationality_options, religion_options }) => {
     return (
       <div className="tab-container">
-        <Grid container spacing={4}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <div style={{ padding: `1em` }}>
+              <Grid container justify="center">
+                <Grid item>
+                  <PhotoHookForm
+                    label="Patient's Picture"
+                    height={130}
+                    width={130}
+                    name="attach_profile_pic"
+                  />
+                </Grid>
+              </Grid>
+            </div>
+          </Grid>
           <Grid item xs={6} md={2}>
             <TextFieldHookForm
               name="prefix"

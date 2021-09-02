@@ -1,25 +1,7 @@
-import {
-  CircularProgress,
-  Container,
-  Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
 import "chartjs-plugin-labels";
 import React, { FC, memo, useEffect, useState } from "react";
-import { Line, Pie } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
-import BodyLoader from "../../Component/BodyLoader";
-import CustomAvatar from "../../Component/CustomAvatar";
-import HelpNumber from "../../Helpers/HelpNumber";
-import { InvalidDateTimeToDefault } from "../../Hooks/UseDateParser";
 import { setPageLinksAction } from "../../Services/Actions/PageActions";
-import DashboardApi from "../../Services/Api/DashboardApi";
 import ConsultRequestEntity from "../../Services/Entities/ConsultRequestEntity";
 import HospResidentEntity from "../../Services/Entities/HospResidentEntity";
 import {
@@ -27,7 +9,6 @@ import {
   PieDashboardModel,
 } from "../../Services/Models/DashboardModel";
 import { RootStore } from "../../Services/Store";
-import { StyledTableProfile } from "../../Styles/GlobalStyles";
 interface IAdminDashboardView {}
 
 const AdminDashboardView: FC<IAdminDashboardView> = memo(() => {
@@ -66,60 +47,60 @@ const AdminDashboardView: FC<IAdminDashboardView> = memo(() => {
   const [total_for_approval_consult, set_total_for_approval_consult] =
     useState<Array<ConsultRequestEntity> | null>(null);
 
-  useEffect(() => {
-    let mounted = true;
-    const load_initial_data = async () => {
-      set_loading_page(true);
-      const total_earning_res = await DashboardApi.TotalEarning();
-      const total_consult_res = await DashboardApi.TotalConsult();
-      const total_hosp_pat_res = await DashboardApi.TotalHospPatient();
-      const total_hosp_resident_res = await DashboardApi.TotalHospResident();
-      const total_dept_res = await DashboardApi.TotalDept();
-      const chart_dept_earning_res = await DashboardApi.ChartDeptEarning();
-      const chart_daily_earning_30day_res =
-        await DashboardApi.ChartDailyEarning30days();
-      const stats_consult_res = await DashboardApi.StatsConsult();
-      const top_resident_res = await DashboardApi.TopResident();
-      const today_for_approval_consult_res =
-        await DashboardApi.TodayForApprovalConsult();
+  // useEffect(() => {
+  //   let mounted = true;
+  //   const load_initial_data = async () => {
+  //     set_loading_page(true);
+  //     const total_earning_res = await DashboardApi.TotalEarning();
+  //     const total_consult_res = await DashboardApi.TotalConsult();
+  //     const total_hosp_pat_res = await DashboardApi.TotalHospPatient();
+  //     const total_hosp_resident_res = await DashboardApi.TotalHospResident();
+  //     const total_dept_res = await DashboardApi.TotalDept();
+  //     const chart_dept_earning_res = await DashboardApi.ChartDeptEarning();
+  //     const chart_daily_earning_30day_res =
+  //       await DashboardApi.ChartDailyEarning30days();
+  //     const stats_consult_res = await DashboardApi.StatsConsult();
+  //     const top_resident_res = await DashboardApi.TopResident();
+  //     const today_for_approval_consult_res =
+  //       await DashboardApi.TodayForApprovalConsult();
 
-      if (
-        total_earning_res.success &&
-        total_consult_res.success &&
-        total_hosp_pat_res.success &&
-        total_hosp_resident_res.success &&
-        total_dept_res.success &&
-        chart_dept_earning_res.success &&
-        chart_daily_earning_30day_res.success &&
-        stats_consult_res.success &&
-        top_resident_res.success &&
-        today_for_approval_consult_res.success
-      ) {
-        set_total_earning(total_earning_res.data);
-        set_total_consult(total_consult_res.data);
-        set_total_hosp_patient(total_hosp_pat_res.data);
-        set_total_hosp_resident(total_hosp_resident_res.data);
-        set_total_dept(total_dept_res.data);
-        set_chart_dept_earning(chart_dept_earning_res.data);
-        set_chart_daily_earning_30day(chart_daily_earning_30day_res.data);
-        set_stats_consult(stats_consult_res.data);
-        set_top_resident(top_resident_res.data);
-        set_total_for_approval_consult(today_for_approval_consult_res.data);
-      } else {
-        // let err_msg = ``;
+  //     if (
+  //       total_earning_res.success &&
+  //       total_consult_res.success &&
+  //       total_hosp_pat_res.success &&
+  //       total_hosp_resident_res.success &&
+  //       total_dept_res.success &&
+  //       chart_dept_earning_res.success &&
+  //       chart_daily_earning_30day_res.success &&
+  //       stats_consult_res.success &&
+  //       top_resident_res.success &&
+  //       today_for_approval_consult_res.success
+  //     ) {
+  //       set_total_earning(total_earning_res.data);
+  //       set_total_consult(total_consult_res.data);
+  //       set_total_hosp_patient(total_hosp_pat_res.data);
+  //       set_total_hosp_resident(total_hosp_resident_res.data);
+  //       set_total_dept(total_dept_res.data);
+  //       set_chart_dept_earning(chart_dept_earning_res.data);
+  //       set_chart_daily_earning_30day(chart_daily_earning_30day_res.data);
+  //       set_stats_consult(stats_consult_res.data);
+  //       set_top_resident(top_resident_res.data);
+  //       set_total_for_approval_consult(today_for_approval_consult_res.data);
+  //     } else {
+  //       // let err_msg = ``;
 
-        set_page_error_msg(
-          "We could not load the data in the dashboard, please try again later."
-        );
-      }
+  //       set_page_error_msg(
+  //         "We could not load the data in the dashboard, please try again later."
+  //       );
+  //     }
 
-      set_loading_page(false);
-    };
+  //     set_loading_page(false);
+  //   };
 
-    mounted && load_initial_data();
+  //   mounted && load_initial_data();
 
-    return () => (mounted = false);
-  }, [dispatch, user_type]);
+  //   return () => (mounted = false);
+  // }, [dispatch, user_type]);
 
   useEffect(() => {
     dispatch(
@@ -133,7 +114,7 @@ const AdminDashboardView: FC<IAdminDashboardView> = memo(() => {
   }, [dispatch, user_type]);
   return (
     <>
-      <Container maxWidth="lg">
+      {/* <Container maxWidth="lg">
         <Grid container spacing={6}>
           {loading_page ? (
             <BodyLoader message="Loading dashboard data, thank you for your patience." />
@@ -178,12 +159,7 @@ const AdminDashboardView: FC<IAdminDashboardView> = memo(() => {
                     </div>
                   </Grid>
 
-                  {/* <Grid item xs={6} sm={3}>
-                      <div className="stats-item">
-                        <div className="value">{total_dept}</div>
-                        <div className="label">Total Departments</div>
-                      </div>
-                    </Grid> */}
+                
                 </Grid>
               </Grid>
               <Grid item xs={12} md={6}>
@@ -382,7 +358,7 @@ const AdminDashboardView: FC<IAdminDashboardView> = memo(() => {
                                 </div>
 
                                 <div className="profile-subtitle">
-                                  {r.doc_id}
+                                 
                                 </div>
                               </StyledTableProfile>
                             </TableCell>
@@ -446,7 +422,7 @@ const AdminDashboardView: FC<IAdminDashboardView> = memo(() => {
             </>
           )}
         </Grid>
-      </Container>
+      </Container> */}
     </>
   );
 });

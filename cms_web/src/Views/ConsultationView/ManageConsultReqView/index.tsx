@@ -1,17 +1,15 @@
-import { Chip, Grid } from "@material-ui/core";
+import { Chip, Grid, IconButton } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { useTheme } from "@material-ui/styles";
 import React, { FC, memo, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import BodyLoader from "../../../Component/BodyLoader";
-import ButtonPopper from "../../../Component/ButtonPopper";
 import LinkTabs, { ILinkTab } from "../../../Component/LinkTabs";
 import { InvalidDateToDefault } from "../../../Hooks/UseDateParser";
 import { StringEmptyToDefault } from "../../../Hooks/UseStringFormatter";
 import {
   closePageLoading,
-  setGeneralPrompt,
   setPageLinksAction,
   setPageSnackbar,
   showPageLoading,
@@ -22,15 +20,12 @@ import { RootStore } from "../../../Services/Store";
 import ConsultActionActions from "./ConsultActionActions";
 import ConsultActionSend from "./ConsultActionSend";
 import ConsultActionStatus from "./ConsultActionStatus";
-import ConsultProfilePic from "./ContanerConsultProfilePic";
-import DialogAssignConsultDept from "./DialogConsultSetSchedDept";
-import DialogMapConsultPatient from "./DialogConsultSyncPat";
 import DoctorNotesView from "./ContainerDoctorNotes";
+import ConsultProfilePic from "./ContainerConsultProfilePic";
 import { PatientManageUi } from "./styles";
 import TabAllergyRecord from "./TabAllergyRecord";
 import TabChatHistoryRecord from "./TabChatHistoryRecord";
 import TabDeptResident from "./TabFileRecord";
-import TabGeneralInfo from "./TabGeneralInfo";
 import TabImmuneRecord from "./TabImmuneRecord";
 import TabMedProbRecord from "./TabMedProbRecord";
 import TabMedRecord from "./TabMedRecord";
@@ -38,7 +33,10 @@ import TabPatHistoryRecord from "./TabPatHistoryRecord";
 import TabPaymentLog from "./TabPaymentLog";
 import TabProcRecord from "./TabProcRecord";
 import VitalSignRecord from "./TabVitalSignRecord";
-
+import DuoRoundedIcon from "@material-ui/icons/DuoRounded";
+import ChatRoundedIcon from "@material-ui/icons/ChatRounded";
+import UseWindow from "../../../Hooks/UseWindow";
+import TabGeneralInfo from "./TabGeneralInfo";
 interface IManageConsultReqView {}
 
 interface IParams {
@@ -312,7 +310,13 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
         !!selected_record && (
           <PatientManageUi theme={theme} maxWidth="xl">
             <div className="actions">
-              <Grid container spacing={1} justify="flex-end">
+              <Grid
+                container
+                spacing={1}
+                justify="flex-end"
+                alignContent="center"
+                alignItems="center"
+              >
                 <Grid item>
                   <ConsultActionStatus
                     consult_info={selected_record}
@@ -324,19 +328,6 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                     consult_info={selected_record}
                     handleReloadRecord={handleReloadRecord}
                   />
-                  {/* <ButtonPopper
-                    actionLabel="Actions"
-                    variant="contained"
-                    buttonColor="primary"
-                    buttons={[
-                      {
-                        text: `Assign Department`,
-                        handleClick: () => {
-                          //
-                        },
-                      },
-                    ]}
-                  /> */}
                 </Grid>
                 <Grid item>
                   <ConsultActionSend
@@ -364,6 +355,40 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                   }}
                 />
               </div>
+
+              <div className="profile-actions">
+                <Grid container>
+                  {/* <Grid item>
+                    <IconButton color="primary">
+                      <ChatRoundedIcon />
+                    </IconButton>
+                  </Grid> */}
+                  <Grid item>
+                    <IconButton
+                      color="primary"
+                      onClick={() => {
+                        if (selected_record?.sts_pk === "s") {
+                          UseWindow.PopupWindowCenter({
+                            url: `/request/${params?.hash_key}/consult-room`,
+                            title: "consult-room",
+                            w: 1360,
+                            h: 768,
+                          });
+                        } else {
+                          dispatch(
+                            setPageSnackbar(
+                              "You cannot attend to this consultation. It could be that the consultation has not started yet or it has already ended.",
+                              "info"
+                            )
+                          );
+                        }
+                      }}
+                    >
+                      <DuoRoundedIcon />
+                    </IconButton>
+                  </Grid>
+                </Grid>
+              </div>
               <div className="personal-info-ctnr">
                 <div className="info-group-column">
                   <div className="label">Gender</div>
@@ -375,7 +400,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
                 <div className="info-group-column">
                   <div className="label">Date of Birth</div>
                   <div className="value">
-                    {InvalidDateToDefault(selected_record?.birth_date, "-")}(
+                    {InvalidDateToDefault(selected_record?.birth_date, "-")} (
                     {selected_record?.age})
                   </div>
                 </div>

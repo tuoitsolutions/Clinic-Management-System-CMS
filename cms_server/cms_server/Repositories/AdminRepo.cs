@@ -57,7 +57,7 @@ namespace cms_server.Repositories
 
                     if (payload.img_attach != null)
                     {
-                        file_upload_response = UseFtp.UploadFtp(payload.img_attach, DefaultConfig.ftp_ip + "/" + DefaultConfig.app_name + "/Uploads/UserPhotos/", DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                        file_upload_response = UseFtp.UploadToFtp(payload.img_attach, DefaultConfig.ftp_ip, $"/{DefaultConfig.app_name}/Uploads/UserPhotos/", DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
                         if (!file_upload_response.success)
                         {
                             return new ResponseModel
@@ -142,7 +142,8 @@ namespace cms_server.Repositories
 
                 if (payload.img_attach != null)
                 {
-                    file_upload_response = UseFtp.UploadFtp(payload.img_attach, DefaultConfig.ftp_ip + "/" + DefaultConfig.app_name + "/Uploads/UserPhotos/", DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                    file_upload_response = UseFtp.UploadToFtp(payload.img_attach, DefaultConfig.ftp_ip, $"/{DefaultConfig.app_name}/Uploads/UserPhotos/", DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+
                     if (!file_upload_response.success)
                     {
                         return new ResponseModel
@@ -341,7 +342,8 @@ namespace cms_server.Repositories
                 {
                     AdminEntity selected_admin = table_data[0];
 
-                    byte[] img_byte_arr = UseFtp.DownloadFtp(selected_admin.pic_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                    byte[] img_byte_arr = UseFtp.DownloadFtp(DefaultConfig.ftp_ip + selected_admin.pic_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+
                     if (img_byte_arr != null)
                     {
                         selected_admin.pic_dest = Convert.ToBase64String(img_byte_arr);
@@ -374,5 +376,58 @@ namespace cms_server.Repositories
             }
         }
 
+
+        public ResponseModel PreviewAdminPic(string admin_pk)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                List<AdminEntity> table_data = con.Query<AdminEntity>(
+                    $@" SELECT pic_dest FROM administrator where admin_pk=@admin_pk limit 1;",
+                    new { admin_pk }, transaction: tran).ToList();
+
+                if (table_data.Count > 0)
+                {
+                    AdminEntity selected_admin = table_data[0];
+
+                    byte[] img_byte_arr = UseFtp.DownloadFtp(DefaultConfig.ftp_ip + selected_admin.pic_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                    if (img_byte_arr != null)
+                    {
+                        selected_admin.pic_dest = "data:image/png;base64," + Convert.ToBase64String(img_byte_arr);
+                    }
+                    else
+                    {
+                        selected_admin.pic_dest = null;
+                    }
+
+                    tran.Commit();
+                    return new ResponseModel
+                    {
+                        success = true,
+                        data = selected_admin.pic_dest
+                    };
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "The record that you are trying to retrieve does not exist!"
+                    };
+                }
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
     }
 }

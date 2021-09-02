@@ -39,6 +39,33 @@ const GetConsultReqByPk = async (hash_key: string): Promise<ResponseModel> => {
   });
   return response;
 };
+const GetPaymentConsultInfo = async (
+  hash_key: string
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetPaymentConsultInfo", {
+    value: hash_key,
+  });
+  return response;
+};
+
+const GetAssignResidentOnlineConsult = async (
+  hash_key: string
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetAssignResidentOnlineConsult", {
+    value: hash_key,
+  });
+  return response;
+};
+
+const GetPublicOnlineConsult = async (
+  hash_key: string
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetPublicOnlineConsult", {
+    value: hash_key,
+  });
+  return response;
+};
+
 const SendPaymentLink = async (
   consult_req_pk: string
 ): Promise<ResponseModel> => {
@@ -203,6 +230,14 @@ const GetConsultDocNotes = async (hash_key: string): Promise<ResponseModel> => {
   });
   return response;
 };
+const PreviewRequesterPic = async (
+  hash_key: string
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "PreviewRequesterPic", {
+    value: hash_key,
+  });
+  return response;
+};
 
 const UpdateConsultDocNotes = async (
   payload: ConsultRequestEntity
@@ -260,8 +295,12 @@ export default {
   GetConsultPatPic,
   UpdateConsultPatPic,
   GetConsultDocNotes,
+  PreviewRequesterPic,
   UpdateConsultDocNotes,
   UpdateConsultDtls,
   SendConsultSms,
   SendConsultEmail,
+  GetAssignResidentOnlineConsult,
+  GetPublicOnlineConsult,
+  GetPaymentConsultInfo,
 };

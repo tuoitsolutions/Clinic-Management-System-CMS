@@ -99,9 +99,10 @@ const PhotoHookForm: React.FC<IPhotoHookForm> = memo(
                           display: "grid",
                           justifyContent: "center",
                           textAlign: "center",
-                          color: `rgba(0,0,0,.6)`,
-                          fontWeight: 600,
-                          fontSize: `.87em`,
+                          color: `rgba(0,0,0,.5)`,
+                          fontWeight: 900,
+                          fontSize: `.6em`,
+                          padding: `.5em`,
                         }}
                       >
                         {label}

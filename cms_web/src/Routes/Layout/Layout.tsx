@@ -65,6 +65,11 @@ const generateNavLinks = (user: UserEntity): Array<IPageNavLinks> => {
         text: "Requests",
         to: "/request",
       },
+      {
+        hasSubLinks: false,
+        text: "Residents",
+        to: "/resident",
+      },
     ];
   }
 

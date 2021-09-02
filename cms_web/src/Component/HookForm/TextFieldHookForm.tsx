@@ -28,7 +28,7 @@ export const TextFieldHookForm: FC<TextFieldProps> = memo((props) => {
           autoComplete="off"
           onKeyPress={(event) => {
             if (props.type === "text") {
-              if (!/^[A-Za-z ]+$/.test(event.key)) {
+              if (!/^[A-Za-z -]+$/.test(event.key)) {
                 event.preventDefault();
               }
             }

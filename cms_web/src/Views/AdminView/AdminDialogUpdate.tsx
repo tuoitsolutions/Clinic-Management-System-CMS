@@ -91,6 +91,7 @@ export const AdminDialogUpdate: FC<IAdminDialogUpdate> = memo((props) => {
             if (response.success) {
               if (typeof props.successCallback === "function") {
                 props.successCallback();
+                props.handleClose();
               }
               //   form_instance.reset();
             }
@@ -143,7 +144,8 @@ export const AdminDialogUpdate: FC<IAdminDialogUpdate> = memo((props) => {
       <FormDialog
         open={!!props.admin_pk}
         title="Fill up all the required fields to update the administrator"
-        minWidth={500}
+        minWidth={650}
+        handleClose={() => props.handleClose()}
         body={
           <>
             {!loading_initial_data ? (
@@ -355,15 +357,6 @@ export const AdminDialogUpdate: FC<IAdminDialogUpdate> = memo((props) => {
               }}
             >
               Reset Form
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => {
-                props.handleClose();
-              }}
-            >
-              Close
             </Button>
           </>
         }

@@ -14,6 +14,7 @@ import DefaultValuesActions from "../../Services/Actions/DefaultValuesActions";
 import ConsultRequestApi from "../../Services/Api/ConsultRequestApi";
 import ConsultRequestEntity from "../../Services/Entities/ConsultRequestEntity";
 import { RootStore } from "../../Services/Store";
+import { PageContainerUi } from "../../Styles/GlobalStyles";
 import CardPayment from "./CardPayment";
 import GCashPayment from "./GCashPayment";
 import GrabPayPayment from "./GrabPayPayment";
@@ -100,7 +101,7 @@ export const PaymentView: FC<PaymentViewProps> = memo(() => {
     let mounted = true;
     const fetch_data = async () => {
       set_fetch_selected_consult_req(true);
-      const response = await ConsultRequestApi.GetConsultReqByPk(hash_key);
+      const response = await ConsultRequestApi.GetPaymentConsultInfo(hash_key);
       if (response.success) {
         set_selected_consult_req(response.data);
       } else {
@@ -120,34 +121,27 @@ export const PaymentView: FC<PaymentViewProps> = memo(() => {
   }, [dispatch]);
 
   return (
-    <div
-      style={{
-        width: `100%`,
-        display: `grid`,
-        alignItems: `center`,
-        alignSelf: `center`,
-        justifyItems: `center`,
-      }}
-    >
+    <PageContainerUi theme={theme}>
       {fetch_hospital_name || fetch_hospital_logo ? (
         <BodyLoader />
       ) : !!error_message ? (
         <Alert>{error_message}</Alert>
       ) : (
         <>
-          <StyledPaymentView maxWidth="lg" theme={theme}>
-            <AppBar className="header-ctnr">
-              <CustomAvatar
-                className="brand-logo"
-                src={hospital_logo}
-                alt={hospital_name?.charAt(0)}
-                isBlob={true}
-                spacing={10}
-              />
-              <div className="brand-name">{hospital_name}</div>
-              <div className="app-name">{APP_NAME}</div>
-            </AppBar>
+          <AppBar className="header-ctnr">
+            <CustomAvatar
+              className="brand-logo"
+              src={hospital_logo}
+              alt={hospital_name?.charAt(0)}
+              isBlob={true}
+              spacing={5}
+            />
 
+            <div className="brand-name">{hospital_name}</div>
+            <div className="app-name">{APP_NAME}</div>
+          </AppBar>
+
+          <StyledPaymentView maxWidth="lg" theme={theme}>
             <div className="top-margin"></div>
 
             {!fetch_is_pay_link_expired ? (
@@ -165,7 +159,8 @@ export const PaymentView: FC<PaymentViewProps> = memo(() => {
                             <div className="main">Statement of Account</div>
                             <div className="sub-title">
                               This link is only available within 24 hours,
-                              kindly complete your transaction beforehand.
+                              kindly complete your transaction before it
+                              expires.
                             </div>
                           </div>
                         </div>
@@ -221,15 +216,15 @@ export const PaymentView: FC<PaymentViewProps> = memo(() => {
 
                             <div className="pay-soa-content">
                               <div className="soa-info-group">
-                                <div className="soa-label">
-                                  Consult Request Code
-                                </div>
+                                <div className="soa-label">Code</div>
                                 <div className="soa-value">
                                   {selected_consult_req?.consult_req_pk}
                                 </div>
                               </div>
                               <div className="soa-info-group">
-                                <div className="soa-label">Requestor Name</div>
+                                <div className="soa-label">
+                                  Requester's Name
+                                </div>
                                 <div className="soa-value">
                                   {selected_consult_req?.first_name}{" "}
                                   {selected_consult_req?.middle_name}{" "}
@@ -302,7 +297,7 @@ export const PaymentView: FC<PaymentViewProps> = memo(() => {
           </StyledPaymentView>
         </>
       )}
-    </div>
+    </PageContainerUi>
   );
 });
 

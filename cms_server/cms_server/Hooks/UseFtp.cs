@@ -84,8 +84,7 @@ namespace ddt_server.Hooks
 
                     string unique_file_name = Path.GetFileNameWithoutExtension(root_file_name)
                               + "_"
-                              + Guid.NewGuid().ToString().Substring(0, 4);
-
+                              + Guid.NewGuid().ToString();
 
 
                     string root_dir = "ftp://" + ftp_base_url + file_dest_path;
@@ -111,7 +110,7 @@ namespace ddt_server.Hooks
                             success = true,
                             data = new FileModel
                             {
-                                name = unique_file_name  ,
+                                name = unique_file_name,
                                 path = file_dest_path + unique_file_name + ext,
                                 ext = ext
                             }
@@ -146,155 +145,155 @@ namespace ddt_server.Hooks
             }
         }
 
-        public static FileResponseModel UploadFtp(IFormFile file, string ftp_path, string username, string password)
-        {
-            try
-            {
-                if (file != null)
-                {
-                    string root_file_name = Path.GetFileName(file.FileName);
-                    string ext = Path.GetExtension(root_file_name);
+        //public static FileResponseModel UploadFtp(IFormFile file, string ftp_path, string username, string password)
+        //{
+        //    try
+        //    {
+        //        if (file != null)
+        //        {
+        //            string root_file_name = Path.GetFileName(file.FileName);
+        //            string ext = Path.GetExtension(root_file_name);
 
-                    string unique_file_name = Path.GetFileNameWithoutExtension(root_file_name)
-                              + "_"
-                              + Guid.NewGuid().ToString().Substring(0, 4)
-                              + ext;
-
-
-
-                    string root_dir = "ftp://" + ftp_path;
-
-                    bool root_dir_exists = CreateFTPDirectory(root_dir, username, password);
-
-                    if (root_dir_exists)
-                    {
-                        FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(root_dir + "/" + unique_file_name));
-                        request.Method = WebRequestMethods.Ftp.UploadFile;
-                        request.UsePassive = false;
-                        request.Credentials = new NetworkCredential(username, password);
+        //            string unique_file_name = Path.GetFileNameWithoutExtension(root_file_name)
+        //                      + "_"
+        //                      + Guid.NewGuid().ToString().Substring(0, 4)
+        //                      + ext;
 
 
-                        using (Stream ftpStream = request.GetRequestStream())
-                        {
-                            file.CopyTo(ftpStream);
-                        }
+
+        //            string root_dir = "ftp://" + ftp_path;
+
+        //            bool root_dir_exists = CreateFTPDirectory(root_dir, username, password);
+
+        //            if (root_dir_exists)
+        //            {
+        //                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(root_dir + "/" + unique_file_name));
+        //                request.Method = WebRequestMethods.Ftp.UploadFile;
+        //                request.UsePassive = false;
+        //                request.Credentials = new NetworkCredential(username, password);
 
 
-                        return new FileResponseModel
-                        {
-                            success = true,
-                            data = new FileModel
-                            {
-                                name = unique_file_name,
-                                path = ftp_path + unique_file_name,
-                                ext = ext
-                            }
-                        };
-                    }
-                    else
-                    {
-                        return new FileResponseModel
-                        {
-                            success = false,
-                            message = "Unable to create the specified directory. Please make sure that the file URI is correct!"
-                        };
-                    }
+        //                using (Stream ftpStream = request.GetRequestStream())
+        //                {
+        //                    file.CopyTo(ftpStream);
+        //                }
 
 
-                }
+        //                return new FileResponseModel
+        //                {
+        //                    success = true,
+        //                    data = new FileModel
+        //                    {
+        //                        name = unique_file_name,
+        //                        path = ftp_path + unique_file_name,
+        //                        ext = ext
+        //                    }
+        //                };
+        //            }
+        //            else
+        //            {
+        //                return new FileResponseModel
+        //                {
+        //                    success = false,
+        //                    message = "Unable to create the specified directory. Please make sure that the file URI is correct!"
+        //                };
+        //            }
 
 
-                return new FileResponseModel
-                {
-                    success = false,
-                    message = "The file cannot be null"
-                };
-            }
-            catch (Exception e)
-            {
-                return new FileResponseModel
-                {
-                    success = false,
-                    message = e.Message
-                };
-            }
-        }
+        //        }
 
 
-        public static FileResponseModel UploadFtp(IFormFile file, string file_folder_path, string ftp_path, string username, string password)
-        {
-            try
-            {
-                if (file != null)
-                {
-                    string root_file_name = Path.GetFileName(file.FileName);
-                    string ext = Path.GetExtension(root_file_name);
-
-                    string unique_file_name = Path.GetFileNameWithoutExtension(root_file_name)
-                              + "_"
-                              + Guid.NewGuid().ToString().Substring(0, 4)
-                              + ext;
-
-
-                    bool root_dir_exists = CreateFTPDirectory(ftp_path, username, password);
-
-                    string full_file_path = file_folder_path + unique_file_name;
+        //        return new FileResponseModel
+        //        {
+        //            success = false,
+        //            message = "The file cannot be null"
+        //        };
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return new FileResponseModel
+        //        {
+        //            success = false,
+        //            message = e.Message
+        //        };
+        //    }
+        //}
 
 
-                    if (root_dir_exists)
-                    {
-                        FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(ftp_path + full_file_path));
-                        request.Method = WebRequestMethods.Ftp.UploadFile;
-                        request.UsePassive = false;
-                        request.Credentials = new NetworkCredential(username, password);
+        //public static FileResponseModel UploadFtp(IFormFile file, string file_folder_path, string ftp_path, string username, string password)
+        //{
+        //    try
+        //    {
+        //        if (file != null)
+        //        {
+        //            string root_file_name = Path.GetFileName(file.FileName);
+        //            string ext = Path.GetExtension(root_file_name);
+
+        //            string unique_file_name = Path.GetFileNameWithoutExtension(root_file_name)
+        //                      + "_"
+        //                      + Guid.NewGuid().ToString().Substring(0, 4)
+        //                      + ext;
 
 
-                        using (Stream ftpStream = request.GetRequestStream())
-                        {
-                            file.CopyTo(ftpStream);
-                        }
+        //            bool root_dir_exists = CreateFTPDirectory(ftp_path, username, password);
+
+        //            string full_file_path = file_folder_path + unique_file_name;
 
 
-                        return new FileResponseModel
-                        {
-                            success = true,
-                            data = new FileModel
-                            {
-                                name = unique_file_name,
-                                path = full_file_path,
-                                ext = ext
-                            }
-                        };
-                    }
-                    else
-                    {
-                        return new FileResponseModel
-                        {
-                            success = false,
-                            message = "Unable to create the specified directory. Please make sure that the file URI is correct!"
-                        };
-                    }
+        //            if (root_dir_exists)
+        //            {
+        //                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(ftp_path + full_file_path));
+        //                request.Method = WebRequestMethods.Ftp.UploadFile;
+        //                request.UsePassive = false;
+        //                request.Credentials = new NetworkCredential(username, password);
 
 
-                }
+        //                using (Stream ftpStream = request.GetRequestStream())
+        //                {
+        //                    file.CopyTo(ftpStream);
+        //                }
 
 
-                return new FileResponseModel
-                {
-                    success = false,
-                    message = "The file cannot be null"
-                };
-            }
-            catch (Exception e)
-            {
-                return new FileResponseModel
-                {
-                    success = false,
-                    message = e.Message
-                };
-            }
+        //                return new FileResponseModel
+        //                {
+        //                    success = true,
+        //                    data = new FileModel
+        //                    {
+        //                        name = unique_file_name,
+        //                        path = full_file_path,
+        //                        ext = ext
+        //                    }
+        //                };
+        //            }
+        //            else
+        //            {
+        //                return new FileResponseModel
+        //                {
+        //                    success = false,
+        //                    message = "Unable to create the specified directory. Please make sure that the file URI is correct!"
+        //                };
+        //            }
 
-        }
+
+        //        }
+
+
+        //        return new FileResponseModel
+        //        {
+        //            success = false,
+        //            message = "The file cannot be null"
+        //        };
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return new FileResponseModel
+        //        {
+        //            success = false,
+        //            message = e.Message
+        //        };
+        //    }
+
+        //}
 
 
         private static bool CreateFTPDirectory(string directory, string username, string password)

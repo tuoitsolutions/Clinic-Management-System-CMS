@@ -11,7 +11,8 @@ namespace cms_server.Pdf
     {
         public static Byte[] GenerateSoaPdf(string brand_name, string brand_logo, string brand_address, string brand_phone, string brand_email,
             ConsultRequestEntity consult_request, string qr_code,
-            List<ConsultMedEntity> presc_meds
+            List<ConsultMedEntity> presc_meds,
+            string resident_esignature_img
             )
         {
 
@@ -178,7 +179,14 @@ namespace cms_server.Pdf
                                     <div  class='col-4' >
                                     </div>
                                     <div class='col-4' style='justify-content: end; justify-self: end;'>
-                                         <div class='signature-name'>{consult_request.assign_res_desc}</div>
+                                         <div class='signature'>
+                                             <div class='sign'>
+                                                <img src='{resident_esignature_img}' height='80' /> 
+                                             </div>                  
+                                             <div class='name'>
+                                                 {consult_request.assign_res_desc}
+                                             </div>             
+                                         </div>
                                     </div>
                                 </div>
 

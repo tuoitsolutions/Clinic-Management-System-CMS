@@ -285,10 +285,16 @@ tbody tr {
 }
 
 
-.signature-name {
-    border-top: 1px solid black;
-    text-align: center;
-    font-weight: 600;
+.signature {
     padding: 10pt;
+    font-weight: 600;
+    text-align: center;
     width: 100%;
 }
+
+    .signature .sign {
+    }
+
+    .signature .name {
+        border-top: 1px solid black;
+    }

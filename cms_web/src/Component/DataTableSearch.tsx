@@ -1,4 +1,10 @@
-import { IconButton, Paper, Popover } from "@material-ui/core";
+import {
+  IconButton,
+  Paper,
+  Popover,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core";
 import FilterListRoundedIcon from "@material-ui/icons/FilterListRounded";
 import React, { FC, memo } from "react";
 import styled from "styled-components";
@@ -8,6 +14,8 @@ interface IDataTableSearch {
 
 export const DataTableSearch: FC<IDataTableSearch> = memo(
   ({ children, width }) => {
+    const theme = useTheme();
+    const screen_sm = useMediaQuery(theme.breakpoints.down("sm"));
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
       null
     );
@@ -54,8 +62,8 @@ export const DataTableSearch: FC<IDataTableSearch> = memo(
         >
           <PopperContent
             style={{
-              minWidth: !!width ? width : 650,
-              maxWidth: !!width ? width : 650,
+              minWidth: screen_sm ? `100%` : !!width ? width : 650,
+              maxWidth: screen_sm ? `100%` : !!width ? width : 650,
             }}
           >
             <div className="popper-content">

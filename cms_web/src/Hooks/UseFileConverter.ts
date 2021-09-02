@@ -53,10 +53,12 @@ export const dataURLtoFile = (data_url, filename) => {
   return converted_file;
 };
 
-export const dataURLtoImageFile = (data_url, filename) => {
+export const dataURLtoImageFile = (data_url, filename, has_root?: boolean) => {
   if (!!data_url && !!filename) {
     try {
-      data_url = "data:image/png;base64, " + data_url;
+      if (has_root !== true) {
+        data_url = "data:image/png;base64, " + data_url;
+      }
 
       var arr = data_url.split(","),
         mime = arr[0].match(/:(.*?);/)[1],

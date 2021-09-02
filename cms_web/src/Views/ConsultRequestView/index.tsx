@@ -10,7 +10,6 @@ import BodyLoader from "../../Component/BodyLoader";
 import CustomAvatar from "../../Component/CustomAvatar";
 import CustomStepper from "../../Component/CustomStepper/CustomStepper";
 import LoadingButton from "../../Component/LoadingButton";
-import PhotoField from "../../Component/PhotoField/PhotoField";
 import { APP_NAME } from "../../Helpers/AppConfig";
 import DefaultValuesActions from "../../Services/Actions/DefaultValuesActions";
 import {
@@ -373,14 +372,14 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
                 src={hospital_logo}
                 alt={hospital_name?.charAt(0)}
                 isBlob={true}
-                spacing={8}
+                spacing={5}
               />
 
               <div className="brand-name">{hospital_name}</div>
               <div className="app-name">{APP_NAME}</div>
             </AppBar>
 
-            <Container maxWidth="md" className="page-content">
+            <Container maxWidth="md" className="page-content ">
               <div className="cntr-title main-title">
                 <div className="main">Consultation Request Form</div>
                 <div className="sub">
@@ -493,6 +492,9 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
                   form_payload={form_payload}
                   open={open_otp_dialog}
                   handleClose={() => {
+                    set_open_otp_dialog(false);
+                  }}
+                  successCallback={() => {
                     set_active_step(0);
                     form_instance_otp.reset();
                     set_open_otp_dialog(false);

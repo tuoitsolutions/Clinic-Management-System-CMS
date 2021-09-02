@@ -35,20 +35,22 @@ namespace DeliveryRoomWatcher.Services
 
                         var path = context.HttpContext.Request.Path;
 
-                        if (path.StartsWithSegments("/api/hubs/timer"))
-                        {
-                            if (!string.IsNullOrEmpty(accessToken))
-                            {
-                                context.Token = accessToken;
-                            }
-                        }
-                        //else if (path.StartsWithSegments("/api/hubs/chat"))
+                        //if (path.StartsWithSegments("/api/hubs/timer"))
                         //{
                         //    if (!string.IsNullOrEmpty(accessToken))
                         //    {
                         //        context.Token = accessToken;
                         //    }
                         //}
+                        //else
+                        
+                        if (path.StartsWithSegments("/api/hubs/chat"))
+                        {
+                            if (!string.IsNullOrEmpty(accessToken))
+                            {
+                                context.Token = accessToken;
+                            }
+                        }
 
                         return Task.CompletedTask;
                     }

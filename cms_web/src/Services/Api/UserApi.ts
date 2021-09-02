@@ -14,7 +14,19 @@ const authUserApi = async (user: AuthUserPayload): Promise<ResponseModel> => {
   return response;
 };
 
+const GetUserResidentDtls = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetUserResidentDtls", null);
+  return response;
+};
+
+const GetUserResidentPic = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetUserResidentPic", null);
+  return response;
+};
+
 export default {
   currentUserApi,
   authUserApi,
+  GetUserResidentDtls,
+  GetUserResidentPic,
 };

@@ -2,7 +2,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Grid } from "@material-ui/core";
 import React, { FC, memo, useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
 import BodyLoader from "../../Component/BodyLoader";
 import ErrorMessage from "../../Component/ErrorMessage";
@@ -23,6 +23,7 @@ import HosResidentApi from "../../Services/Api/HospResidentApi";
 import LibraryApi from "../../Services/Api/LibraryApi";
 import HospResidentEntity from "../../Services/Entities/HospResidentEntity";
 import { OptionItemModel } from "../../Services/Models/OptionModel";
+import { RootStore } from "../../Services/Store";
 
 interface IAdminDialogCreate {
   open: boolean;
@@ -31,22 +32,26 @@ interface IAdminDialogCreate {
 }
 
 const form_schema = yup.object({
-  doc_id: yup.string().required().nullable().label("Employee Id"),
-  spclty_pk: yup.string().required().nullable().label("Employee Id"),
-  prefix: yup.string().nullable().label("Prefix"),
+  license_no: yup.string().required().nullable().label("License Number"),
+  dept_pk: yup.string().nullable().label("Department"),
+  spclty_pk: yup.string().required().nullable().label("Specialty"),
+  doc_title: yup.string().nullable().label("Doctor's Title"),
   first_name: yup.string().required().nullable().label("First Name"),
   middle_name: yup.string().nullable().label("Middle Name"),
   last_name: yup.string().required().nullable().label("Last Name"),
-  suffix: yup.string().nullable().label("Name Extension"),
+  suffix: yup.string().nullable().label("Suffix"),
   gender: yup.string().required().nullable().label("Gender"),
   mob_no: yup.string().required().nullable().label("Mobile Number"),
   tel_no: yup.string().label("Telephone Number"),
   email: yup.string().email().required().nullable().label("Email Address"),
+  is_active: yup.string().required().nullable().label("Is Active"),
 });
 
 export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
   const dispatch = useDispatch();
-
+  const user_type = useSelector(
+    (store: RootStore) => store.UserReducer.user?.user_type
+  );
   const form_instance = useForm<any>({
     resolver: yupResolver(form_schema),
     mode: "onChange",
@@ -56,6 +61,7 @@ export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
   const [doc_specialty_options, set_doc_specialty_options] = useState<
     Array<OptionItemModel>
   >([]);
+  const [dept_options, set_dept_options] = useState<Array<OptionItemModel>>([]);
   const [error_message, set_error_message] = useState("");
 
   const handleSubmitForm = useCallback(
@@ -91,6 +97,7 @@ export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
             if (response.success) {
               if (typeof props.successCallback === "function") {
                 props.successCallback();
+                props.handleClose();
               }
               form_instance.reset();
             }
@@ -106,10 +113,12 @@ export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
 
     async function fetchData() {
       set_loading_initial_data(true);
-      const selected_record = await LibraryApi.DoctorSpecialtyOptions();
+      const spclty_opt_res = await LibraryApi.DoctorSpecialtyOptions();
+      const dept_opt_res = await LibraryApi.GetDepartmentOptions();
 
-      if (selected_record.success) {
-        mounted && set_doc_specialty_options(selected_record.data);
+      if (spclty_opt_res.success && dept_opt_res.success) {
+        mounted && set_doc_specialty_options(spclty_opt_res.data);
+        mounted && set_dept_options(dept_opt_res.data);
       } else {
         mounted &&
           set_error_message(
@@ -132,7 +141,10 @@ export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
       <FormDialog
         open={props.open}
         title="Fill up all the required fields to register a new hospital resident"
-        minWidth={500}
+        minWidth={650}
+        handleClose={() => {
+          props.handleClose();
+        }}
         body={
           <>
             {!loading_initial_data ? (
@@ -153,42 +165,33 @@ export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
                         borderRadius: 10,
                       }}
                     >
-                      <Grid container spacing={4}>
+                      <Grid container spacing={3}>
                         <Grid item xs={12}>
                           <div style={{ marginBottom: `1em` }}>
                             <Grid container justify="center">
                               <Grid item>
                                 <PhotoHookForm
                                   label="Attach the profile photo"
-                                  height={170}
-                                  width={170}
+                                  height={150}
+                                  width={150}
                                   name="img_attach"
                                 />
                               </Grid>
                             </Grid>
                           </div>
                         </Grid>
-                        <Grid item xs={12} md={3}>
+                        <Grid item xs={12} md={6}>
                           <TextFieldHookForm
-                            name="doc_id"
-                            label="Doctor Id"
+                            name="license_no"
+                            label="License Number"
                             InputLabelProps={{
                               shrink: true,
                             }}
-                            required
-                          />
-                        </Grid>
-                        <Grid item xs={12} md={3}>
-                          <TextFieldHookForm
-                            name="prefix"
-                            label="Prefix"
                             fullWidth
-                            InputLabelProps={{
-                              shrink: true,
-                            }}
                             required
                           />
                         </Grid>
+
                         <Grid item xs={12} md={6}>
                           <TextFieldHookForm
                             name="first_name"
@@ -227,25 +230,25 @@ export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
                           />
                         </Grid>
 
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={3}>
                           <TextFieldHookForm
                             name="suffix"
                             label="Suffix"
                             InputLabelProps={{
                               shrink: true,
                             }}
+                            fullWidth
                           />
                         </Grid>
 
-                        <Grid item xs={12} md={6}>
-                          <AutocompleteHookForm
-                            name="spclty_pk"
-                            label="Specialty"
-                            fullWidth={true}
+                        <Grid item xs={12} sm={3}>
+                          <TextFieldHookForm
+                            name="doc_title"
+                            label="Title"
+                            fullWidth
                             InputLabelProps={{
                               shrink: true,
                             }}
-                            options={doc_specialty_options}
                           />
                         </Grid>
 
@@ -269,6 +272,33 @@ export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
                             ]}
                           />
                         </Grid>
+
+                        <Grid item xs={12} md={6}>
+                          <AutocompleteHookForm
+                            name="spclty_pk"
+                            label="Specialty"
+                            fullWidth={true}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            options={doc_specialty_options}
+                            required
+                          />
+                        </Grid>
+
+                        {user_type === "admin" && (
+                          <Grid item xs={12} md={6}>
+                            <AutocompleteHookForm
+                              name="dept_pk"
+                              label="Department"
+                              fullWidth={true}
+                              InputLabelProps={{
+                                shrink: true,
+                              }}
+                              options={dept_options}
+                            />
+                          </Grid>
+                        )}
 
                         <Grid item xs={12} md={6}>
                           <TextFieldHookForm
@@ -346,15 +376,6 @@ export const AdminDialogCreate: FC<IAdminDialogCreate> = memo((props) => {
               }}
             >
               Reset
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => {
-                props.handleClose();
-              }}
-            >
-              Close
             </Button>
           </>
         }

@@ -13,10 +13,6 @@ html {
   color: #333;
 }
 
-th {
-  font-weight: 600 !important;
-}
-
 body {
   width: calc(100vw - (100vw - 100%));
   max-width: calc(100vw - (100vw - 100%));
@@ -64,9 +60,11 @@ body {
 
 .MuiChip-label {
   text-transform: capitalize !important;
-  font-size: 0.9em !important;
-  font-weight: 900 !important;
+  font-size: 0.87em !important;
+  font-weight: 700 !important;
   padding: 0 3px !important;
+  letter-spacing: 0.3pt;
+  word-spacing: 0.3pt;
 }
 
 .uncaps .MuiChip-label {
@@ -76,8 +74,9 @@ body {
 .MuiChip-root {
   border-radius: 5px !important;
   padding: 1px 3px !important;
-  max-height: 25px !important;
-  min-height: 25px !important;
+  max-height: 20px !important;
+  min-height: 20px !important;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1) !important;
 }
 
 .MuiBadge-badge {
@@ -125,10 +124,6 @@ a,
   color: blue !important;
   text-decoration: none !important;
   cursor: pointer;
-}
-
-tr th {
-  background-color: #fff !important;
 }
 
 .empty-rows {
@@ -403,7 +398,7 @@ tr th {
 .info-group-column .label {
   font-weight: 600;
   opacity: 0.6;
-  font-size: 0.87em;
+  font-size: 0.9em;
 }
 
 .info-group-column .value {
@@ -635,27 +630,6 @@ canvas {
   opacity: 0.9 !important;
 }
 
-.stats-item {
-  height: 100%;
-  width: 100%;
-  border-radius: 7px;
-  background-color: #f5f5f5 !important;
-  min-width: 200px;
-  padding: 1.5em 2.5em;
-  text-align: center;
-}
-
-.stats-item .value {
-  font-size: 1.8em;
-  font-weight: 900;
-}
-
-.stats-item .label {
-  font-size: 0.87em;
-  opacity: 0.8;
-  font-weight: 500;
-}
-
 em {
   font-size: 0.9em !important;
   opacity: 0.7;
@@ -663,4 +637,31 @@ em {
 
 .MuiToolbar-gutters {
   padding: 0 !important;
+}
+
+/* 
+. {
+  color: #785ada7d;
+} */
+
+.page-content {
+  /* background-color: #fff !important; */
+  border-radius: 7px !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.02) !important;
+  padding: 1em;
+}
+
+.table-title {
+  font-weight: 700;
+  letter-spacing: 0.2pt;
+  word-spacing: 0.2pt;
+}
+
+table tr th {
+  background-color: #fff !important;
+  font-weight: 900 !important;
+  font-size: 0.75em !important;
+  opacity: 0.7 !important;
+  /* letter-spacing: 0.2pt; */
+  /* word-spacing: 0.2pt; */
 }

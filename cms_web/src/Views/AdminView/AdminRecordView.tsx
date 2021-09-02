@@ -24,6 +24,7 @@ import FormikDateField from "../../Component/Formik/FormikDateField";
 import FormikInputField from "../../Component/Formik/FormikInputField";
 import IconButtonPopper from "../../Component/IconButtonPopper/IconButtonPopper";
 import LinearLoadingProgress from "../../Component/LinearLoadingProgress";
+import PreviewPictureFtp from "../../Component/PreviewPictureFtp";
 import { InvalidDateTimeToDefault } from "../../Hooks/UseDateParser";
 import useFilter from "../../Hooks/useFilter";
 import {
@@ -117,6 +118,7 @@ const tableColumns: Array<TblColumnModel> = [
     label: "Actions",
     width: 70,
     fixedWidth: true,
+    align: "center",
   },
   {
     label: "Employee",
@@ -139,7 +141,7 @@ const tableColumns: Array<TblColumnModel> = [
   },
   {
     label: "Encoded On",
-    width: 100,
+    width: 150,
     fixedWidth: true,
   },
 ];
@@ -162,6 +164,7 @@ export const AdminRecordView: FC<AdminRecordViewProps> = memo(() => {
 
   const [data_table, set_data_table] = useState<null | AdminTableModel>(null);
   const [fetch_data_table, set_fetch_data_table] = useState<boolean>(false);
+  const [page_error, set_page_error] = useState<string>("");
 
   const [
     tableSearch,
@@ -230,6 +233,8 @@ export const AdminRecordView: FC<AdminRecordViewProps> = memo(() => {
 
       if (table_response.success) {
         mounted && set_data_table(table_response.data);
+      } else {
+        mounted && set_page_error(table_response.message.toString());
       }
       mounted && set_fetch_data_table(false);
     };
@@ -260,10 +265,12 @@ export const AdminRecordView: FC<AdminRecordViewProps> = memo(() => {
   }, [dispatch, user_type]);
 
   return (
-    <Container maxWidth="lg">
-      {!!data_table ? (
+    <Container maxWidth="xl">
+      {!!page_error ? (
+        <Alert severity="error">{page_error}</Alert>
+      ) : !!data_table ? (
         <div className="panel-container">
-          <Grid container spacing={4} alignItems="center">
+          <Grid container spacing={2} alignItems="center">
             <Grid item xs={12}>
               <Grid container justify="flex-end">
                 <Button
@@ -278,152 +285,167 @@ export const AdminRecordView: FC<AdminRecordViewProps> = memo(() => {
               </Grid>
             </Grid>
 
-            <Grid item xs={6}>
-              <Grid
-                container
-                justify="flex-start"
-                alignContent="center"
-                alignItems="center"
-                spacing={2}
-              >
-                <Grid item>
-                  <TablePagination
-                    rowsPerPageOptions={[50, 250, 500]}
-                    component="div"
-                    count={!!data_table?.count ? data_table?.count : -1}
-                    rowsPerPage={tableLimit}
-                    page={tablePage}
-                    onChangePage={handleChangePage}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
-
-            <Grid xs={6} item>
+            <Grid item xs={12}>
               <Grid
                 container
                 spacing={2}
                 alignContent="center"
                 alignItems="center"
-                justify="flex-end"
               >
-                <Grid item>
-                  <DataTableSort
-                    handleChagenSelectedSortIndex={
-                      handleChagenSelectedSortIndex
-                    }
-                    initialTableSort={initialTableSort}
-                    selectedSortIndex={selectedSortIndex}
-                  />
+                <Grid item md={"auto"}>
+                  <Grid
+                    container
+                    justify="flex-start"
+                    alignContent="center"
+                    alignItems="center"
+                    spacing={1}
+                  >
+                    <Grid item>
+                      <TablePagination
+                        rowsPerPageOptions={[50, 250, 500]}
+                        component="div"
+                        count={!!data_table?.count ? data_table?.count : -1}
+                        rowsPerPage={tableLimit}
+                        page={tablePage}
+                        onChangePage={handleChangePage}
+                        onChangeRowsPerPage={handleChangeRowsPerPage}
+                        variant="head"
+                      />
+                    </Grid>
+                  </Grid>
                 </Grid>
 
-                <Grid item>
-                  <DataTableSearch width={400}>
-                    <Formik
-                      initialValues={tableSearch}
-                      enableReinitialize
-                      onSubmit={(form_values) => {
-                        handleSetTableSearch(form_values);
-                      }}
-                    >
-                      {() => (
-                        <Form className="form">
-                          <Grid container spacing={4}>
-                            <Grid item xs={6}>
-                              <FormikInputField
-                                fullWidth
-                                name="emp_id"
-                                label="Employee ID"
-                                InputLabelProps={{
-                                  shrink: true,
-                                }}
-                              />
-                            </Grid>
+                <Grid item md={"auto"}>
+                  <Grid
+                    container
+                    spacing={1}
+                    alignContent="center"
+                    alignItems="center"
+                    justify="flex-end"
+                  >
+                    <Grid item>
+                      <DataTableSort
+                        handleChagenSelectedSortIndex={
+                          handleChagenSelectedSortIndex
+                        }
+                        initialTableSort={initialTableSort}
+                        selectedSortIndex={selectedSortIndex}
+                      />
+                    </Grid>
 
-                            <Grid item xs={12}>
-                              <FormikInputField
-                                fullWidth
-                                name="first_name"
-                                label="First Name"
-                                InputLabelProps={{
-                                  shrink: true,
-                                }}
-                              />
-                            </Grid>
-                            <Grid item xs={12}>
-                              <FormikInputField
-                                fullWidth
-                                name="last_name"
-                                label="Last Name"
-                                InputLabelProps={{
-                                  shrink: true,
-                                }}
-                              />
-                            </Grid>
-
-                            <Grid item xs={12}>
-                              <FormikCheckbox
-                                data={[
-                                  {
-                                    id: "y",
-                                    label: "Yes",
-                                  },
-                                  {
-                                    id: "n",
-                                    label: "No",
-                                  },
-                                ]}
-                                name="is_active"
-                                label="Is Active"
-                                size="small"
-                              />
-                            </Grid>
-
-                            <Grid item xs={6}>
-                              <FormikDateField
-                                name="date_from"
-                                clearable={true}
-                                showTodayButton
-                                label="Encoded From"
-                                type="date"
-                                variant="standard"
-                              />
-                            </Grid>
-                            <Grid item xs={6}>
-                              <FormikDateField
-                                name="date_to"
-                                clearable={true}
-                                showTodayButton
-                                label="Encoded To"
-                                type="date"
-                                variant="standard"
-                              />
-                            </Grid>
-
-                            <Grid item xs={12}>
-                              <div style={{ marginTop: `1em` }}>
-                                <Grid container spacing={2} justify="flex-end">
-                                  <Grid item>
-                                    <Button
-                                      type="submit"
-                                      variant="contained"
-                                      color="primary"
-                                    >
-                                      Apply Filters
-                                    </Button>
-                                  </Grid>
+                    <Grid item>
+                      <DataTableSearch width={400}>
+                        <Formik
+                          initialValues={tableSearch}
+                          enableReinitialize
+                          onSubmit={(form_values) => {
+                            handleSetTableSearch(form_values);
+                          }}
+                        >
+                          {() => (
+                            <Form className="form">
+                              <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                  <FormikInputField
+                                    fullWidth
+                                    name="emp_id"
+                                    label="Employee ID"
+                                    InputLabelProps={{
+                                      shrink: true,
+                                    }}
+                                  />
                                 </Grid>
-                              </div>
-                            </Grid>
-                          </Grid>
-                        </Form>
-                      )}
-                    </Formik>
-                  </DataTableSearch>
+
+                                <Grid item xs={12}>
+                                  <FormikInputField
+                                    fullWidth
+                                    name="first_name"
+                                    label="First Name"
+                                    InputLabelProps={{
+                                      shrink: true,
+                                    }}
+                                  />
+                                </Grid>
+                                <Grid item xs={12}>
+                                  <FormikInputField
+                                    fullWidth
+                                    name="last_name"
+                                    label="Last Name"
+                                    InputLabelProps={{
+                                      shrink: true,
+                                    }}
+                                  />
+                                </Grid>
+
+                                <Grid item xs={12}>
+                                  <FormikCheckbox
+                                    data={[
+                                      {
+                                        id: "y",
+                                        label: "Yes",
+                                      },
+                                      {
+                                        id: "n",
+                                        label: "No",
+                                      },
+                                    ]}
+                                    name="is_active"
+                                    label="Is Active"
+                                    size="small"
+                                  />
+                                </Grid>
+
+                                <Grid item xs={6}>
+                                  <FormikDateField
+                                    name="date_from"
+                                    clearable={true}
+                                    showTodayButton
+                                    label="Encoded From"
+                                    type="date"
+                                    variant="standard"
+                                  />
+                                </Grid>
+                                <Grid item xs={6}>
+                                  <FormikDateField
+                                    name="date_to"
+                                    clearable={true}
+                                    showTodayButton
+                                    label="Encoded To"
+                                    type="date"
+                                    variant="standard"
+                                  />
+                                </Grid>
+
+                                <Grid item xs={12}>
+                                  <div style={{ marginTop: `1em` }}>
+                                    <Grid
+                                      container
+                                      spacing={2}
+                                      justify="flex-end"
+                                    >
+                                      <Grid item>
+                                        <Button
+                                          type="submit"
+                                          variant="contained"
+                                          color="primary"
+                                        >
+                                          Apply Filters
+                                        </Button>
+                                      </Grid>
+                                    </Grid>
+                                  </div>
+                                </Grid>
+                              </Grid>
+                            </Form>
+                          )}
+                        </Formik>
+                      </DataTableSearch>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
+
             <Grid xs={12} item>
               <div>
                 <TableContainer
@@ -468,7 +490,7 @@ export const AdminRecordView: FC<AdminRecordViewProps> = memo(() => {
 
                       {data_table?.table?.map((row, index) => (
                         <TableRow key={index}>
-                          <TableCell>
+                          <TableCell align="center">
                             <IconButtonPopper
                               buttons={[
                                 {
@@ -490,12 +512,12 @@ export const AdminRecordView: FC<AdminRecordViewProps> = memo(() => {
                           </TableCell>
                           <TableCell>
                             <StyledTableProfile>
-                              <CustomAvatar
-                                src={row.pic_dest}
-                                alt={row.first_name?.charAt(0)}
-                                spacing={8}
-                                isBlob={true}
+                              <PreviewPictureFtp
                                 className="profile-photo"
+                                spacing={5}
+                                api_func={AdminApi.PreviewAdminPic}
+                                api_params={row.admin_pk}
+                                watch_change={row.pic_dest}
                               />
                               <div className="profile-title">
                                 {row.first_name} {row.middle_name}{" "}
@@ -518,21 +540,17 @@ export const AdminRecordView: FC<AdminRecordViewProps> = memo(() => {
                             <Chip
                               label={row?.is_active === "y" ? "Yes" : "No"}
                               size="small"
-                              style={{
-                                color:
-                                  row?.is_active === "y"
-                                    ? "#0d47a1"
-                                    : "#b71c1c",
-                                backgroundColor:
-                                  row?.is_active === "y"
-                                    ? "#e3f2fd"
-                                    : "#ffebee",
-                              }}
+                              color={
+                                row?.is_active === "y" ? "primary" : "secondary"
+                              }
                             />
                           </TableCell>
 
                           <TableCell>
-                            {InvalidDateTimeToDefault(row?.encoded_at, "-")}
+                            <small>
+                              {" "}
+                              {InvalidDateTimeToDefault(row?.encoded_at, "-")}
+                            </small>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -555,8 +573,8 @@ export const AdminRecordView: FC<AdminRecordViewProps> = memo(() => {
             }}
           />
           {/* {!!selected_record_dialog?.admin_pk && (
-          
-          )} */}
+              
+              )} */}
           <AdminDialogUpdate
             admin_pk={selected_record_dialog?.admin_pk}
             handleClose={() => {

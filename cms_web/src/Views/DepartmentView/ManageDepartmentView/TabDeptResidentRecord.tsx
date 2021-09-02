@@ -440,7 +440,7 @@ export const TabDeptResident: FC<ITabDeptResident> = memo(({ dept_pk }) => {
                             </div>
 
                             <div className="profile-subtitle">
-                              {row?.hosp_res?.doc_id}
+                              {row?.hosp_res?.license_no}
                             </div>
                           </StyledTableProfile>
                         </TableCell>

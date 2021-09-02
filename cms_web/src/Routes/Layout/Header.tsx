@@ -69,7 +69,7 @@ const Header: React.FC<IHeader> = memo(
               className="brand-logo"
               alt={hospital_name}
               isBlob
-              spacing={6}
+              spacing={5}
             />
             <div className="brand-name">{hospital_name}</div>
             <div className="app-name">{APP_NAME}</div>
@@ -116,7 +116,7 @@ const StyledHeader = styled(AppBar)`
   grid-auto-flow: column !important;
   grid-auto-columns: ${(p) => p.theme.sidebar.maxWidth}px 1fr 1fr;
   grid-gap: 2em !important;
-  padding: 0 1em !important;
+  padding: 0 0.5em !important;
   transition: 0.2s all ease-in-out !important;
   background-color: ${(p) => p.theme.palette.primary.main.dark} !important;
 
@@ -134,24 +134,28 @@ const StyledHeader = styled(AppBar)`
     .brand-logo {
       grid-area: logo;
       margin-right: 0.2em;
-      /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); */
-      /* box-shadow: 0 5px 10px -4px rgba(0, 0, 0, 0.56),
-        0 2px 8px 0px rgba(0, 0, 0, 0.12), 0 2px 5px -3px rgba(0, 0, 0, 0.2); */
     }
 
     .brand-name {
       width: ${(p) => p.theme.sidebar.maxWidth - 50}px;
       grid-area: name;
-      font-weight: 600;
-      font-size: 0.9em;
-      align-self: start;
-      white-space: pre-wrap;
       text-transform: capitalize !important;
-
+      white-space: pre-wrap;
+      align-self: start;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       align-self: end;
+      font-weight: 900;
+      font-size: 0.87em !important;
+
+      @media only screen and (max-width: ${(props) =>
+          props.theme.breakpoints.values.sm}px) {
+        white-space: unset !important;
+        overflow: unset !important;
+        text-overflow: unset !important;
+        font-size: 0.8em !important;
+      }
     }
 
     .app-name {
@@ -160,10 +164,9 @@ const StyledHeader = styled(AppBar)`
       grid-area: app;
       white-space: nowrap;
       justify-self: start;
-      font-weight: 500;
-      font-size: 0.7em;
+      font-weight: 600 !important;
+      font-size: 0.7em !important;
       white-space: pre-wrap;
-
       width: ${(p) => p.theme.sidebar.maxWidth - 50}px;
     }
   }

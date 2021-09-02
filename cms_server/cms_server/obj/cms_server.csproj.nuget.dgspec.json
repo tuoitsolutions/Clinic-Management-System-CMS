@@ -74,10 +74,6 @@
               "target": "Package",
               "version": "[1.4.1, )"
             },
-            "Select.HtmlToPdf": {
-              "target": "Package",
-              "version": "[21.1.0, )"
-            },
             "Select.HtmlToPdf.NetCore": {
               "target": "Package",
               "version": "[21.1.0, )"

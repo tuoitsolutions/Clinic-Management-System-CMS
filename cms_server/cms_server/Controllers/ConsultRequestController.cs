@@ -67,6 +67,30 @@ namespace cms_server.Controllers
         }
 
         [HttpPost]
+        public IActionResult GetPaymentConsultInfo(SingleValuePayload payload)
+        {
+            return Ok(consult_req_repo.GetPaymentConsultInfo(payload.value));
+        }
+
+
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult GetAssignResidentOnlineConsult(SingleValuePayload payload)
+        {
+            return Ok(consult_req_repo.GetAssignResidentOnlineConsult(payload.value, User.Identity.Name));
+        }
+
+        [HttpPost]
+        public IActionResult GetPublicOnlineConsult(SingleValuePayload payload)
+        {
+            return Ok(consult_req_repo.GetPublicOnlineConsult(payload.value));
+        }
+
+
+
+
+        [HttpPost]
         public IActionResult IsPayLinkExpired(SingleValuePayload payload)
         {
             return Ok(consult_req_repo.IsPayLinkExpired(payload.value));
@@ -155,11 +179,11 @@ namespace cms_server.Controllers
             return Ok(consult_req_repo.MapConsultationToPatient(payload));
         }
 
-        [HttpPost]
-        public IActionResult GetCosultLinkInfo(SingleValuePayload payload)
-        {
-            return Ok(consult_req_repo.GetCosultLinkInfo(payload.value));
-        }
+        //[HttpPost]
+        //public IActionResult GetCosultLinkInfo(SingleValuePayload payload)
+        //{
+        //    return Ok(consult_req_repo.GetCosultLinkInfo(payload.value));
+        //}
 
         [HttpPost]
         public IActionResult AuthenticateConsultLink(ConsultRequestEntity payload)
@@ -202,6 +226,8 @@ namespace cms_server.Controllers
             return Ok(consult_req_repo.GetConsultDocNotes(payload.value));
         }
 
+
+
         [HttpPost]
         public IActionResult UpdateConsultDocNotes(ConsultRequestEntity payload)
         {
@@ -230,6 +256,11 @@ namespace cms_server.Controllers
             return Ok(consult_req_repo.SendConsultEmail(payload));
         }
 
+        [HttpPost]
+        public IActionResult PreviewRequesterPic(SingleValuePayload payload)
+        {
+            return Ok(consult_req_repo.PreviewRequesterPic(payload.value));
+        }
 
     }
 }

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "TIZqqMtME8zv3BIvtebB0MlKbkpUg8AAKWYUkPlo5Ozj/Voh0v3d5WiIN4DHstu/+A5aBivXyUvIZivdw4abZg==",
+  "dgSpecHash": "DYSR/zZ2WMS3m1uvL7+xph5uCXoA176ie2AycoVZC6nCwVIH/QQgop8bB8GbR/1V56z7iRBOot+JIDohgigBUA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Public\\Software Development\\Clinic Management System (cms_v2)\\cms_server\\cms_server\\cms_server.csproj",
   "expectedPackageFiles": [
@@ -65,7 +65,6 @@
     "C:\\Users\\mrmon\\.nuget\\packages\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.2\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.2\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl\\4.3.2\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
-    "C:\\Users\\mrmon\\.nuget\\packages\\select.htmltopdf\\21.1.0\\select.htmltopdf.21.1.0.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\select.htmltopdf.netcore\\21.1.0\\select.htmltopdf.netcore.21.1.0.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\smartformat.net\\2.7.0\\smartformat.net.2.7.0.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\ssh.net\\2016.1.0\\ssh.net.2016.1.0.nupkg.sha512",

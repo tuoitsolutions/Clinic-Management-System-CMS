@@ -3,62 +3,59 @@ import ResponseModel from "../Models/ServerResponseModel";
 
 const BASE = `api/dashboard/`;
 
-const TotalEarning = async (): Promise<ResponseModel> => {
-  const response = await PostFetch(BASE + "TotalEarning", null);
+const GetTotalForApproval = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetTotalForApproval", null);
   return response;
 };
 
-const TotalConsult = async (): Promise<ResponseModel> => {
-  const response = await PostFetch(BASE + "TotalConsult", null);
-  return response;
-};
-const TotalHospPatient = async (): Promise<ResponseModel> => {
-  const response = await PostFetch(BASE + "TotalHospPatient", null);
-  return response;
-};
-const TotalHospResident = async (): Promise<ResponseModel> => {
-  const response = await PostFetch(BASE + "TotalHospResident", null);
-  return response;
-};
-const TotalDept = async (): Promise<ResponseModel> => {
-  const response = await PostFetch(BASE + "TotalDept", null);
+const GetTotalPaid = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetTotalPaid", null);
   return response;
 };
 
-const ChartDeptEarning = async (): Promise<ResponseModel> => {
-  const response = await PostFetch(BASE + "ChartDeptEarning", null);
+const GetTotalStarted = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetTotalStarted", null);
   return response;
 };
 
-const ChartDailyEarning30days = async (): Promise<ResponseModel> => {
-  const response = await PostFetch(BASE + "ChartDailyEarning30days", null);
+const GetTotalEnded = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetTotalEnded", null);
   return response;
 };
 
-const StatsConsult = async (): Promise<ResponseModel> => {
-  const response = await PostFetch(BASE + "StatsConsult", null);
+const GetFinishConsult = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetFinishConsult", null);
   return response;
 };
 
-const TopResident = async (): Promise<ResponseModel> => {
-  const response = await PostFetch(BASE + "TopResident", null);
+const GetLatestConsultReqUserDept = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetLatestConsultReqUserDept", null);
   return response;
 };
 
-const TodayForApprovalConsult = async (): Promise<ResponseModel> => {
-  const response = await PostFetch(BASE + "TodayForApprovalConsult", null);
+const GetLatestConsultReqOtherDept = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetLatestConsultReqOtherDept", null);
+  return response;
+};
+
+const GetCharity = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetCharity", null);
+  return response;
+};
+
+const GetConsultPerDept = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetConsultPerDept", null);
   return response;
 };
 
 export default {
-  TotalEarning,
-  TotalConsult,
-  TotalHospPatient,
-  TotalHospResident,
-  TotalDept,
-  ChartDeptEarning,
-  ChartDailyEarning30days,
-  StatsConsult,
-  TopResident,
-  TodayForApprovalConsult,
+  GetTotalForApproval,
+  GetTotalPaid,
+  GetTotalStarted,
+  GetTotalEnded,
+  GetFinishConsult,
+  GetLatestConsultReqUserDept,
+  GetLatestConsultReqOtherDept,
+  GetCharity,
+  GetConsultPerDept,
 };
