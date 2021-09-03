@@ -42,7 +42,7 @@ namespace cms_server.Repositories
                     return new ResponseModel
                     {
                         success = false,
-                        message = "The otp code that you have entered has already expired!"
+                        message = "The OTP that you entered has already expired!"
                     };
                 }
                 else if (otp_result.Equals("x"))
@@ -51,7 +51,7 @@ namespace cms_server.Repositories
                     return new ResponseModel
                     {
                         success = false,
-                        message = "The otp code that you have entered is not correct! Please try again."
+                        message = "The OTP that you entered is not correct, kindly enter the correct and valid one."
                     };
                 }
 
@@ -102,7 +102,7 @@ namespace cms_server.Repositories
                             mob_no=@mob_no,
                             chief_complaint=@chief_complaint,
                             symptoms=@symptoms,
-                            is_charity=@is_charity,
+                            is_charity='n',
                             is_agree_priv_pol=@is_agree_priv_pol,
                             assign_dept_pk=@assign_dept_pk,
                             notes=@notes,
@@ -113,7 +113,8 @@ namespace cms_server.Repositories
                             zip_code=@zip_code,
                             line1=@line1,
                             request_at = NOW(),
-                            pay_link_sent_count=if(@is_charity = 'y', 0 , 1),
+                            pay_link_sent_count=1,
+                            consult_cost=get_initial_value('consult_cost'),
                             sts_pk = 'fa';
                             ",
                     payload, transaction: tran);
@@ -136,8 +137,7 @@ namespace cms_server.Repositories
                                 consult_req_pk = payload.consult_req_pk
                             };
 
-                            file_upload_response = UseFtp.UploadToFtp(f, DefaultConfig.ftp_ip, $"/{DefaultConfig.app_name}/Uploads/ConsultationFiles/", DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
-
+                            file_upload_response = UseFtp.UploadToFtp(f, DefaultConfig.ftp_ip, $"/{DefaultConfig.app_name}/Uploads/ConsultationFiles/{payload.consult_req_pk}/", DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
 
                             if (!file_upload_response.success)
                             {
@@ -161,7 +161,7 @@ namespace cms_server.Repositories
                                 consult_req_pk=@consult_req_pk, 
                                 file_dest=@file_dest, 
                                 file_name=@file_name, 
-                                file_type='Attached upon request', 
+                                file_type='attached during request', 
                                 file_ext=@file_ext, 
                                 notes='', 
                                 is_active='y', 
@@ -182,54 +182,71 @@ namespace cms_server.Repositories
 
                     }
 
-                    if (payload.is_charity.Equals("n"))
-                    {
-                        string otp_code = "111111";
+                    string otp_code = "111111";
 
-                        string full_body = $@"This is {def_val_repo.GetHospitalName().data}. Dear {payload.last_name}, {payload.first_name}, your Consultation Request Payment Link OTP is: {otp_code}. This is only valid within 24 hours.";
+                    string sms_body = $@"Greetings from {def_val_repo.GetHospitalName().data}, your Out-Patient Telemedicine ePayLink OTP is {otp_code}. This is only valid within 24 hours.";
 
-                        int message_affected_rows = con.Execute($@"INSERT INTO messageout SET
+                    int message_affected_rows = con.Execute($@"INSERT INTO messageout SET
                                                                 messageto='{payload.mob_no}',
-                                                                messagetext=@full_body;"
-                                                       , new { full_body }, transaction: tran);
+                                                                messagetext=@sms_body;"
+                                                   , new { sms_body }, transaction: tran);
 
-                        if (message_affected_rows > 0)
+                    if (message_affected_rows > 0)
+                    {
+                        con.Execute($@"DELETE from otp where mob_no=@mob_no;"
+                            , new { payload.mob_no }, transaction: tran);
+
+                        OtpEntity otp_payload = new OtpEntity
                         {
-                            con.Execute($@"DELETE from otp where mob_no=@mob_no;",
-                              new
-                              {
-                                  mob_no = payload.mob_no
-                              }, transaction: tran);
+                            otp_code = otp_code,
+                            mob_no = payload.mob_no,
+                            consult_req_pk = payload.consult_req_pk,
+                            user_pk = payload.email
+                        };
 
-                            OtpEntity otp_payload = new OtpEntity
+                        int insert_otp_affected_rows = con.Execute(
+                                    "INSERT INTO OTP set user_pk=@user_pk, mob_no=@mob_no, consult_req_pk=@consult_req_pk, otp_code=@otp_code;"
+                                    , otp_payload, transaction: tran);
+
+                        if (insert_otp_affected_rows > 0)
+                        {
+                            payload.hash_key = con.QuerySingle<string>($@"SELECT MD5('{payload.consult_req_pk}')", null, transaction: tran);
+
+                            string brand_name = def_val_repo.GetHospitalName().data.ToString();
+                            string brand_initial = def_val_repo.GetHospitalInitial().data.ToString();
+
+                            string email_body = $@"<div style='font-family: Verdana;'>
+                                                      <div style='text-align: center; '>
+                                                          <h3 style='color: red'>Your Out-Patient Telemedicine ePayLink is now ready for visiting!</h3>
+                                                       </div>
+                                                      <h4>Peace be with you,</h4>
+                                                         <p>
+                                                             The ePayLink for your online consultation request with code <b>{payload.consult_req_pk}</b> is now available. 
+                                                             To access it,  <a href='{DefaultConfig._clientBaseUrl}consultation-payment/{payload.hash_key}' target='__blank' >kindly visit this link</a>
+                                                             then enter the 6 (six) digit OTP that was sent to your mobile number (<b>{payload.mob_no}</b>). 
+                                                         </p> 
+                                                        <div>
+                                                        <br />
+                                                        <br />
+                                                        <small>
+                                                            <em>
+                                                             This is a system generated message, do not reply.
+                                                            </em>
+                                                        </small>
+                                                        </div>
+                                                  </div>";
+
+                            // payload.email = "mrmontiveles@gmail.com";
+
+                            ResponseModel email_response = UseEmail.SendEmail(brand_name, payload.email, email_body, $"{brand_initial}-ePayLink");
+
+                            if (!email_response.success)
                             {
-                                otp_code = otp_code,
-                                mob_no = payload.mob_no,
-                                consult_req_pk = payload.consult_req_pk,
-                                user_pk = payload.email
-                            };
-
-                            int insert_otp_affected_rows = con.Execute(
-                                        "INSERT INTO OTP set user_pk=@user_pk, mob_no=@mob_no, consult_req_pk=@consult_req_pk, otp_code=@otp_code;",
-                                       otp_payload, transaction: tran);
-
-                            if (insert_otp_affected_rows > 0)
-                            {
-                                payload.hash_key = con.QuerySingle<string>($@"SELECT MD5('{payload.consult_req_pk}')", null, transaction: tran);
-
-                                string brand_name = def_val_repo.GetHospitalName().data.ToString();
-
-                                string email_message = $@"This is {brand_name}. Dear {payload.email}, kindly pay your Consultation Request at " + DefaultConfig._clientBaseUrl + "consultation-payment/" + payload.hash_key +
-                                                                                                        " .Please do not share this link to prevent outside sources from accessing your data.";
-                                ResponseModel email_response = UseEmail.SendEmail(brand_name, payload.email, email_message, "Online Consultation Payment Page");
-
-                                if (!email_response.success)
-                                {
-                                    return email_response;
-                                }
+                                return email_response;
                             }
                         }
                     }
+
 
                     tran.Commit();
                     return new ResponseModel
@@ -3029,7 +3046,7 @@ namespace cms_server.Repositories
                 using var tran = con.BeginTransaction();
 
                 List<ConsultRequestEntity> tbl_consult = con.Query<ConsultRequestEntity>(
-                    $@"SELECT * FROM `consult_request` WHERE MD5(consult_req_pk) = @hash_key LIMIT 1;"
+                    $@"SELECT * FROM `consult_request` WHERE consult_req_pk = @consult_req_pk LIMIT 1;"
                     , payload
                     , transaction: tran).ToList();
 
@@ -3130,7 +3147,7 @@ namespace cms_server.Repositories
                 using var tran = con.BeginTransaction();
 
                 List<ConsultRequestEntity> tbl_consult = con.Query<ConsultRequestEntity>(
-                    $@"SELECT * FROM `consult_request` WHERE MD5(consult_req_pk) = @hash_key LIMIT 1;"
+                    $@"SELECT * FROM `consult_request` WHERE consult_req_pk = @consult_req_pk LIMIT 1;"
                     , payload
                     , transaction: tran).ToList();
 

@@ -1,7 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { AppBar, Button, Container, Grid } from "@material-ui/core";
+import { AppBar, Button, Container, Grid, useTheme } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import { useTheme } from "@material-ui/styles";
 import React, { FC, memo, useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +19,7 @@ import {
 } from "../../Services/Actions/PageActions";
 import CommonApi from "../../Services/Api/CommonApi";
 import DefaultValuesApi from "../../Services/Api/DefaultValuesApi";
+import DepartmentApi from "../../Services/Api/DepartmentApi";
 import LibraryApi from "../../Services/Api/LibraryApi";
 import ConsultRequestEntity from "../../Services/Entities/ConsultRequestEntity";
 import OtpEntity from "../../Services/Entities/OtpEntity";
@@ -29,9 +29,10 @@ import ConsultOtpDialog from "./ConsultOtpDialog";
 import StepConsultInfo from "./StepConsultInfo";
 import StepContactInfo from "./StepContactInfo";
 import StepPersonalInfo from "./StepPersonalInfo";
+import { ConsultRequestUi } from "./styles";
 interface ConsultRequestViewProps {}
 
-export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
+const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
   const theme = useTheme();
   const dispatch = useDispatch();
 
@@ -49,7 +50,6 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
     mob_no: "",
     email: "",
     line1: "",
-    line2: "",
     region_pk: "",
     prov_pk: "",
     citymun_pk: "",
@@ -57,6 +57,8 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
     zip_code: "",
     chief_complaint: "",
     symptoms: "",
+    assign_dept_pk: "",
+    is_agree_priv_pol: undefined,
     notes: "",
     validate_lab_req_form: [],
   };
@@ -132,11 +134,7 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
       symptoms: yup.string().nullable().required().label("Symptoms"),
       notes: yup.string().nullable().label("Notes"),
       assign_dept_pk: yup.string().required().nullable().label("Department"),
-      is_charity: yup
-        .string()
-        .nullable()
-        .required()
-        .label("Is Charity Patient"),
+
       is_agree_priv_pol: yup
         .string()
         .nullable()
@@ -175,25 +173,33 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
           user_pk: data.email,
         };
 
-        const response = await CommonApi.GenerateOtp(otp_payload);
+        const otp_response = await CommonApi.GenerateOtp(otp_payload);
+
+        const dept_cut_off_response = await DepartmentApi.IsDeptCutOff(
+          data?.assign_dept_pk
+        );
 
         dispatch(closePageLoading());
+
         dispatch(
           setPageSnackbar(
-            response?.message?.toString(),
-            response.success ? "success" : "error"
+            otp_response?.message?.toString(),
+            otp_response.success ? "success" : "error"
           )
         );
-        if (response.success) {
-          console.log(`data`, {
-            ...data,
-            is_agree_priv_pol: !!data?.is_agree_priv_pol ? "y" : "n",
-          });
+        dispatch(
+          setPageSnackbar(
+            dept_cut_off_response?.message?.toString(),
+            dept_cut_off_response.success ? "success" : "error"
+          )
+        );
 
+        if (otp_response.success && dept_cut_off_response.success) {
           set_form_payload({
             ...data,
             is_agree_priv_pol: !!data?.is_agree_priv_pol ? "y" : "n",
           });
+
           set_open_otp_dialog(true);
         }
       }
@@ -360,7 +366,7 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
   return (
     <PageContainerUi theme={theme}>
       {fetch_hospital_name || fetch_hospital_logo ? (
-        <BodyLoader />
+        <BodyLoader message="We are preparing the necessary information, thank you for your patience..." />
       ) : !loading_initial_data ? (
         !!error_message ? (
           <Alert>{error_message}</Alert>
@@ -378,13 +384,16 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
               <div className="brand-name">{hospital_name}</div>
               <div className="app-name">{APP_NAME}</div>
             </AppBar>
-
-            <Container maxWidth="md" className="page-content ">
-              <div className="cntr-title main-title">
+            <ConsultRequestUi
+              theme={theme}
+              maxWidth="sm"
+              className="page-content "
+            >
+              <div className="ctnr-title main-title">
                 <div className="main">Consultation Request Form</div>
                 <div className="sub">
-                  This form is used to create consultation requests for
-                  patients. Kindly fill up all the required fields.
+                  You can create an online consultation request by filling up
+                  all the required (*) fields.
                 </div>
               </div>
               <div className="tabs-ctnr">
@@ -398,7 +407,7 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
                       active_step={active_step}
                       steps={[
                         {
-                          label: "Personal Details",
+                          label: "Personal",
                           View: (
                             <StepPersonalInfo
                               nationality_options={nationality_options}
@@ -407,7 +416,7 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
                           ),
                         },
                         {
-                          label: "Contact Details",
+                          label: "Contact",
                           View: (
                             <StepContactInfo
                               region_options={region_options}
@@ -421,7 +430,7 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
                           ),
                         },
                         {
-                          label: "Consultation Details",
+                          label: "Consultation",
                           View: (
                             <StepConsultInfo
                               step={active_step}
@@ -437,12 +446,10 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
 
               <div style={{ marginTop: `2em` }}>
                 <Grid container spacing={2} justify="flex-end">
-                  <Grid item>
+                  <Grid item xs={12} sm={"auto"}>
                     <Button
-                      variant="contained"
-                      size="large"
+                      color="secondary"
                       type="button"
-                      form="form_instance_otp"
                       onClick={() => {
                         dispatch(
                           setGeneralPrompt({
@@ -463,10 +470,9 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
                       Reset
                     </Button>
                   </Grid>
-                  <Grid item>
+                  <Grid item xs={12} sm={"auto"}>
                     <Button
                       variant="contained"
-                      size="large"
                       color="secondary"
                       onClick={handleBack}
                       disabled={active_step === 0}
@@ -474,12 +480,11 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
                       Previous Step
                     </Button>
                   </Grid>
-                  <Grid item>
+                  <Grid item xs={12} sm={"auto"}>
                     <LoadingButton
                       form="form_instance_otp"
                       type="submit"
                       variant="contained"
-                      size="large"
                       color="primary"
                     >
                       Next Step
@@ -502,11 +507,11 @@ export const ConsultRequestView: FC<ConsultRequestViewProps> = memo(() => {
                   }}
                 />
               )}
-            </Container>
+            </ConsultRequestUi>
           </>
         )
       ) : (
-        <BodyLoader />
+        <BodyLoader message="We are preparing the necessary information, thank you for your patience..." />
       )}
     </PageContainerUi>
   );

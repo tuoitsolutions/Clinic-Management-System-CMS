@@ -18,18 +18,16 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
       <div className="tab-container">
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <div style={{ padding: `1em` }}>
-              <Grid container justify="center">
-                <Grid item>
-                  <PhotoHookForm
-                    label="Patient's Picture"
-                    height={130}
-                    width={130}
-                    name="attach_profile_pic"
-                  />
-                </Grid>
+            <Grid container justify="center">
+              <Grid item>
+                <PhotoHookForm
+                  label="Patient's Picture"
+                  height={130}
+                  width={130}
+                  name="attach_profile_pic"
+                />
               </Grid>
-            </div>
+            </Grid>
           </Grid>
           <Grid item xs={6} md={2}>
             <TextFieldHookForm
@@ -42,7 +40,7 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
               placeholder="Enter prefix"
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={5}>
             <TextFieldHookForm
               label="First Name"
               name="first_name"
@@ -55,7 +53,7 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
               required
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={5}>
             <TextFieldHookForm
               name="middle_name"
               type="text"
@@ -67,7 +65,7 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
               placeholder="Enter middle name"
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={5}>
             <TextFieldHookForm
               name="last_name"
               type="text"
@@ -91,19 +89,20 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
               }}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={5}>
             <MultiRadioFieldHookForm
               name="gender"
               label="Gender"
               row
               size="small"
+              required
               radio_items={[
                 { label: "Male", value: "m" },
                 { label: "Female", value: "f" },
               ]}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={6}>
             <DateFieldHookForm
               type="date"
               name="birth_date"
@@ -115,11 +114,12 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
               disableFuture={true}
               fullWidth
               autoOk
+              required
               placeholder="Enter birth date"
               mask="__/__/____"
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <AutocompleteHookForm
               label="Civil Status"
               name="cs_pk"
@@ -140,7 +140,7 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
               required
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <AutocompleteHookForm
               label="Nationality"
               name="nat_pk"
@@ -153,7 +153,7 @@ const StepPersonalInfo: FC<IStepPersonalInfo> = memo(
               required
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <AutocompleteHookForm
               label="Religion"
               name="rel_pk"

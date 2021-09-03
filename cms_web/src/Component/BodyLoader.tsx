@@ -11,12 +11,15 @@ export const BodyLoader: FC<IBodyLoader> = memo(({ message }) => {
       style={{
         width: `100%`,
         minHeight: `60vh`,
+        height: `60vh`,
         display: `grid`,
         margin: `1em`,
-        alignItems: `start`,
-        alignContent: `start`,
+        padding: `1em`,
+        alignItems: `center`,
+        alignContent: `center`,
         justifyItems: `center`,
         justifyContent: `center`,
+        textAlign: `center`,
       }}
     >
       <BoxLoader />

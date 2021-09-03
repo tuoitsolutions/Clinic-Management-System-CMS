@@ -12,6 +12,7 @@ import {
 import Check from "@material-ui/icons/Check";
 import clsx from "clsx";
 import React from "react";
+import { CustomStepperUi } from "./CustomStepperUi";
 
 const QontoConnector = withStyles({
   alternativeLabel: {
@@ -111,7 +112,7 @@ const CustomStepper: React.FC<CustomStepperProps> = ({
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <CustomStepperUi className={classes.root}>
       <Stepper
         alternativeLabel
         activeStep={active_step}
@@ -120,22 +121,7 @@ const CustomStepper: React.FC<CustomStepperProps> = ({
         {steps?.map((step, key) => (
           <Step key={key}>
             <StepLabel StepIconComponent={QontoStepIcon}>
-              <div style={{ fontWeight: 600, fontSize: `1em` }}>
-                {step.label}
-              </div>
-              {!!step.subtitle && (
-                <div>
-                  <small
-                    style={{
-                      fontSize: `.67em`,
-                      fontWeight: 400,
-                      opacity: 1,
-                    }}
-                  >
-                    {step.subtitle}
-                  </small>
-                </div>
-              )}
+              {step.label}
             </StepLabel>
           </Step>
         ))}
@@ -150,14 +136,13 @@ const CustomStepper: React.FC<CustomStepperProps> = ({
               opacity: active_step === index ? 1 : 0,
               zIndex: active_step === index ? 1 : 0,
               maxHeight: active_step === index ? `100%` : 0,
-              // transition: `.1s opacity ease-in`,
             }}
           >
             {step.View}
           </div>
         ))}
       </div>
-    </div>
+    </CustomStepperUi>
   );
 };
 

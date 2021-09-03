@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "xaIz9pNV/I5NvKRcfcIK6dPhSc33/j86ELW8tm91xqOVRvTmabaoO7LUteV2g9lra471dQrOw5G+c/lim8r/hw==",
+  "dgSpecHash": "LQ2KKDET34+6M1zpNxEsIPqQw0Q6oCA2sdEuG4cKdenJygMosZYBVSTPs2Mc56ZWJUPwOVjqpHk8Rhs2bOIZhw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Public\\Software Development\\Clinic Management System (cms_v2)\\cms_server\\cms_server\\cms_server.csproj",
   "expectedPackageFiles": [
@@ -89,7 +89,6 @@
     "C:\\Users\\mrmon\\.nuget\\packages\\runtime.win.system.net.primitives\\4.3.0\\runtime.win.system.net.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\runtime.win.system.net.sockets\\4.3.0\\runtime.win.system.net.sockets.4.3.0.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\runtime.win.system.runtime.extensions\\4.3.0\\runtime.win.system.runtime.extensions.4.3.0.nupkg.sha512",
-    "C:\\Users\\mrmon\\.nuget\\packages\\select.htmltopdf\\21.1.0\\select.htmltopdf.21.1.0.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\select.htmltopdf.netcore\\21.1.0\\select.htmltopdf.netcore.21.1.0.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\smartformat.net\\2.7.0\\smartformat.net.2.7.0.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\ssh.net\\2016.1.0\\ssh.net.2016.1.0.nupkg.sha512",

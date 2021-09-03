@@ -210,6 +210,55 @@ namespace cms_server.Repositories
             }
         }
 
+        public ResponseModel IsDeptCutOff(string dept_pk)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+
+                int is_cut_off = con.QuerySingle<int>(
+                    $@"SELECT IF(cut_off_start IS NULL OR cut_off_end IS NULL , FALSE,
+                     IF(TIME(NOW()) BETWEEN  cut_off_start AND  cut_off_end  ,FALSE,TRUE)) FROM `department` WHERE `dept_pk` = @dept_pk LIMIT 1; "
+                     , new { dept_pk }, transaction: tran);
+
+
+                if (is_cut_off == 1)
+                {
+                    DepartmentEntity selected_record = con.QuerySingle<DepartmentEntity>(
+                                              $@" SELECT * FROM department where dept_pk=@dept_pk limit 1;",
+                                              new { dept_pk }, transaction: tran);
+
+                    tran.Commit();
+                    return new ResponseModel
+                    {
+                        success = true,
+                        data = $"The {selected_record.dept_name} department cut off is from {DateTime.Today.Add(selected_record.cut_off_start):hh:mm tt} to {DateTime.Today.Add(selected_record.cut_off_end):hh:mm tt}. Thus, your consultation will most likely be catered as soon as the operation of the department is back."
+                    };
+                }
+                else
+                {
+                    tran.Commit();
+                    return new ResponseModel
+                    {
+                        success = true,
+                        data = ""
+                    };
+                }
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
         public ResponseModel GetDepartmentOptions()
         {
             try

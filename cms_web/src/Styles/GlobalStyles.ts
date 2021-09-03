@@ -264,12 +264,12 @@ export const ChatBoxUi = styled.div`
 `;
 
 export const PageContainerUi = styled.div`
-  width: 100%;
   display: grid;
   align-items: center;
   align-self: center;
   justify-items: center;
-
+  max-width: 100%;
+  overflow: hidden;
   .header-ctnr {
     display: grid;
     grid-template-areas: "logo name" "logo app" "title title";

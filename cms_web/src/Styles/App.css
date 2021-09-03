@@ -7,19 +7,13 @@
 }
 
 html {
-  font-size: 0.95em !important;
-  /* letter-spacing: 0.3pt;
-  word-spacing: 0.3pt; */
-  color: #333;
+  /* font-size: 0.95em !important; */
 }
 
 body {
   width: calc(100vw - (100vw - 100%));
   max-width: calc(100vw - (100vw - 100%));
   background-color: #fafafa !important;
-
-  /* background-color: #e2f5fa; */
-  /* overflow: hidden !important; */
 }
 
 .appbar-title {
@@ -102,14 +96,6 @@ body {
   font-size: 0.75em !important;
   font-weight: 600 !important;
 }
-
-/* .MuiTypography-root.MuiFormControlLabel-label.MuiTypography-body1 {
-  font-size: 0.8em !important;
-  line-height: unset !important;
-  font-family: Nunito !important;
-  letter-spacing: 0.3pt;
-  word-spacing: 0.3pt;
-} */
 
 .PrivateSwitchBase-root-1 {
   padding: 3px !important;
@@ -554,12 +540,10 @@ canvas {
 
 .MuiAutocomplete-listbox {
   font-size: 0.87em !important;
-  text-transform: capitalize;
 }
 
 .MuiMenuItem-root {
   font-size: 0.87em !important;
-  text-transform: capitalize;
 }
 
 .Mui-disabled {
@@ -606,17 +590,13 @@ canvas {
 
 .ctnr-title .main {
   font-weight: 900;
-  opacity: 0.6;
+  color: rgba(0, 0, 0, 0.5);
   align-self: end;
-  font-size: 0.9em;
-  /* text-transform: uppercase; */
 }
 .ctnr-title .sub {
   align-self: start;
-
-  font-size: 0.67em;
-  opacity: 0.7;
-  color: #2196f3;
+  font-size: 0.7em;
+  color: rgba(0, 0, 0, 0.7);
 }
 
 .btn-pdf-preview {
@@ -635,9 +615,9 @@ em {
   opacity: 0.7;
 }
 
-.MuiToolbar-gutters {
+/* .MuiToolbar-gutters {
   padding: 0 !important;
-}
+} */
 
 /* 
 . {
@@ -662,7 +642,9 @@ table tr th {
   font-weight: 900 !important;
   font-size: 0.75em !important;
   color: rgba(0, 0, 0, 0.6) !important;
-  /* opacity: 0.7 !important; */
-  /* letter-spacing: 0.2pt; */
-  /* word-spacing: 0.2pt; */
+}
+
+.MuiAlert-root {
+  align-items: center !important;
+  align-content: center !important;
 }

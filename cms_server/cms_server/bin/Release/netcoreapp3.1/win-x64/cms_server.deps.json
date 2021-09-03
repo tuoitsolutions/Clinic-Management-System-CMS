@@ -32,7 +32,6 @@
           "Microsoft.AspNetCore.Rewrite": "2.2.0",
           "MySql.Data": "8.0.22",
           "QRCoder": "1.4.1",
-          "Select.HtmlToPdf": "21.1.0",
           "Select.HtmlToPdf.NetCore": "21.1.0",
           "SmartFormat.NET": "2.7.0",
           "Swashbuckle.AspNetCore": "5.6.3",
@@ -2237,7 +2236,6 @@
           "System.Private.Uri": "4.3.0"
         }
       },
-      "Select.HtmlToPdf/21.1.0": {},
       "Select.HtmlToPdf.NetCore/21.1.0": {
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "1.1.0",
@@ -3110,7 +3108,6 @@
           "Microsoft.AspNetCore.Rewrite": "2.2.0",
           "MySql.Data": "8.0.22",
           "QRCoder": "1.4.1",
-          "Select.HtmlToPdf": "21.1.0",
           "Select.HtmlToPdf.NetCore": "21.1.0",
           "SmartFormat.NET": "2.7.0",
           "Swashbuckle.AspNetCore": "5.6.3",
@@ -3985,7 +3982,6 @@
           "System.Private.Uri": "4.3.0"
         }
       },
-      "Select.HtmlToPdf/21.1.0": {},
       "Select.HtmlToPdf.NetCore/21.1.0": {
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "1.1.0",
@@ -5494,13 +5490,6 @@
       "sha512": "sha512-RkgHVhUPvzZxuUubiZe8yr/6CypRVXj0VBzaR8hsqQ8f+rUo7e4PWrHTLOCjd8fBMGWCrY//fi7Ku3qXD7oHRw==",
       "path": "runtime.win.system.runtime.extensions/4.3.0",
       "hashPath": "runtime.win.system.runtime.extensions.4.3.0.nupkg.sha512"
-    },
-    "Select.HtmlToPdf/21.1.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-cAXtTAsQXBn74tafX4a7Q2Eq6am4MI51C1iHA7mXiM+MoOHLYG5fHPgpqGWxbmNwyPsXnEP0VqKL8A1uU7weQg==",
-      "path": "select.htmltopdf/21.1.0",
-      "hashPath": "select.htmltopdf.21.1.0.nupkg.sha512"
     },
     "Select.HtmlToPdf.NetCore/21.1.0": {
       "type": "package",

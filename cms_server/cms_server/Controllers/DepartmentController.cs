@@ -37,5 +37,12 @@ namespace cms_server.Controllers
             return Ok(admin_repo.GetDepartmentByDeptPk(payload.value));
         }
 
+        [HttpPost]
+        public IActionResult IsDeptCutOff(SingleValuePayload payload)
+        {
+            return Ok(admin_repo.IsDeptCutOff(payload.value));
+        }
+
+
     }
 }

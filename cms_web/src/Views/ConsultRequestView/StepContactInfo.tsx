@@ -44,7 +44,7 @@ const StepContactInfo: FC<IStepContactInfo> = memo(
               }}
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <TextFieldHookForm
               label="Mobile Number"
               name="mob_no"
@@ -60,110 +60,106 @@ const StepContactInfo: FC<IStepContactInfo> = memo(
             />
           </Grid>
 
-          <Grid item xs={12}>
-            <Grid container spacing={4}>
-              <Grid item xs={12} md={2}>
-                <TextFieldHookForm
-                  name="zip_code"
-                  label="Zip Code"
-                  fullWidth
-                  placeholder="Enter zip code"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  disabled
-                />
-              </Grid>
+          <Grid item xs={12} md={6}>
+            <AutocompleteHookForm
+              label="Region"
+              name="region_pk"
+              options={region_options}
+              defaultValue=""
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder="Enter region"
+              required
+              disabled
+            />
+          </Grid>
 
-              <Grid item xs={12} md={5}>
-                <AutocompleteHookForm
-                  label="Region"
-                  name="region_pk"
-                  options={region_options}
-                  defaultValue=""
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  placeholder="Enter region"
-                  required
-                  disabled
-                />
-              </Grid>
+          <Grid item xs={12} md={6}>
+            <AutocompleteHookForm
+              label="Province"
+              name="prov_pk"
+              options={prov_options}
+              loading={loading_prov_options}
+              defaultValue=""
+              placeholder="Enter province"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              required
+              onChangeCallback={(val) => {
+                setValue("citymun_pk", "", {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                });
+                setValue("brgy_pk", "", {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                });
+              }}
+            />
+          </Grid>
 
-              <Grid item xs={12} md={5}>
-                <AutocompleteHookForm
-                  label="Province"
-                  name="prov_pk"
-                  options={prov_options}
-                  loading={loading_prov_options}
-                  defaultValue=""
-                  placeholder="Enter province"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  required
-                  onChangeCallback={(val) => {
-                    setValue("citymun_pk", "", {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    });
-                    setValue("brgy_pk", "", {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    });
-                  }}
-                />
-              </Grid>
+          <Grid item xs={12} md={6}>
+            <AutocompleteHookForm
+              label="City/Municipality"
+              name="citymun_pk"
+              defaultValue=""
+              placeholder="Enter city/municipality"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              required
+              options={citymun_options}
+              loading={loading_citymun_options}
+              onChangeCallback={(val) => {
+                setValue("brgy_pk", "", {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                });
+              }}
+            />
+          </Grid>
 
-              <Grid item xs={12} md={5}>
-                <AutocompleteHookForm
-                  label="City/Municipality"
-                  name="citymun_pk"
-                  defaultValue=""
-                  placeholder="Enter city/municipality"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  required
-                  options={citymun_options}
-                  loading={loading_citymun_options}
-                  onChangeCallback={(val) => {
-                    setValue("brgy_pk", "", {
-                      shouldDirty: true,
-                      shouldValidate: true,
-                    });
-                  }}
-                />
-              </Grid>
+          <Grid item xs={12} md={6}>
+            <AutocompleteHookForm
+              label="Barangay"
+              name="brgy_pk"
+              defaultValue=""
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder="Enter barangay"
+              required
+              options={brgy_options}
+              loading={loading_brgy_options}
+            />
+          </Grid>
 
-              <Grid item xs={12} md={5}>
-                <AutocompleteHookForm
-                  label="Barangay"
-                  name="brgy_pk"
-                  defaultValue=""
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  placeholder="Enter barangay"
-                  required
-                  options={brgy_options}
-                  loading={loading_brgy_options}
-                />
-              </Grid>
+          <Grid item xs={12} md={10}>
+            <TextFieldHookForm
+              name="line1"
+              label="Building/Lot/Block & Street/Subd."
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder="Enter building/lot/block and street/subd."
+              required
+            />
+          </Grid>
 
-              <Grid item xs={12}>
-                <TextFieldHookForm
-                  name="line1"
-                  label="Building/Lot/Block & Street/Subd."
-                  fullWidth
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  placeholder="Enter building/lot/block and street/subd."
-                  required
-                />
-              </Grid>
-            </Grid>
+          <Grid item xs={12} md={2}>
+            <TextFieldHookForm
+              name="zip_code"
+              label="Zip Code"
+              fullWidth
+              placeholder="Enter zip code"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              disabled
+            />
           </Grid>
         </Grid>
       </div>

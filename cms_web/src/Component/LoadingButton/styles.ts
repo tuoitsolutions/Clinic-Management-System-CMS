@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const StyledLoadingButton = styled.div`
   display: grid;
+  justify-content: start;
   grid-template-areas: "combine";
   .btn {
     grid-area: combine;

@@ -35,9 +35,17 @@ const GetDepartmentByDepartmentPk = async (
   return response;
 };
 
+const IsDeptCutOff = async (dept_pk?: string): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "IsDeptCutOff", {
+    value: dept_pk,
+  });
+  return response;
+};
+
 export default {
   InsertDepartment,
   UpdateDepartment,
   GetTableDepartment,
   GetDepartmentByDepartmentPk,
+  IsDeptCutOff,
 };

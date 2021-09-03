@@ -14,14 +14,14 @@ namespace ddt_server.Hooks
     {
         DefValRepo def_val_repo = new DefValRepo();
 
-        public static ResponseModel SendEmail(string display_name, string email, string msg, string subject)
+        public static ResponseModel SendEmail(string display_name, string email, string body, string subject)
         {
             try
             {
                 var fromAddress = new MailAddress(DefaultConfig._providerEmailAddress, display_name);
                 var toAddress = new MailAddress(email, subject);
 
-                string body = msg;
+                //string body = msg;
                 var smtp = new SmtpClient
                 {
                     Host = "smtp.gmail.com",
@@ -31,11 +31,19 @@ namespace ddt_server.Hooks
                     UseDefaultCredentials = false,
                     Credentials = new NetworkCredential(fromAddress.Address, DefaultConfig._providerEmailPass),
                 };
+
+
+
+
                 using (var message = new MailMessage(fromAddress, toAddress)
                 {
-                    Subject = display_name + ": " + subject,
-                    Body = body
+                    Subject = subject,
+                    IsBodyHtml = true,
+                    Body = body,
+
                 })
+
+
                 {
                     smtp.Send(message);
                 }

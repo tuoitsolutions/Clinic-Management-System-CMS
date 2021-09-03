@@ -88,8 +88,8 @@ let theme = createMuiTheme({
       textTransform: "unset",
       // letterSpacing: `.3pt`,
       // wordSpacing: `.3pt`,
-      fontWeight: 700,
-      fontSize: `.83em`,
+      // fontWeight: 700,
+      // fontSize: `.83em`,
     },
     fontFamily: [
       "nunito",

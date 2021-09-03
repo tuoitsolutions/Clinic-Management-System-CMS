@@ -15,11 +15,11 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
     color: "#333",
     border: `none`,
-    padding: "10px",
+    padding: ".2em .5em",
   },
   icon: {
     color: "#888888",
-    fontSize: "35px",
+    // fontSize: "1.3em",
   },
 }));
 
@@ -74,11 +74,11 @@ const DropzoneFieldHookForm: React.FC<IDropzoneFieldHookForm> = ({
                   style={{ boxShadow: `0 0 5px rgba(0,0,0,.1)` }}
                   {...getRootProps()}
                 >
-                  <CloudUpload className={styles.icon} />
+                  <CloudUpload className={styles.icon} fontSize="small" />
                   <input {...getInputProps()} name={name} onBlur={onBlur} />
                   <div
                     style={{
-                      fontSize: `.87em`,
+                      fontSize: `.7em`,
                       fontWeight: 400,
                     }}
                   >
@@ -94,17 +94,18 @@ const DropzoneFieldHookForm: React.FC<IDropzoneFieldHookForm> = ({
                 return (
                   <div key={index} className="list-file-item">
                     <div className="file-icon">
-                      <InsertDriveFile />
+                      <InsertDriveFile fontSize="small" />
                     </div>
                     <div className="file-name">
                       <div className="file-name-main">{f.name}</div>
-                      <div className="file-name-sub">{`${f.size} kb`}</div>
+                      <div className="file-name-sub">{`${f.size} KB`}</div>
                     </div>
                     <div className="file-action">
                       <IconButton
                         edge="end"
                         color="secondary"
                         aria-label="comments"
+                        size="small"
                         onClick={() => {
                           const files = getValues(name);
                           if (files instanceof Array) {
@@ -171,8 +172,8 @@ const StyledListFiles = styled.div`
         font-size: 1em;
       }
       .file-name-sub {
-        font-size: 0.9em;
-        opacity: 0.8;
+        font-size: 0.75em;
+        color: rgba(0, 0, 0, 0.5);
       }
     }
     .file-action {
