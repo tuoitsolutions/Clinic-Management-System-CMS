@@ -1,11 +1,10 @@
 import React, { FC, memo, useState } from "react";
-import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
 import ButtonPopper from "../../../Component/ButtonPopper";
 import ConsultRequestEntity from "../../../Services/Entities/ConsultRequestEntity";
 import DialogChangeConsultCost from "./DialogChangeConsultCost";
-import DialogAssignConsultDept from "./DialogConsultSetSchedDept";
+import DialogConsultSetEstSched from "./DialogConsultSetEstSched";
 import DialogMapConsultPatient from "./DialogConsultSyncPat";
+import DialogConsultTransferDept from "./DialogConsultTransferDept";
 
 interface IConsultActionActions {
   consult_info: ConsultRequestEntity;
@@ -14,7 +13,10 @@ interface IConsultActionActions {
 
 const ConsultActionActions: FC<IConsultActionActions> = memo(
   ({ consult_info, handleReloadRecord }) => {
-    const [open_assign_dept_dialog, set_open_assign_dept_dialog] =
+    const [open_tranfers_dept_dialog, set_open_tranfers_dept_dialog] =
+      useState(false);
+
+    const [open_set_est_sched_dialog, set_open_set_est_sched_dialog] =
       useState(false);
 
     const [
@@ -24,6 +26,7 @@ const ConsultActionActions: FC<IConsultActionActions> = memo(
 
     const [open_sync_consult_dialog, set_open_sync_consult_dialog] =
       useState(false);
+
     return (
       <>
         <ButtonPopper
@@ -45,9 +48,15 @@ const ConsultActionActions: FC<IConsultActionActions> = memo(
               },
             },
             {
-              text: `Set & Schedule Department`,
+              text: `Set Department and Resident`,
               handleClick: () => {
-                set_open_assign_dept_dialog(true);
+                set_open_tranfers_dept_dialog(true);
+              },
+            },
+            {
+              text: `Set Estimated Start Schedule`,
+              handleClick: () => {
+                set_open_set_est_sched_dialog(true);
               },
             },
           ]}
@@ -66,11 +75,24 @@ const ConsultActionActions: FC<IConsultActionActions> = memo(
           />
         )}
 
-        {!!consult_info?.consult_req_pk && open_assign_dept_dialog && (
-          <DialogAssignConsultDept
-            open={open_assign_dept_dialog}
+        {!!consult_info?.consult_req_pk && open_tranfers_dept_dialog && (
+          <DialogConsultTransferDept
+            open={open_tranfers_dept_dialog}
             handleCloseDialog={() => {
-              set_open_assign_dept_dialog(false);
+              set_open_tranfers_dept_dialog(false);
+            }}
+            successCallback={() => {
+              handleReloadRecord();
+            }}
+            selected_consultation={consult_info}
+          />
+        )}
+
+        {open_set_est_sched_dialog && (
+          <DialogConsultSetEstSched
+            open={open_set_est_sched_dialog}
+            handleCloseDialog={() => {
+              set_open_set_est_sched_dialog(false);
             }}
             successCallback={() => {
               handleReloadRecord();

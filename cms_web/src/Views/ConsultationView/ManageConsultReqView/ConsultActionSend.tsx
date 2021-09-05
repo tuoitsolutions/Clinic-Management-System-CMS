@@ -96,7 +96,7 @@ const ConsultActionSend: FC<IConsultActionSend> = memo(
           showPageLoading({
             show: true,
             loading_message:
-              "Loading Procedure Prescription, thank you for your patience",
+              "Loading Procedure Request, thank you for your patience",
           })
         );
         const response = await ConsultProcApi.PreviewProcPrescrip(
@@ -255,13 +255,13 @@ const ConsultActionSend: FC<IConsultActionSend> = memo(
         dispatch(
           setGeneralPrompt({
             open: true,
-            custom_title: `Are you sure that you want to send the Procedure Prescription the requestor's email?`,
+            custom_title: `Are you sure that you want to send the Procedure Request the requestor's email?`,
             continue_callback: async () => {
               dispatch(
                 showPageLoading({
                   show: true,
                   loading_message:
-                    "Emailing Procedure Prescription, thank you for your patience",
+                    "Emailing Procedure Request, thank you for your patience",
                 })
               );
               const response = await ConsultProcApi.EmailProcPrescrip({
@@ -406,7 +406,7 @@ const ConsultActionSend: FC<IConsultActionSend> = memo(
         {!!preview_proc_presc && (
           <PreviewPDF
             file={preview_proc_presc}
-            doc_title={`Procedure-Prescription-${consult_info?.consult_req_pk}.pdf`}
+            doc_title={`Procedure-Request-${consult_info?.consult_req_pk}.pdf`}
             handleClose={() => {
               set_preview_proc_presc(null);
             }}

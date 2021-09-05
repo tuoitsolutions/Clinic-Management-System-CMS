@@ -179,7 +179,7 @@ namespace cms_server.Repositories
                 {
                     DepartmentEntity selected_row = table_data[0];
 
-                    selected_row.user = con.QuerySingle<UserEntity>(
+                    selected_row.user = con.QuerySingleOrDefault<UserEntity>(
                         $@"SELECT full_name FROM users where user_pk=@user_pk limit 1;"
                         , new { user_pk = selected_row.encoder_pk }, transaction: tran);
 

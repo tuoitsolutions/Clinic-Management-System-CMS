@@ -417,7 +417,7 @@ const DialogConsultStartReq: FC<IDialogConsultStartReq> = memo((props) => {
                       <Grid item xs={12}>
                         <AutocompleteHookForm
                           name="hospital_no"
-                          label="Choose the name of the patient to SYNC this consultation to an existing patient record (Leave empty if not applicable)"
+                          label="Would you like to sync this consultation to an existing patient record"
                           placeholder="Select the patient that you want to sync/merge"
                           fullWidth={true}
                           InputLabelProps={{

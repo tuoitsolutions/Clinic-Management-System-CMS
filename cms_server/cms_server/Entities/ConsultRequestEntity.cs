@@ -95,6 +95,7 @@ namespace cms_server.Entities
         public string user_pk { get; set; }
         public string esignature { get; set; }
         public string pat_name { get; set; }
+        public int is_cut_off { get; set; }
 
         public HospResidentEntity assigned_resident_info { get; set; }
     }

@@ -150,8 +150,10 @@ export const LoginStyles = styled(Paper)`
             }
           }
 
-          .buttons {
+          .login-btn {
             display: grid;
+            /* justify-content: center; */
+            /* padding: 0 2em; */
             grid-auto-flow: row;
             grid-gap: 0.5em;
             .submit-btn {

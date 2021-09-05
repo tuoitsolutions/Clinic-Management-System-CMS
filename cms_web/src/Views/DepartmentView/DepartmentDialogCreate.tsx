@@ -169,7 +169,7 @@ export const DepartmentDialogCreate: FC<IDepartmentDialogCreate> = memo(
                 variant="contained"
                 type="submit"
               >
-                Save Unit
+                Save Department
               </Button>
               <Button
                 variant="contained"

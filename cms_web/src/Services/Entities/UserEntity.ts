@@ -9,6 +9,9 @@ interface UserEntity {
   is_active?: string;
   encoded_at?: Date;
   encoder_pk?: string;
+
+  //ext
+  user_sub?: string;
 }
 
 export default UserEntity;

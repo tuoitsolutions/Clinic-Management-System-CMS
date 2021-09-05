@@ -293,14 +293,14 @@ namespace cms_server.Repositories
 
                 int count = has_more ? -1 : payload.page.begin * payload.page.limit + table_data.Count;
 
-                foreach (var r in table_data)
-                {
-                    byte[] img_byte_arr = UseFtp.DownloadFtp(r.pic_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
-                    if (img_byte_arr != null)
-                    {
-                        r.pic_dest = Convert.ToBase64String(img_byte_arr);
-                    }
-                }
+                //foreach (var r in table_data)
+                //{
+                //    byte[] img_byte_arr = UseFtp.DownloadFtp(r.pic_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                //    if (img_byte_arr != null)
+                //    {
+                //        r.pic_dest = Convert.ToBase64String(img_byte_arr);
+                //    }
+                //}
 
                 return new ResponseModel
                 {

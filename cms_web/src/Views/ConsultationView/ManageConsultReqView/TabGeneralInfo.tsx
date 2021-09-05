@@ -1,7 +1,10 @@
 import { Button, Chip, Grid } from "@material-ui/core";
 import React, { FC, memo, useState } from "react";
 import HelpNumber from "../../../Helpers/HelpNumber";
-import { InvalidDateTimeToDefault } from "../../../Hooks/UseDateParser";
+import {
+  InvalidDateTimeToDefault,
+  InvalidDateToDefault,
+} from "../../../Hooks/UseDateParser";
 import { StringEmptyToDefault } from "../../../Hooks/UseStringFormatter";
 import ConsultRequestEntity from "../../../Services/Entities/ConsultRequestEntity";
 import DialogUpdateConsultDtls from "./DialogUpdateConsultDtls";
@@ -55,57 +58,113 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
             </div>
           </Grid>
           <Grid item xs={12}>
-            <Grid container spacing={0}>
-              <Grid item xs={12} sm={6} md={2} lg={1}>
-                <div className="info-group">
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <div className="info-group-column">
                   <div className="label">Prefix</div>
                   <div className="value">
-                    {StringEmptyToDefault(consult_info?.suffix, "-")}
+                    {StringEmptyToDefault(consult_info?.prefix, "-")}
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} lg={2}>
-                <div className="info-group">
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <div className="info-group-column">
                   <div className="label">First Name</div>
                   <div className="value">
                     {StringEmptyToDefault(consult_info?.first_name, "-")}
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} lg={2}>
-                <div className="info-group">
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <div className="info-group-column">
                   <div className="label">Middle Name</div>
                   <div className="value">
                     {StringEmptyToDefault(consult_info?.middle_name, "-")}
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} lg={2}>
-                <div className="info-group">
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <div className="info-group-column">
                   <div className="label">Last Name</div>
                   <div className="value">
                     {StringEmptyToDefault(consult_info?.last_name, "-")}
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={12} sm={6} md={2} lg={1}>
-                <div className="info-group">
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <div className="info-group-column">
                   <div className="label">Suffix</div>
                   <div className="value">
                     {StringEmptyToDefault(consult_info?.suffix, "-")}
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} lg={2}>
-                <div className="info-group">
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <div className="info-group-column">
+                  <div className="label">Gender</div>
+                  <div className="value">
+                    {consult_info?.gender === "m" && "Male"}
+                    {consult_info?.gender === "f" && "Female"}
+                  </div>
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <div className="info-group-column">
+                  <div className="label">Birth Date</div>
+                  <div className="value">
+                    {InvalidDateToDefault(consult_info?.birth_date, "-")}
+                  </div>
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={6} lg={3}>
+                <div className="info-group-column">
+                  <div className="label">Age</div>
+                  <div className="value">{consult_info?.age}</div>
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={6} lg={3}>
+                <div className="info-group-column">
+                  <div className="label">Nationality</div>
+                  <div className="value">
+                    {StringEmptyToDefault(
+                      consult_info?.nat_desc,
+                      <em>Not specified</em>
+                    )}
+                  </div>
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4} lg={3}>
+                <div className="info-group-column">
+                  <div className="label">Civil Status</div>
+                  <div className="value">
+                    {StringEmptyToDefault(
+                      consult_info?.cs_desc,
+                      <em>Not specified</em>
+                    )}
+                  </div>
+                </div>
+              </Grid>
+              <Grid item xs={12} md={12} lg={6}>
+                <div className="info-group-column">
+                  <div className="label">Religion</div>
+                  <div className="value">
+                    {StringEmptyToDefault(
+                      consult_info?.rel_desc,
+                      <em>Not specified</em>
+                    )}
+                  </div>
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={6} lg={3}>
+                <div className="info-group-column">
                   <div className="label">Mobile Number</div>
                   <div className="value">
                     {StringEmptyToDefault(consult_info?.mob_no, "-")}
                   </div>
                 </div>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} lg={2}>
-                <div className="info-group">
+              <Grid item xs={12} sm={6} lg={6}>
+                <div className="info-group-column">
                   <div className="label">Email Address</div>
                   <div className="value">
                     {StringEmptyToDefault(consult_info?.email, "-")}
@@ -113,7 +172,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                 </div>
               </Grid>
               <Grid item xs={12}>
-                <div className="info-group">
+                <div className="info-group-column">
                   <div className="label">Complete Address</div>
                   <div className="value">
                     {StringEmptyToDefault(consult_info?.line1, "")}
@@ -150,107 +209,9 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
             </div>
           </Grid>
           <Grid item xs={12}>
-            <Grid container spacing={0}>
-              <Grid item xs={12} md={6} lg={2}>
-                <div className="info-group">
-                  <div className="label">Code</div>
-                  <div className="value">
-                    {StringEmptyToDefault(consult_info?.consult_req_pk, "-")}
-                  </div>
-                </div>
-              </Grid>
-              <Grid item xs={12} md={6} lg={2} xl={1}>
-                <div className="info-group">
-                  <div className="label">Patient Number</div>
-                  <div className="value">
-                    {StringEmptyToDefault(
-                      consult_info?.hospital_no,
-                      <em>To be decided</em>
-                    )}
-                    {/* <div>
-                      {StringEmptyToDefault(
-                        consult_info?.hospital_no,
-                        <em>To be decided</em>
-                      )}
-                    </div> */}
-
-                    {/* {consult_info?.sts_pk === "pd" && (
-                      <Tooltip title="Map this consultation to a hospital number (Note: Only for patients that have admitted before)">
-                        <IconButton
-                          size="small"
-                          color="primary"
-                          onClick={() => {
-                            // set_open_map_consult_dialog(true);
-                          }}
-                        >
-                          <EditRoundedIcon fontSize="small" color="primary" />
-                        </IconButton>
-                      </Tooltip>
-                    )} */}
-                  </div>
-                </div>
-              </Grid>
-              <Grid item xs={12} md={6} lg={2} xl={1}>
-                <div className="info-group">
-                  <div className="label">Consult Cost</div>
-                  <div className="value">
-                    <Chip
-                      label={
-                        <>
-                          {consult_info.is_charity === "y" ? (
-                            <em>Not applicable</em>
-                          ) : (
-                            <>
-                              {" "}
-                              &#8369;{" "}
-                              {HelpNumber.NumberToMoney(
-                                consult_info?.consult_cost
-                              )}{" "}
-                            </>
-                          )}
-                        </>
-                      }
-                    />
-                  </div>
-                </div>
-              </Grid>
-
-              <Grid item xs={12} md={6} lg={2}>
-                <div className="info-group">
-                  <div className="label">Department</div>
-                  <div className="value">
-                    {StringEmptyToDefault(
-                      consult_info?.assign_dept_desc,
-                      <em>To be decided</em>
-                    )}
-                  </div>
-                </div>
-              </Grid>
-              <Grid item xs={12} md={6} lg={2}>
-                <div className="info-group">
-                  <div className="label"> Resident</div>
-                  <div className="value">
-                    {StringEmptyToDefault(
-                      consult_info?.assign_res_desc,
-                      <em>To be decided</em>
-                    )}
-                  </div>
-                </div>
-              </Grid>
-              <Grid item xs={12} md={6} lg={2}>
-                <div className="info-group">
-                  <div className="label ">Expected Start On</div>
-                  <div className="value">
-                    {InvalidDateTimeToDefault(
-                      consult_info?.est_start_at,
-                      <em>To be decided</em>
-                    )}
-                  </div>
-                </div>
-              </Grid>
-
+            <Grid container spacing={2}>
               <Grid item xs={12} md={12}>
-                <div className="info-group">
+                <div className="info-group-column">
                   <div className="label">Chief Complaint</div>
                   <div className="value">
                     {StringEmptyToDefault(consult_info?.chief_complaint, "-")}
@@ -258,7 +219,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                 </div>
               </Grid>
               <Grid item xs={12} md={12}>
-                <div className="info-group">
+                <div className="info-group-column">
                   <div className="label">Symptoms</div>
                   <div className="value">
                     {StringEmptyToDefault(consult_info?.symptoms, "-")}
@@ -266,7 +227,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                 </div>
               </Grid>
               <Grid item xs={12} md={12}>
-                <div className="info-group">
+                <div className="info-group-column">
                   <div className="label">Remarks</div>
                   <div className="value">
                     {StringEmptyToDefault(consult_info?.notes, "-")}
@@ -294,7 +255,7 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
           </Grid>
 
           <Grid item xs={12}>
-            <Grid container spacing={0}>
+            <Grid container spacing={2}>
               <Grid item xs={12}>
                 <div className="info-group-column">
                   <div className="label">Requested On</div>
@@ -310,9 +271,13 @@ const TabGeneralInfo: FC<ITabGeneralInfo> = memo(
                 <div className="info-group-column">
                   <div className="label">Paid On</div>
                   <div className="value">
-                    {InvalidDateTimeToDefault(
-                      consult_info?.pay_at,
-                      <em>To be decided</em>
+                    {consult_info.is_charity === "y" ? (
+                      <em>Not applicable</em>
+                    ) : (
+                      InvalidDateTimeToDefault(
+                        consult_info?.pay_at,
+                        <em>To be decided</em>
+                      )
                     )}
                   </div>
                 </div>

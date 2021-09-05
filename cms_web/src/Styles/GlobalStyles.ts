@@ -1,4 +1,5 @@
 import { Container } from "@material-ui/core";
+import { Timeline } from "@material-ui/lab";
 import styled from "styled-components";
 
 export const StyledTableData = styled.div`
@@ -132,16 +133,16 @@ export const StyledTableProfile = styled.div`
   }
   .profile-title {
     grid-area: title;
-    font-weight: 600;
-    letter-spacing: 0.3pt;
-    word-spacing: 0.3pt;
+    font-weight: 900;
+    font-size: 0.9em;
+    color: rgba(0, 0, 0, 0.65);
   }
 
   .profile-subtitle {
     grid-area: sub;
     font-weight: 900;
-    font-size: 0.75em;
-    opacity: 0.6;
+    font-size: 0.65em;
+    color: rgba(0, 0, 0, 0.5);
   }
 `;
 
@@ -551,6 +552,81 @@ export const UserProfileUi = styled(Container)`
       font-size: 0.83em;
       background-color: #fafafa;
       padding: 1em 0.5em;
+    }
+  }
+`;
+
+export const TimelineUi = styled(Timeline)`
+  .MuiTimelineItem-missingOppositeContent:before {
+    flex: 0;
+    padding: 0;
+  }
+  .MuiTimelineItem-root {
+    min-height: auto !important;
+  }
+  .timeline-content-opposite {
+    display: grid;
+    font-size: 0.7em;
+    .date {
+    }
+    .time {
+    }
+  }
+
+  .timeline-content-main {
+    padding: 0.5em;
+    border-radius: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.04);
+    border: 0.02em solid rgba(0, 0, 0, 0.07);
+    border-top-left-radius: 0;
+    .user {
+      all: unset;
+    }
+
+    .datetime {
+      font-size: 0.6em;
+      font-weight: 900;
+      color: rgba(0, 0, 0, 0.5);
+      margin-bottom: 5px;
+      font-style: italic;
+      letter-spacing: 0.3pt;
+      word-spacing: 0.3pt;
+    }
+    .content {
+      font-size: 0.8em;
+      letter-spacing: 0;
+      word-spacing: 0;
+      span {
+        all: unset;
+
+        word-break: keep-all;
+        white-space: nowrap;
+        white-space: pre;
+      }
+
+      .user {
+      }
+      .from {
+        font-weight: 900;
+        font-size: 0.65em;
+        padding: 2px 5px;
+        background-color: #eeeeee;
+        color: rgba(0, 0, 0, 0.6);
+        margin: 0 5px;
+        border-radius: 3px;
+        margin: 5px;
+      }
+      .to {
+        font-weight: 900;
+        font-size: 0.65em;
+        padding: 2px 5px;
+        background-color: #2196f3;
+        color: #fff;
+        margin: 5px;
+        border-radius: 3px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      }
     }
   }
 `;

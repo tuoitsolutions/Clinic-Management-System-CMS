@@ -11,6 +11,7 @@ using pos_server.Payloads;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static cms_server.Config.UserConfig;
 
 namespace DeliveryRoomWatcher.Repositories
 {
@@ -85,7 +86,24 @@ namespace DeliveryRoomWatcher.Repositories
             using var tran = con.BeginTransaction();
             try
             {
-                var user = con.QuerySingleOrDefault($@"SELECT * FROM users where user_pk = @user_pk limit 1;", new { user_pk }, transaction: tran);
+                var user = con.QuerySingleOrDefault<UserEntity>($@"SELECT full_name,user_type,sts_pk,log_count FROM users where user_pk = @user_pk limit 1;", new { user_pk }, transaction: tran);
+
+
+                if (IsUserRole(USER_ROLES.ADMIN, user.user_type))
+                {
+                    user.user_sub = "Administrator";
+                }
+                else if (IsUserRole(USER_ROLES.HOSP_RESIDENT, user.user_type))
+                {
+                    string resident_dept = con.QuerySingleOrDefault<string>(
+                        $@"SELECT d.`dept_name` FROM `hosp_resident` hr
+                            LEFT JOIN `department` d ON hr.`dept_pk` = d.`dept_pk`
+                            WHERE hr.`user_pk` = @user_pk LIMIT 1;"
+                        , new { user_pk }, transaction: tran);
+
+                    user.user_sub = $"{resident_dept} Resident";
+
+                }
 
                 tran.Commit();
                 return new ResponseModel
@@ -251,6 +269,73 @@ namespace DeliveryRoomWatcher.Repositories
             }
         }
 
+
+        public ResponseModel GetUserPhoto(string user_pk)
+        {
+            using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+            con.Open();
+            using var tran = con.BeginTransaction();
+            try
+            {
+                UserEntity user_info = con.QuerySingle<UserEntity>(
+                $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                , new { user_pk }
+                , transaction: tran);
+
+                string pic_dest = "";
+
+                if (IsUserRole(USER_ROLES.ADMIN, user_info.user_type))
+                {
+                    pic_dest = con.QuerySingleOrDefault<string>(
+                        $@"SELECT pic_dest FROM `administrator` WHERE user_pk  = @user_pk  LIMIT 1;"
+                        , new { user_pk }, transaction: tran);
+                }
+                else if (IsUserRole(USER_ROLES.HOSP_RESIDENT, user_info.user_type))
+                {
+                    pic_dest = con.QuerySingleOrDefault<string>(
+                        $@"SELECT pic_dest FROM `hosp_resident` WHERE user_pk  = @user_pk  LIMIT 1;"
+                        , new { user_pk }, transaction: tran);
+                }
+
+                string img_file = "";
+
+                if (!String.IsNullOrEmpty(pic_dest))
+                {
+                    byte[] img_byte_arr = UseFtp.DownloadFtp(DefaultConfig.ftp_ip + pic_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                    if (img_byte_arr != null)
+                    {
+                        img_file = "data:image/png;base64," + Convert.ToBase64String(img_byte_arr);
+                    }
+                    else
+                    {
+                        img_file = null;
+                    }
+
+                    tran.Commit();
+                    return new ResponseModel
+                    {
+                        success = true,
+                        data = img_file
+                    };
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "We could not retrieve the user's photo!"
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Details: " + e.Message.ToString()
+                };
+            }
+        }
 
 
         //update pic

@@ -56,9 +56,9 @@ namespace DeliveryRoomWatcher
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseCors("AllowAll");
-
 
             app.UseAuthentication();
             app.UseAuthorization();

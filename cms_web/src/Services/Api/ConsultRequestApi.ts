@@ -126,10 +126,23 @@ const EmailConsultRequestSoa = async (
   return response;
 };
 
-const SetConsultDeptSched = async (
+const TransferConsultDept = async (
   payload: ConsultRequestEntity
 ): Promise<ResponseModel> => {
-  const response = await PostFetch(BASE + "SetConsultDeptSched", payload);
+  const response = await PostFetch(BASE + "TransferConsultDept", payload);
+  return response;
+};
+
+const SetEstSchedule = async (
+  payload: ConsultRequestEntity
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "SetEstSchedule", payload);
+  return response;
+};
+const ChangeCharityTag = async (
+  payload: ConsultRequestEntity
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "ChangeCharityTag", payload);
   return response;
 };
 
@@ -280,7 +293,9 @@ export default {
   ResendPayOtp,
   PreviewConsultSoa,
   EmailConsultRequestSoa,
-  SetConsultDeptSched,
+  TransferConsultDept,
+  SetEstSchedule,
+  ChangeCharityTag,
   SendConsultLink,
   ChangeConsultationCost,
   StartConsultation,

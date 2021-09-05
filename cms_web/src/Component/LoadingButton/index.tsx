@@ -30,7 +30,13 @@ const LoadingButton: React.FC<IProps> = ({
   form,
 }) => {
   return (
-    <StyledLoadingButton>
+    <StyledLoadingButton
+      style={{
+        width: fullWidth ? `100%` : "auto",
+        minWidth: fullWidth ? `100%` : "auto",
+        justifyContent: fullWidth ? "normal" : `start`,
+      }}
+    >
       <Button
         className={`btn ${className}`}
         type={type}

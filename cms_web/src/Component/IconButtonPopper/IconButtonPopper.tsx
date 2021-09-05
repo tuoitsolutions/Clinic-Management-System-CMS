@@ -69,7 +69,7 @@ const IconButtonPopper: React.FC<IIconButtonPopper> = memo(
                 key={index}
                 color={btn.color}
                 className="btn"
-                // size="small"
+                size="small"
                 onClick={() => {
                   handleClose();
                   if (typeof btn.handleClick !== "undefined") {
@@ -92,10 +92,10 @@ const IconButtonPopper: React.FC<IIconButtonPopper> = memo(
 export default IconButtonPopper;
 
 export const PopperContent = styled(Paper)`
-  padding: 1.5em 2em;
+  padding: 1em 1.5em;
   display: grid;
   grid-gap: 0.5em;
-  min-width: 150px;
+  /* min-width: 150px; */
 
   .btn {
   }

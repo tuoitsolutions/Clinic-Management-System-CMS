@@ -32,7 +32,19 @@ const PageLinks: FC<IPageLinks> = memo(({ links, isOpenMobileHeader }) => {
     >
       <Breadcrumbs aria-label="breadcrumb" className="bread-crumb">
         {links.map((v, i) => (
-          <Link key={i} color="inherit" to={v.link} className="navText">
+          <Link
+            key={i}
+            // color="inherit"
+            // color="textPrimary"
+            // style={{
+            //   marginLeft: i > 0 ? -60 : `auto`,
+            //   zIndex: i,
+            // }}
+            href={v.link}
+            to={v.link}
+            className="navText"
+            aria-current="page"
+          >
             {v.title}
           </Link>
         ))}
@@ -49,7 +61,6 @@ const StyledPageLinks = styled(AppBar)`
   display: grid !important;
   align-content: center !important;
 
-  border: none !important;
   box-shadow: none !important;
   margin-top: ${(p) => p.theme.header.height}px !important;
   transition: 0.2s margin-top ease-in-out !important;
@@ -62,15 +73,15 @@ const StyledPageLinks = styled(AppBar)`
 
   .bread-crumb {
     padding: 0 1em;
-    .navText {
-      text-decoration: none !important;
-      font-weight: 500 !important;
-      font-size: 0.87em !important;
-      color: black !important;
-      opacity: 0.9 !important;
 
-      /* color: #00; */
-      /* color: ${(p) => p.theme.palette.primary.main}; */
-    }
+    /* .navText {
+      text-decoration: none !important;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.01);
+      border-radius: 40px;
+      padding: 5px 16px;
+      padding-right: 50px;
+      background-color: #fff !important;
+    } */
   }
 `;

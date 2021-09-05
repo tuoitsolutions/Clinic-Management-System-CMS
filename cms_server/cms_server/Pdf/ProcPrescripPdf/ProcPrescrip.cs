@@ -62,11 +62,11 @@ namespace cms_server.Pdf
                     ";
 
 
-                string tbl_med_prescrip = "";
+                string tbl_proc_request = "";
 
                 foreach (var med in proc_prescrip)
                 {
-                    tbl_med_prescrip += $@"<tr>
+                    tbl_proc_request += $@"<tr>
                                                 <td>
                                                     <div>{med.proc_desc}</div>
                                                     <small style='padding-top: 1pt;'><i>{med.notes}</i></small>
@@ -165,7 +165,12 @@ namespace cms_server.Pdf
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {tbl_med_prescrip}
+                                        {tbl_proc_request}
+                                        <tr style='border: none; box-shadow: none;'>
+                                            <td align='center'>
+                                                <em>Nothing follows</em>
+                                            </td>
+                                        </tr
                                     </tbody>
                                 </table>
 
@@ -179,7 +184,8 @@ namespace cms_server.Pdf
                                                 <img src='{resident_esignature_img}' height='80' /> 
                                              </div>                  
                                              <div class='name'>
-                                                 {consult_request.assign_res_desc}
+                                                 <div>{consult_request.assigned_resident_info?.res_name}</div>
+                                                 <div>{consult_request.assigned_resident_info?.license_no}</div>
                                              </div>             
                                          </div>
                                     </div>
@@ -189,8 +195,7 @@ namespace cms_server.Pdf
                         </html>
                      ";
 
-                string html_footer = "Page: {page_number} of {total_pages} " +
-                   "| Issued At: " + DateTime.Now.ToString("MMM, dd, yyyy hh:mm tt");
+                string html_footer = "This is an eletronically signed document | Page: {page_number} of {total_pages} | Issued At: " + DateTime.Now.ToString("MMM, dd, yyyy hh:mm tt");
 
                 PdfDocument doc = UsePdf.CreateStandardPdfDocument(html_header, html_body, html_footer);
 

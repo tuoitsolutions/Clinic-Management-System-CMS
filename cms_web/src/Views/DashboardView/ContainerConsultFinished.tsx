@@ -52,11 +52,11 @@ const ContainerConsultFinished: FC<IContainerConsultFinished> = memo(() => {
           <Grid item xs={12}>
             <div className="ctnr-title">
               <div className="main">
-                Finished Consultation of your Department
+                Successful Consultations of your Department
               </div>
               <div className="sub">
-                This is all the finished consultations in <b>your department</b>{" "}
-                for the last 15 days.
+                This is all the successful consultations in{" "}
+                <b>your department</b> for the last 30 days.
               </div>
             </div>
           </Grid>

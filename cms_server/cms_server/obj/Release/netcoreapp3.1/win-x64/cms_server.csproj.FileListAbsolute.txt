@@ -33,7 +33,6 @@ C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_serve
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\Newtonsoft.Json.Bson.dll
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\QRCoder.dll
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\Select.HtmlToPdf.dll
-C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\SmartFormat.dll
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\Renci.SshNet.dll
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\SshNet.Security.Cryptography.dll
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\Swashbuckle.AspNetCore.Swagger.dll
@@ -43,7 +42,6 @@ C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_serve
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\System.Drawing.Common.dll
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\System.Security.Cryptography.ProtectedData.dll
-C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\System.Text.Json.dll
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\System.Xml.XPath.XmlDocument.dll
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\TypeMerger.dll
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\obj\Release\netcoreapp3.1\win-x64\cms_server.Properties.Resources.resources

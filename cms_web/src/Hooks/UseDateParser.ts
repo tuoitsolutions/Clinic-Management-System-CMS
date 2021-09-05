@@ -52,8 +52,8 @@ export const dateParseJsToAspDate = (date: Date): any => {
 
 export const InvalidTimeToDefault = (
   date: Date | null | string,
-  defaultString: string
-): string => {
+  defaultString: any
+): any => {
   if (!date) {
     return defaultString;
   }
@@ -74,7 +74,7 @@ export const InvalidDateToDefault = (
     return defaultString;
   }
 
-  const d = moment(date).format("MMM DD, YYYY");
+  const d = moment(date).format("MMM. DD, YYYY");
 
   if (d.toLowerCase() === "invalid date") {
     return defaultString;

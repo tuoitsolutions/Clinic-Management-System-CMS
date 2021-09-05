@@ -36,8 +36,6 @@ export const ConsultOtpDialog: FC<IConsultOtpDialog> = memo(
   ({ form_payload, open, handleClose, successCallback }) => {
     const dispatch = useDispatch();
 
-    console.log(`form_values`, form_payload);
-
     const [submitting_request, set_submitting_request] = useState(false);
     const [generating_otp, set_generating_otp] = useState(false);
 
@@ -91,7 +89,7 @@ export const ConsultOtpDialog: FC<IConsultOtpDialog> = memo(
         dispatch(
           setGeneralPrompt({
             open: true,
-            custom_title: `Are you sure that you want to add this hospital department?`,
+            custom_title: `Are you sure that you want to continue this consultation request?`,
             continue_callback: async () => {
               dispatch(
                 showPageLoading({

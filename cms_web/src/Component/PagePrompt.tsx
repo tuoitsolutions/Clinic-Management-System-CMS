@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogTitle,
   Typography,
+  useTheme,
 } from "@material-ui/core";
 import CheckRoundedIcon from "@material-ui/icons/CheckRounded";
 import CloseRoundedIcon from "@material-ui/icons/CloseRounded";
@@ -20,6 +21,7 @@ interface IPagePrompt {}
 
 export const PagePrompt: FC<IPagePrompt> = memo(() => {
   const dispatch = useDispatch();
+  const theme = useTheme();
   const {
     open,
     custom_title,
@@ -48,6 +50,7 @@ export const PagePrompt: FC<IPagePrompt> = memo(() => {
 
   return (
     <StyledPagePrompt
+      theme={theme}
       open={open}
       scroll="body"
       disableBackdropClick={true}
@@ -59,7 +62,7 @@ export const PagePrompt: FC<IPagePrompt> = memo(() => {
         style: {
           margin: 0,
           padding: 0,
-          borderRadius: 10,
+          // borderRadius: 10,
           width: 400,
           overflowY: "visible",
         },
@@ -87,23 +90,23 @@ export const PagePrompt: FC<IPagePrompt> = memo(() => {
       </DialogTitle>
 
       <DialogContent className="dialog-content">
-        <Typography variant="h6" paragraph={false}>
+        <div className="prompt-title">
           {custom_title
             ? custom_title
             : "Are you sure that you want to continue?"}
-        </Typography>
-        <Typography>
+        </div>
+        <div className="prompt-sub">
           {custom_subtitle
             ? custom_subtitle
             : "If you proceed, you won't be able to revert this process."}
-        </Typography>
+        </div>
       </DialogContent>
       <DialogActions className="dialog-actions">
         <Button
           color="primary"
           variant="contained"
-          startIcon={<CheckRoundedIcon fontSize="small" />}
-          disableElevation
+          // startIcon={<CheckRoundedIcon fontSize="small" />}
+          // disableElevation
           onClick={handleContinue}
         >
           Yes, Continue
@@ -111,9 +114,9 @@ export const PagePrompt: FC<IPagePrompt> = memo(() => {
         <Button
           color="secondary"
           variant="contained"
-          startIcon={<CloseRoundedIcon fontSize="small" />}
+          // startIcon={<CloseRoundedIcon fontSize="small" />}
           onClick={handleCancel}
-          disableElevation
+          // disableElevation
         >
           No, Cancel
         </Button>
@@ -128,6 +131,18 @@ const StyledPagePrompt = styled(Dialog)`
   .dialog-content {
     margin-bottom: 1em;
     text-align: center;
+    display: grid;
+    grid-gap: 1em;
+
+    .prompt-title {
+      font-weight: 900;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .prompt-sub {
+      font-size: 0.75em;
+      color: ${(p) => p.theme.palette.warning.main};
+    }
     .big-text {
       color: red;
       font-weight: 600;

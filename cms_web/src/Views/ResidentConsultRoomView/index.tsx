@@ -442,7 +442,7 @@ const ResidentConsultRoom: FC<IResidentConsultRoom> = memo(() => {
                                 <div className="label">Chief Complaint</div>
                                 <div className="value">
                                   {StringEmptyToDefault(
-                                    selected_record?.symptoms,
+                                    selected_record?.chief_complaint,
                                     <em>Not indicated</em>
                                   )}
                                 </div>

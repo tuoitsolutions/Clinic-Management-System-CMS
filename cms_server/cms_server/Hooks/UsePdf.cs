@@ -43,7 +43,6 @@ namespace cms_server.Hooks
 
             PdfDocument doc = converter.ConvertHtmlString(html_body);
 
-
             return doc;
 
         }

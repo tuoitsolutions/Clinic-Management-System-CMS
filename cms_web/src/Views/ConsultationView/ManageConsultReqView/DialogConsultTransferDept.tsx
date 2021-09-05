@@ -2,7 +2,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Grid } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import moment from "moment";
-import React, { FC, memo, useCallback, useEffect, useState } from "react";
+import React, {
+  FC,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import * as yup from "yup";
@@ -23,7 +30,7 @@ import LibraryApi from "../../../Services/Api/LibraryApi";
 import ConsultRequestEntity from "../../../Services/Entities/ConsultRequestEntity";
 import { OptionItemModel } from "../../../Services/Models/OptionModel";
 
-interface IDialogConsultSetSchedDept {
+interface IDialogConsultTransferDept {
   open: boolean;
   selected_consultation: ConsultRequestEntity;
   handleCloseDialog: () => void;
@@ -35,15 +42,14 @@ const form_schema = yup.object({
   assign_res_pk: yup.string().nullable().label("Resident"),
 });
 
-const DialogConsultSetSchedDept: FC<IDialogConsultSetSchedDept> = memo(
+const DialogConsultTransferDept: FC<IDialogConsultTransferDept> = memo(
   (props) => {
     const dispatch = useDispatch();
 
     const [error_page_message, set_error_page_message] = useState("");
 
-    const [dept_resident_options, set_dept_resident_options] = useState<
-      Array<OptionItemModel>
-    >([]);
+    const [dept_resident_options, set_dept_resident_options] =
+      useState<Array<OptionItemModel> | null>();
     const [fetch_dept_resident_options, set_fetch_dept_resident_options] =
       useState(false);
 
@@ -56,15 +62,8 @@ const DialogConsultSetSchedDept: FC<IDialogConsultSetSchedDept> = memo(
       resolver: yupResolver(form_schema),
       mode: "onChange",
       defaultValues: {
-        ...props.selected_consultation,
-        start_date: DateFormatOrNull(
-          props.selected_consultation?.est_start_at,
-          null
-        ),
-        start_time: DateFormatOrNull(
-          props.selected_consultation?.est_start_at,
-          null
-        ),
+        assign_dept_pk: props.selected_consultation.assign_dept_pk,
+        assign_res_pk: props.selected_consultation.assign_res_pk,
       },
     });
 
@@ -72,16 +71,9 @@ const DialogConsultSetSchedDept: FC<IDialogConsultSetSchedDept> = memo(
 
     const handleSubmitForm = useCallback(
       async (payload: ConsultRequestEntity) => {
+        console.log(`payload`, payload);
         payload.consult_req_pk = props.selected_consultation.consult_req_pk;
-
-        var new_date = moment(
-          `${moment(payload.start_date).format("YYYY-MM-DD")} ${moment(
-            payload.start_time
-          ).format("hh:mm A")}`,
-          "YYYY-MM-DD hh:mm A"
-        );
-        if (!!payload.consult_req_pk && new_date?.isValid()) {
-          payload.est_start_at = new_date.format();
+        if (!!payload.consult_req_pk) {
           dispatch(
             setGeneralPrompt({
               open: true,
@@ -94,7 +86,7 @@ const DialogConsultSetSchedDept: FC<IDialogConsultSetSchedDept> = memo(
                       "Saving changes, thank you for your patience",
                   })
                 );
-                const response = await ConsultRequestApi.SetConsultDeptSched(
+                const response = await ConsultRequestApi.TransferConsultDept(
                   payload
                 );
                 dispatch(closePageLoading());
@@ -128,6 +120,7 @@ const DialogConsultSetSchedDept: FC<IDialogConsultSetSchedDept> = memo(
         } else {
           mounted && set_error_page_message(dept_opt_res.message.toString());
         }
+
         mounted && set_fetch_dept_options(false);
       }
 
@@ -164,7 +157,7 @@ const DialogConsultSetSchedDept: FC<IDialogConsultSetSchedDept> = memo(
     return (
       <>
         <FormDialog
-          title="Set and schedule the consultation to the department and resident"
+          title="Set or transfer the department and/or resident of this consultation"
           open={props.open}
           handleClose={props.handleCloseDialog}
           minWidth={500}
@@ -199,10 +192,7 @@ const DialogConsultSetSchedDept: FC<IDialogConsultSetSchedDept> = memo(
                           }}
                           options={dept_options}
                           onChangeCallback={(val) => {
-                            form_instance.setValue("assign_res_pk", "", {
-                              shouldDirty: true,
-                              shouldValidate: true,
-                            });
+                            form_instance.setValue("assign_res_pk", "");
                           }}
                         />
                       </Grid>
@@ -221,35 +211,9 @@ const DialogConsultSetSchedDept: FC<IDialogConsultSetSchedDept> = memo(
                         />
                       </Grid>
 
-                      <Grid item xs={6}>
-                        <DateFieldHookForm
-                          name="start_date"
-                          label="Estimated Start Date"
-                          type="date"
-                          disablePast
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          mask="__/__/____"
-                          placeholder="MM/DD/YYYY"
-                        />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <DateFieldHookForm
-                          name="start_time"
-                          label="Estimated Start Time"
-                          type="time"
-                          disablePast
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          placeholder="HH:mm A"
-                        />
-                      </Grid>
-
                       <Grid item xs={12}>
                         <SingleCheckboxHookForm
-                          label="Send the online consultation link to the requester"
+                          label="Do you want to send an email for the changes of this consultation to the requestor?"
                           name="is_send_consult_link"
                           size="small"
                         />
@@ -273,10 +237,10 @@ const DialogConsultSetSchedDept: FC<IDialogConsultSetSchedDept> = memo(
               <Button
                 variant="contained"
                 color="secondary"
-                type="reset"
-                onClick={async () => {
-                  form_instance.reset(props.selected_consultation);
-                }}
+                // type="reset"
+                // onClick={async () => {
+                //   form_instance.reset(props.selected_consultation);
+                // }}
               >
                 Reset
               </Button>
@@ -288,4 +252,4 @@ const DialogConsultSetSchedDept: FC<IDialogConsultSetSchedDept> = memo(
   }
 );
 
-export default DialogConsultSetSchedDept;
+export default DialogConsultTransferDept;

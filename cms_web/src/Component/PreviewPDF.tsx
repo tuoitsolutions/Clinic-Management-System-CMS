@@ -1,6 +1,5 @@
 import { Backdrop, IconButton, useTheme } from "@material-ui/core";
 import BackspaceRoundedIcon from "@material-ui/icons/BackspaceRounded";
-import PictureAsPdfRoundedIcon from "@material-ui/icons/PictureAsPdfRounded";
 import ZoomInRoundedIcon from "@material-ui/icons/ZoomInRounded";
 import ZoomOutRoundedIcon from "@material-ui/icons/ZoomOutRounded";
 import React, { FC, memo, useEffect, useState } from "react";
@@ -94,9 +93,9 @@ const PreviewPDF: FC<IPreviewPDF> = memo(
           </div>
           {(file_type === "img" || file_type === "pdf") && (
             <div className="footer">
-              <div className="footer-content">
-                <div className="pages"># of pages: {numPages}</div>
-                <div className="actions">
+              <div className="pdf-footer-content">
+                <div className="pdf-footer-pages"># of pages: {numPages}</div>
+                <div className="pdf-footer-actions">
                   <div className="action-item">
                     <IconButton
                       disabled={scale === 1}
@@ -177,8 +176,8 @@ const StyledPdfPreview = styled(Backdrop)`
         text-shadow: 1px 1px 1px black;
 
         .doc-title {
-          background-color: rgba(0, 0, 0, 0.2);
-          box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+          /* background-color: rgba(0, 0, 0, 0.2); */
+          /* box-shadow: 0 0 50px rgba(0, 0, 0, 0.2); */
           border-radius: 20px;
           /* padding: 0.5em 0; */
         }
@@ -222,31 +221,31 @@ const StyledPdfPreview = styled(Backdrop)`
       transform: translate(-50%, 0);
       padding: 0.3em 3em;
 
-      .footer-content {
-        /* display: grid !important; */
-        /* align-items: center !important;
+      .pdf-footer-content {
+        display: grid !important;
+        align-items: center !important;
         align-content: center !important;
         justify-items: center !important;
-        justify-content: center !important; */
-        /* min-width: 400px !important; */
-        /* grid-auto-flow: column !important;
+        justify-content: center !important;
+        grid-auto-flow: column !important;
         grid-auto-columns: 1fr 1fr;
-        grid-gap: 1em !important; */
-        .pages {
-          font-weight: 500;
+        grid-gap: 1em !important;
+        font-size: 0.9em;
+        .pdf-footer-pages {
+          font-weight: 400;
           display: grid;
-          justify-self: start;
-          justify-content: start;
-          align-self: start;
-          align-content: start;
+          justify-self: center;
+          justify-content: center;
+          align-self: center;
+          align-content: center;
         }
 
-        .actions {
+        .pdf-footer-actions {
           justify-self: end;
           grid-auto-flow: column;
           display: grid;
-          justify-self: end;
-          justify-content: end;
+          justify-self: center;
+          justify-content: center;
           grid-gap: 0.5em;
         }
       }

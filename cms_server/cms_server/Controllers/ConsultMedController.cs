@@ -41,7 +41,7 @@ namespace cms_server.Controllers
         [HttpPost]
         public IActionResult PreviewMedPrescrip(SingleValuePayload payload)
         {
-            return Ok(dept_res_repo.PreviewMedPrescrip(payload.value));
+            return Ok(dept_res_repo.PreviewMedPrescrip(payload.value, User.Identity.Name));
         }
 
         [HttpPost]

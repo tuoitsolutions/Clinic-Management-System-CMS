@@ -89,6 +89,7 @@ interface ConsultRequestEntity {
   attach_base64_soa?: string;
   attach_profile_pic?: string | File;
   age?: string;
+  is_cut_off?: number;
   start_date?: Date | string;
   start_time?: Date | string;
 

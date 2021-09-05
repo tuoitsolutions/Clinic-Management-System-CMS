@@ -41,10 +41,12 @@ const ContainerConsultSumDept: FC<IContainerConsultSumDept> = memo(() => {
         <Grid container spacing={1}>
           <Grid item xs={12}>
             <div className="ctnr-title">
-              <div className="main">Total Consultation of each Department</div>
+              <div className="main">
+                Successful Consultations of each Department
+              </div>
               <div className="sub">
-                This is the overview of the total consultations of each
-                department.
+                This is the overview of the total successful consultations of
+                each department.
               </div>
             </div>
           </Grid>

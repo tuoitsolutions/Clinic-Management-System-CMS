@@ -138,12 +138,23 @@ export const PatientManageUi = styled(Container)`
     justify-items: center;
     align-content: start;
     align-items: start;
-    grid-gap: 0.5em;
-    .patient-name {
-      padding: 0.3em;
-      font-size: 1em;
-      font-weight: 900;
+    /* grid-gap: 0.3em; */
+    .patient-profile-title {
+      padding: 0.5em 0.3em;
       text-align: center;
+
+      .main {
+        all: none;
+        font-size: 1em;
+        font-weight: 900;
+      }
+      .sub {
+        all: none;
+        font-size: 0.7em;
+        color: rgba(0, 0, 0, 0.5);
+        font-weight: 900;
+        margin-bottom: 0.2em;
+      }
     }
 
     .personal-info-ctnr {
@@ -155,8 +166,9 @@ export const PatientManageUi = styled(Container)`
       /* grid-gap: 0.5em; */
       .info-group-column {
         display: grid;
-        padding: 0.5em 0;
-        grid-auto-columns: 1fr 1fr;
+        padding: 5px 0;
+        grid-auto-columns: 2fr 3fr;
+        box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.2) !important;
       }
     }
   }

@@ -1,11 +1,15 @@
 import { Popover, useTheme } from "@material-ui/core";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { removeToken } from "../../Helpers/AppConfig";
+import { StringEmptyToDefault } from "../../Hooks/UseStringFormatter";
+import HospResidentApi from "../../Services/Api/HospResidentApi";
+import UserApi from "../../Services/Api/UserApi";
 import UserEntity from "../../Services/Entities/UserEntity";
 import CustomAvatar from "../CustomAvatar";
+import PreviewPictureFtp from "../PreviewPictureFtp";
 import { StyledPopOverContent, StyledUserProfile } from "./styles";
 
 interface IUserProfile {
@@ -34,6 +38,28 @@ const UserProfile: React.FC<IUserProfile> = memo(({ variant, user }) => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
+  const [user_photo, set_user_photo] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+
+    const load_initial_data = async () => {
+      const response = await UserApi.GetUserPhoto();
+
+      if (response.success) {
+        set_user_photo(response?.data);
+        // if (!!response?.data) {
+        //   set_preview(response?.data);
+        // } else {
+        //   set_preview(null);
+        // }
+      }
+    };
+
+    mounted && load_initial_data();
+    return () => (mounted = false);
+  }, []);
+
   return (
     <StyledUserProfile>
       <div className="header" aria-describedby={id} onClick={handleClick}>
@@ -41,6 +67,7 @@ const UserProfile: React.FC<IUserProfile> = memo(({ variant, user }) => {
           className="profile-image"
           alt={user?.full_name?.charAt(0)}
           spacing={5}
+          src={user_photo}
         />
         {open ? (
           <ExpandLessIcon className="icon" fontSize="small" />
@@ -48,12 +75,11 @@ const UserProfile: React.FC<IUserProfile> = memo(({ variant, user }) => {
           <ExpandMoreIcon className="icon" fontSize="small" />
         )}
 
-        {variant === "mobile" ? null : (
+        {variant !== "mobile" && (
           <div className="user">
             <div className="fullname">{user?.full_name}</div>
             <div className="designation">
-              {user?.user_type === "hosp_resident" && "Resident"}
-              {user?.user_type === "admin" && "Administrator"}
+              {StringEmptyToDefault(user?.user_sub, "-")}
             </div>
           </div>
         )}
@@ -76,15 +102,15 @@ const UserProfile: React.FC<IUserProfile> = memo(({ variant, user }) => {
           <div className="content-header">
             <CustomAvatar
               className="content-header-image"
-              spacing={5}
+              spacing={7}
               alt={user?.full_name?.charAt(0)}
+              src={user_photo}
             />
+
             <div className="content-header-user">
               <div className="name">{user?.full_name}</div>
               <div className="designation">
-                {" "}
-                {user?.user_type === "hosp_resident" && "Resident"}
-                {user?.user_type === "admin" && "Administrator"}
+                {StringEmptyToDefault(user?.user_sub, "-")}
               </div>
             </div>
           </div>

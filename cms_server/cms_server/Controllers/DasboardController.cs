@@ -63,10 +63,26 @@ namespace cms_server.Controllers
 
         [HttpPost]
         [Authorize]
+        public IActionResult GetLatestConsultForResident()
+        {
+
+            return Ok(dashboard_repo.GetLatestConsultForResident(User.Identity.Name));
+        }
+
+        [HttpPost]
+        [Authorize]
         public IActionResult GetLatestConsultReqOtherDept()
         {
 
             return Ok(dashboard_repo.GetLatestConsultReqOtherDept(User.Identity.Name));
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult GetLatestDeptTranLog()
+        {
+
+            return Ok(dashboard_repo.GetLatestDeptTranLog());
         }
 
         [HttpPost]

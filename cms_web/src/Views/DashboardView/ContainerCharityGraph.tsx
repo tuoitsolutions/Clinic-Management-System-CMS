@@ -51,14 +51,14 @@ const ContainerCharityGraph: FC<IContainerCharityGraph> = memo(() => {
               </div>
               <div className="sub">
                 This is the proportion charity and non charity consultation
-                requests of <b>all departments</b> for the past 15 days.
+                requests of <b>all departments</b> for the past 30 days.
               </div>
             </div>
           </Grid>
 
           <Grid item xs={12}>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={8}>
+              <Grid item xs={12} md={9}>
                 {fetch_graph_data ? (
                   <>
                     <Skeleton
@@ -196,7 +196,7 @@ const ContainerCharityGraph: FC<IContainerCharityGraph> = memo(() => {
                 )}
               </Grid>
 
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={3}>
                 <div
                   style={{
                     display: `grid`,

@@ -42,9 +42,8 @@ namespace cms_server.Controllers
         [HttpPost]
         public IActionResult PreviewProcPrescrip(SingleValuePayload payload)
         {
-            return Ok(dept_res_repo.PreviewProcPrescrip(payload.value));
+            return Ok(dept_res_repo.PreviewProcPrescrip(payload.value, User.Identity.Name));
         }
-
 
         [HttpPost]
         public IActionResult EmailProcPrescrip(ConsultProcEntity payload)

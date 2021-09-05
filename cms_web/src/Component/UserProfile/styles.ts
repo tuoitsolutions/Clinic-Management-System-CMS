@@ -19,11 +19,8 @@ export const StyledUserProfile = styled.div`
     }
     .profile-image {
       grid-area: image;
-      height: 45px;
-      width: 43px;
-      img {
-        /* margin: 0.5em; */
-      }
+      /* box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05); */
     }
 
     .icon {
@@ -32,8 +29,10 @@ export const StyledUserProfile = styled.div`
       color: #fff;
     }
     .user {
+      all: unset;
       grid-area: user;
-      max-width: 100px;
+      max-width: 120px;
+      width: 120px;
 
       .fullname {
         font-size: 0.87em;
@@ -45,10 +44,16 @@ export const StyledUserProfile = styled.div`
         text-transform: capitalize;
       }
       .designation {
-        font-size: 0.7em;
-        font-weight: 600;
-        color: #fff;
-        text-transform: capitalize;
+        font-size: 0.6em !important;
+        font-weight: 700 !important;
+        color: #fff !important;
+        opacity: 7 !important;
+        letter-spacing: 0.3pt !important;
+        word-spacing: 0.3pt !important;
+        text-transform: capitalize !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   }
@@ -72,7 +77,7 @@ export const StyledUserProfile = styled.div`
 `;
 
 export const StyledPopOverContent = styled.div`
-  max-width: 360px;
+  width: 250px;
   min-width: 250px;
   .content-header {
     overflow: hidden;
@@ -85,7 +90,8 @@ export const StyledPopOverContent = styled.div`
     grid-gap: 0.5em;
     padding: 1em;
     grid-auto-columns: auto 1fr 100px;
-    background-color: #785ada4a;
+    background-color: #f5f5f5;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.1);
 
     .content-header-image {
       height: 50px;
@@ -99,8 +105,11 @@ export const StyledPopOverContent = styled.div`
       }
 
       .designation {
-        font-size: 600;
-        font-size: 0.87em;
+        opacity: 0.7;
+        font-size: 0.7em;
+        font-weight: 900;
+        letter-spacing: 0.3pt;
+        word-spacing: 0.3pt;
       }
     }
 

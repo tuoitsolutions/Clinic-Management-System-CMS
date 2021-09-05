@@ -47,8 +47,6 @@ const AutoCompleteLoader: FC<IAutoCompleteLoader> = memo(
                 rows={rows}
                 size={size}
                 variant={!!variant ? variant : "standard"}
-                //   error={error}
-                //   helperText={error_message}
                 required={required}
                 InputProps={{
                   ...params.InputProps,

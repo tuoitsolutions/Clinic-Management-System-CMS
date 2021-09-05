@@ -32,9 +32,18 @@ const GetLatestConsultReqUserDept = async (): Promise<ResponseModel> => {
   const response = await PostFetch(BASE + "GetLatestConsultReqUserDept", null);
   return response;
 };
+const GetLatestConsultForResident = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetLatestConsultForResident", null);
+  return response;
+};
 
 const GetLatestConsultReqOtherDept = async (): Promise<ResponseModel> => {
   const response = await PostFetch(BASE + "GetLatestConsultReqOtherDept", null);
+  return response;
+};
+
+const GetLatestDeptTranLog = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetLatestDeptTranLog", null);
   return response;
 };
 
@@ -56,6 +65,8 @@ export default {
   GetFinishConsult,
   GetLatestConsultReqUserDept,
   GetLatestConsultReqOtherDept,
+  GetLatestDeptTranLog,
   GetCharity,
   GetConsultPerDept,
+  GetLatestConsultForResident,
 };

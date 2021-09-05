@@ -69,7 +69,7 @@ const CustomTab: React.FC<ICustomTab> = memo(({ tabs, height }) => {
                 className="custom-tab-content"
                 style={{
                   height: height,
-                  padding: `1.5em 1em`,
+                  padding: `.5em`,
                 }}
               >
                 {tab?.RenderComponent}
@@ -121,9 +121,9 @@ const AntTab = withStyles((theme: Theme) =>
   createStyles({
     root: {
       textTransform: "none",
-      minWidth: 72,
+      minWidth: 50,
       fontWeight: theme.typography.fontWeightRegular,
-      marginRight: theme.spacing(4),
+      marginRight: theme.spacing(1),
       "&:hover": {
         color: "#40a9ff",
         opacity: 1,

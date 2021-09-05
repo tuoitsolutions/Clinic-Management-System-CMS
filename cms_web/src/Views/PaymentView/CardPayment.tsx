@@ -331,7 +331,7 @@ const CardPayment: FC<ICardPayment> = memo(({ selected_consult_req }) => {
               <Grid item xs={12} md={7}>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
-                    <div className="cntr-title">
+                    <div className="ctnr-title">
                       <div className="main">Billing Details</div>
                       <div className="sub">
                         The requestor's basic details is automatically loaded as
@@ -454,14 +454,14 @@ const CardPayment: FC<ICardPayment> = memo(({ selected_consult_req }) => {
                 <div
                   style={{
                     padding: `1em`,
-                    backgroundColor: `#fafafa47`,
+                    backgroundColor: `#fafafa5f`,
                     paddingTop: 0,
                     borderRadius: 5,
                   }}
                 >
                   <Grid container spacing={3}>
                     <Grid item xs={12}>
-                      <div className="cntr-title">
+                      <div className="ctnr-title">
                         <div className="main">Card Details</div>
                         <div className="sub">
                           Kindly fill up the card details.

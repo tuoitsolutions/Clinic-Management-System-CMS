@@ -7,11 +7,8 @@ import * as yup from "yup";
 import BodyLoader from "../../Component/BodyLoader";
 import ErrorMessage from "../../Component/ErrorMessage";
 import FormDialog from "../../Component/FormDialog/FormDialog";
-import AutocompleteHookForm from "../../Component/HookForm/AutocompleteHookForm";
 import MultiRadioFieldHookForm from "../../Component/HookForm/MultiRadioFieldHookForm";
-import PhotoHookForm from "../../Component/HookForm/PhotoHookForm";
 import TextFieldHookForm from "../../Component/HookForm/TextFieldHookForm";
-import MaskedPhoneNumber from "../../Component/Mask/MaskedPhoneNumber";
 import {
   closePageLoading,
   setGeneralPrompt,
@@ -219,7 +216,7 @@ export const DepartmentDialogUpdate: FC<IDepartmentDialogUpdate> = memo(
                 variant="contained"
                 type="submit"
               >
-                Save Unit
+                Update Department
               </Button>
               <Button
                 variant="contained"

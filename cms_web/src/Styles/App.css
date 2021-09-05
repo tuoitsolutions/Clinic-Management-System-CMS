@@ -54,11 +54,12 @@ body {
 
 .MuiChip-label {
   text-transform: capitalize !important;
-  font-size: 0.87em !important;
-  font-weight: 700 !important;
-  padding: 0 3px !important;
-  letter-spacing: 0.3pt;
-  word-spacing: 0.3pt;
+  font-size: 0.7em !important;
+  font-weight: 900 !important;
+  padding: 2px 5px !important;
+
+  /* letter-spacing: 0.3pt;
+  word-spacing: 0.3pt; */
 }
 
 .uncaps .MuiChip-label {
@@ -66,11 +67,11 @@ body {
 }
 
 .MuiChip-root {
-  border-radius: 5px !important;
+  border-radius: 3px !important;
   padding: 1px 3px !important;
   max-height: 20px !important;
   min-height: 20px !important;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.09) !important;
 }
 
 .MuiBadge-badge {
@@ -96,10 +97,10 @@ body {
   font-size: 0.75em !important;
   font-weight: 600 !important;
 }
-
+/* 
 .PrivateSwitchBase-root-1 {
   padding: 3px !important;
-}
+} */
 
 .user-pages-table .MuiTableCell-root {
   background-color: #fff !important;
@@ -107,7 +108,7 @@ body {
 
 a,
 .link {
-  color: blue !important;
+  /* color: blue !important; */
   text-decoration: none !important;
   cursor: pointer;
 }
@@ -168,6 +169,13 @@ a,
   align-content: center;
   align-items: center;
   padding-bottom: 0.5em;
+}
+
+table .table-datetime {
+  font-size: 0.7em;
+  font-weight: 700;
+  letter-spacing: 0.3pt;
+  word-spacing: 0.3pt;
 }
 
 .table-paragraph {
@@ -339,30 +347,32 @@ a,
   display: grid;
   align-items: center;
   align-content: center;
-  padding: 0.2em;
-  grid-auto-columns: auto 1fr;
+  padding: 0.3em;
   width: 100%;
-  font-weight: 500;
-  font-size: 0.9em;
+  box-shadow: 0 2px 1px -2px rgba(0, 0, 0, 0.3);
+  word-break: break-all;
+  white-space: pre-wrap;
 }
 
 .info-group .label {
-  font-weight: 600;
-  opacity: 0.6;
-  font-size: 0.87em;
+  font-weight: 500;
+  opacity: 0.7;
+  font-size: 0.75em;
 }
 
 .info-group .value {
-  padding: 0.3em 0;
+  /* padding: 0.3em 0; */
   width: 100%;
   display: grid;
   grid-gap: 0.5em;
+  /* font-size: 0.9em; */
 
   align-content: center;
   align-items: center;
   grid-auto-flow: column;
   justify-content: start;
   justify-self: start;
+  /**/
 }
 
 .info-group-column {
@@ -371,30 +381,35 @@ a,
   align-content: center;
   justify-content: start;
   justify-items: start;
+  justify-content: start;
   grid-gap: 1em;
   grid-auto-flow: column;
-  padding: 0.3em;
-  /* box-shadow: 0 2px 1px -2px rgba(0, 0, 0, 0.1); */
-
   height: 100%;
-  font-weight: 500;
-  font-size: 0.9em;
+  /* font-size: 0.9em; */
+  padding: 3px 10px;
+  grid-template-columns: 65px 2fr;
+  /* margin: 0 1em; */
+  box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.1);
 }
 
 .info-group-column .label {
-  font-weight: 600;
-  opacity: 0.6;
-  font-size: 0.9em;
+  font-weight: 900;
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 0.7em;
 }
 
 .info-group-column .value {
   width: 100%;
-  display: grid;
+  /* display: grid;
   align-content: center;
   align-items: center;
   grid-auto-flow: column;
   justify-content: start;
-  justify-self: start;
+  justify-self: start; */
+  /* font-weight: 300; */
+  font-size: 0.95em;
+  word-break: break-all;
+  white-space: pre-wrap;
 }
 
 .info-group-column .value button {
@@ -561,7 +576,7 @@ canvas {
   min-height: 10px !important;
 }
 
-.cntr-title {
+/* .cntr-title {
   box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.1) !important;
   padding: 0.2em 0;
   margin-top: 0.5em;
@@ -576,26 +591,35 @@ canvas {
 .cntr-title .sub {
   font-size: 0.67em;
   color: #2196f3;
-}
+} */
 
 .ctnr-title-container {
-  padding: 0.5em 0;
-  box-shadow: 0 2px 1px -2px rgba(0, 0, 0, 0.2) !important;
+  padding: 0.1em 0;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.ctnr-title-container .ctnr-title {
+  box-shadow: none !important;
 }
 
 .ctnr-title {
   align-self: end;
   display: grid;
+  /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
+  box-shadow: 0 3px 2px -2px rgba(0, 0, 0, 0.1) !important;
+  padding-bottom: 5px;
 }
 
 .ctnr-title .main {
   font-weight: 900;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.6);
   align-self: end;
+  font-size: 0.9em;
 }
 .ctnr-title .sub {
   align-self: start;
-  font-size: 0.7em;
+  font-size: 0.65em;
+  font-weight: 400;
   color: rgba(0, 0, 0, 0.7);
 }
 
@@ -640,11 +664,20 @@ em {
 table tr th {
   background-color: #fff !important;
   font-weight: 900 !important;
-  font-size: 0.75em !important;
-  color: rgba(0, 0, 0, 0.6) !important;
+  font-size: 0.7em !important;
+  color: rgba(0, 0, 0, 0.7) !important;
 }
 
 .MuiAlert-root {
   align-items: center !important;
   align-content: center !important;
+}
+
+small {
+  font-size: 0.75em !important;
+}
+
+.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-colorPrimary {
+  background-color: rgba(33, 149, 243, 0.074);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }

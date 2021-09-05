@@ -3,6 +3,7 @@ using cms_server.Hooks;
 using SelectPdf;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 
 namespace cms_server.Pdf
@@ -157,7 +158,7 @@ namespace cms_server.Pdf
                                 
                                 <table style='margin-top: 10pt'>
                                     <thead style='display: table-header-group;'>
-                                        <tr>
+                                        <tr style='font-weight: 600;'>
                                             <td>
                                                 Medicine Name
                                             </td>
@@ -171,6 +172,11 @@ namespace cms_server.Pdf
                                     </thead>
                                     <tbody>
                                         {tbl_med_prescrip}
+                                        <tr style='border: none; box-shadow: none;'>
+                                            <td colSpan='3' align='center'>
+                                                <em>Nothing follows</em>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
 
@@ -184,7 +190,8 @@ namespace cms_server.Pdf
                                                 <img src='{resident_esignature_img}' height='80' /> 
                                              </div>                  
                                              <div class='name'>
-                                                 {consult_request.assign_res_desc}
+                                                 <div>{consult_request.assigned_resident_info?.res_name}</div>
+                                                 <div>{consult_request.assigned_resident_info?.license_no}</div>
                                              </div>             
                                          </div>
                                     </div>
@@ -194,10 +201,21 @@ namespace cms_server.Pdf
                         </html>
                      ";
 
-                string html_footer = "Page: {page_number} of {total_pages} " +
-                   "| Issued At: " + DateTime.Now.ToString("MMM, dd, yyyy hh:mm tt");
+                string html_footer = "This is an eletronically signed document | Page: {page_number} of {total_pages} | Issued At: " + DateTime.Now.ToString("MMM, dd, yyyy hh:mm tt");
 
                 PdfDocument doc = UsePdf.CreateStandardPdfDocument(html_header, html_body, html_footer);
+
+                PdfTemplate template = doc.AddTemplate(doc.Pages[0].ClientRectangle);
+
+                //string filePath = "MyImage.jpg";
+                //File.WriteAllBytes(filePath, Convert.FromBase64String(brand_logo));
+
+                //PdfImageElement img = new PdfImageElement(
+                //    doc.Pages[0].ClientRectangle.Width - 300,
+                //    doc.Pages[0].ClientRectangle.Height - 150, filePath);
+                //img.Transparency = 50;
+                //template.Background = true;
+                //template.Add(img);
 
                 doc.Save(ms);
                 res = ms.ToArray();

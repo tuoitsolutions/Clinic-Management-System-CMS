@@ -13,7 +13,12 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import IconButtonPopper from "../../Component/IconButtonPopper/IconButtonPopper";
 import PreviewPictureFtp from "../../Component/PreviewPictureFtp";
-import { InvalidDateTimeToDefault } from "../../Hooks/UseDateParser";
+import {
+  InvalidDateTimeToDefault,
+  InvalidDateToDefault,
+  InvalidTimeToDefault,
+} from "../../Hooks/UseDateParser";
+import { StringEmptyToDefault } from "../../Hooks/UseStringFormatter";
 import { setPageSnackbar } from "../../Services/Actions/PageActions";
 import ConsultRequestApi from "../../Services/Api/ConsultRequestApi";
 import DashboardApi from "../../Services/Api/DashboardApi";
@@ -57,7 +62,7 @@ const ContainerRequestOtherDept: FC<IContainerRequestOtherDept> = memo(() => {
           <Grid item xs={12}>
             <div className="ctnr-title">
               <div className="main">
-                Transferable Consultation Request of Other Departments
+                Transferable Consultation of Other Departments
               </div>
               <div className="sub">
                 These are list of consultation request that you can take over to
@@ -99,20 +104,19 @@ const ContainerRequestOtherDept: FC<IContainerRequestOtherDept> = memo(() => {
                       <TableCell
                         align="center"
                         style={{
-                          minWidth: 70,
-                          maxWidth: 70,
+                          minWidth: 30,
+                          maxWidth: 30,
+                          width: 30,
                         }}
-                      >
-                        Actions
-                      </TableCell>
+                      ></TableCell>
                       <TableCell>Requested By</TableCell>
-                      {/* <TableCell>Resident</TableCell>
-                      <TableCell align="center">Charity</TableCell>
-                      <TableCell align="center">Status</TableCell> */}
+                      <TableCell>Department</TableCell>
+
                       <TableCell
                         style={{
-                          minWidth: 155,
-                          maxWidth: 155,
+                          minWidth: 110,
+                          maxWidth: 110,
+                          width: 110,
                         }}
                       >
                         Requested On
@@ -155,46 +159,27 @@ const ContainerRequestOtherDept: FC<IContainerRequestOtherDept> = memo(() => {
                             </div>
                           </StyledTableProfile>
                         </TableCell>
-                        {/* <TableCell>
-                          <StyledTableProfile>
-                            <PreviewPictureFtp
-                              className="profile-photo"
-                              spacing={3}
-                              api_func={HospResidentApi.PreviewResidentPic}
-                              api_params={row.assigned_resident_info?.res_pk}
-                              watch_change={row.assigned_resident_info?.pic_dest}
-                            />
-                            <div className="profile-title">
-                              {StringEmptyToDefault(
-                                row?.assigned_resident_info?.res_name,
-                                <em>To be decided</em>
-                              )}
-                            </div>
-  
-                            <div className="profile-subtitle">
-                              {StringEmptyToDefault(
-                                row?.assigned_resident_info?.specialty,
-                                ""
-                              )}
-                            </div>
-                          </StyledTableProfile>
-                        </TableCell>
-                        <TableCell align="center">
-                          {row?.is_charity === "y" ? "Yes" : "No"}
-                        </TableCell>
-                        <TableCell align="center">
-                          <Chip
-                            label={row?.status?.sts_desc}
-                            style={{
-                              color: row?.status?.sts_color,
-                              backgroundColor: row?.status?.sts_bg_color,
-                            }}
-                          />
-                        </TableCell> */}
+
                         <TableCell>
-                          <small>
-                            {InvalidDateTimeToDefault(row?.request_at, "-")}
-                          </small>
+                          {StringEmptyToDefault(
+                            row.assign_dept_desc,
+                            <em>No department assigned</em>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div
+                            className="table-datetime "
+                            style={{
+                              color: row.is_cut_off === 1 ? `red` : "",
+                            }}
+                          >
+                            <div>
+                              {InvalidDateToDefault(row?.request_at, "-")}
+                            </div>
+                            <div>
+                              {InvalidTimeToDefault(row?.request_at, "-")}
+                            </div>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}

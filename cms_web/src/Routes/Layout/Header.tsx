@@ -95,7 +95,14 @@ const Header: React.FC<IHeader> = memo(
             {/* {user?.username?.toLowerCase().trim() === "pgh" && (
               <OnlineUsersMenu />
             )} */}
-            <UserProfile user={user} variant={mobile ? "mobile" : "desktop"} />
+            {!!user?.user_type ? (
+              <UserProfile
+                user={user}
+                variant={mobile ? "mobile" : "desktop"}
+              />
+            ) : (
+              <> </>
+            )}
           </section>
 
           <IconButton className="btn-open-menu" onClick={handleToggleHeader}>
@@ -115,6 +122,7 @@ const StyledHeader = styled(AppBar)`
   display: grid !important;
   grid-auto-flow: column !important;
   grid-auto-columns: ${(p) => p.theme.sidebar.maxWidth}px 1fr 1fr;
+  /* grid-auto-columns: ${(p) => p.theme.sidebar.maxWidth}px 1fr auto; */
   grid-gap: 2em !important;
   padding: 0 0.5em !important;
   transition: 0.2s all ease-in-out !important;

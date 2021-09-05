@@ -24,9 +24,17 @@ const GetUserResidentPic = async (): Promise<ResponseModel> => {
   return response;
 };
 
+const GetUserPhoto = async (): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetUserPhoto", null);
+
+  console.log(`response`, response);
+  return response;
+};
+
 export default {
   currentUserApi,
   authUserApi,
   GetUserResidentDtls,
   GetUserResidentPic,
+  GetUserPhoto,
 };

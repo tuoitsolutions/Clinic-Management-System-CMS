@@ -1,4 +1,4 @@
-import { Chip, Grid, IconButton } from "@material-ui/core";
+import { Chip, Grid, IconButton, Switch } from "@material-ui/core";
 import DuoRoundedIcon from "@material-ui/icons/DuoRounded";
 import { Alert } from "@material-ui/lab";
 import { useTheme } from "@material-ui/styles";
@@ -7,11 +7,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import BodyLoader from "../../../Component/BodyLoader";
 import LinkTabs, { ILinkTab } from "../../../Component/LinkTabs";
-import { InvalidDateToDefault } from "../../../Hooks/UseDateParser";
+import HelpNumber from "../../../Helpers/HelpNumber";
+import {
+  InvalidDateToDefault,
+  InvalidTimeToDefault,
+} from "../../../Hooks/UseDateParser";
 import { StringEmptyToDefault } from "../../../Hooks/UseStringFormatter";
 import UseWindow from "../../../Hooks/UseWindow";
 import {
   closePageLoading,
+  setGeneralPrompt,
   setPageLinksAction,
   setPageSnackbar,
   showPageLoading,
@@ -56,8 +61,6 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
     useState<null | ConsultRequestEntity>(null);
   const [error_message, set_error_message] = useState("");
 
-  const [is_open_chat, set_is_open_chat] = useState(false);
-
   const handleReloadRecord = useCallback(async () => {
     const hash_key: string = params.hash_key;
 
@@ -86,6 +89,42 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
       }
     }
   }, [dispatch, params.hash_key]);
+
+  const handleChangeCharityTag = useCallback(async () => {
+    if (!!selected_record?.consult_req_pk) {
+      dispatch(
+        setGeneralPrompt({
+          open: true,
+          custom_title: `Are you sure that you want to tag this consultation as ${
+            selected_record?.is_charity === "y" ? "Non-charity" : "Charity"
+          }?`,
+          continue_callback: async () => {
+            dispatch(
+              showPageLoading({
+                show: true,
+                loading_message: "Saving changes, thank you for your patience",
+              })
+            );
+            const response = await ConsultRequestApi.ChangeCharityTag({
+              is_charity: selected_record?.is_charity === "y" ? "n" : "y",
+              consult_req_pk: selected_record.consult_req_pk,
+            });
+
+            dispatch(closePageLoading());
+            dispatch(
+              setPageSnackbar(
+                response?.message?.toString(),
+                response.success ? "success" : "error"
+              )
+            );
+            if (response.success) {
+              handleReloadRecord();
+            }
+          },
+        })
+      );
+    }
+  }, [dispatch, handleReloadRecord, selected_record]);
 
   const GenerateTabLinks = useCallback(() => {
     let LinkTabRoutes: Array<ILinkTab> = [];
@@ -250,7 +289,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
     }
 
     return LinkTabRoutes;
-  }, [selected_record, user_type]);
+  }, [handleReloadRecord, params, selected_record, user_type]);
 
   useEffect(() => {
     let mounted = true;
@@ -344,13 +383,13 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
             <div className="panel-container patient-profile">
               <ConsultProfilePic />
 
-              <div className="patient-name">
-                {selected_record?.prefix} {selected_record?.first_name}{" "}
-                {selected_record?.middle_name} {selected_record?.last_name}{" "}
-                {selected_record?.suffix}
-              </div>
-
-              <div className="consult-status">
+              <div className="patient-profile-title">
+                <div className="main">
+                  {selected_record?.prefix} {selected_record?.first_name}{" "}
+                  {selected_record?.middle_name} {selected_record?.last_name}{" "}
+                  {selected_record?.suffix}
+                </div>
+                <div className="sub">{selected_record?.consult_req_pk}</div>
                 <Chip
                   label={selected_record?.status?.sts_desc}
                   style={{
@@ -361,7 +400,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
               </div>
 
               <div className="profile-actions">
-                <Grid container>
+                <Grid container spacing={1}>
                   <Grid item>
                     <ContainerConsultChat selected_row={selected_record} />
                   </Grid>
@@ -393,51 +432,81 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
               </div>
               <div className="personal-info-ctnr">
                 <div className="info-group-column">
-                  <div className="label">Gender</div>
-                  <div className="value">
-                    {selected_record?.gender === "m" && "Male"}
-                    {selected_record?.gender === "f" && "Female"}
-                  </div>
-                </div>
-                <div className="info-group-column">
-                  <div className="label">Date of Birth</div>
-                  <div className="value">
-                    {InvalidDateToDefault(selected_record?.birth_date, "-")} (
-                    {selected_record?.age})
-                  </div>
-                </div>
-                <div className="info-group-column">
                   <div className="label">Charity Patient</div>
                   <div className="value">
-                    {selected_record?.is_charity === "y" ? "Yes" : "No"}
+                    <Switch
+                      size="small"
+                      checked={selected_record?.is_charity === "y"}
+                      onChange={handleChangeCharityTag}
+                      color="primary"
+                    />
                   </div>
                 </div>
                 <div className="info-group-column">
-                  <div className="label">Nationality</div>
+                  <div className="label">Department</div>
                   <div className="value">
                     {StringEmptyToDefault(
-                      selected_record?.nat_desc,
-                      <em>Not specified</em>
+                      selected_record?.assign_dept_desc,
+                      <em>To be decided</em>
                     )}
                   </div>
                 </div>
                 <div className="info-group-column">
-                  <div className="label">Civil Status</div>
+                  <div className="label">Resident</div>
                   <div className="value">
-                    {" "}
                     {StringEmptyToDefault(
-                      selected_record?.cs_desc,
-                      <em>Not specified</em>
+                      selected_record?.assign_res_desc,
+                      <em>To be decided</em>
                     )}
                   </div>
                 </div>
                 <div className="info-group-column">
-                  <div className="label">Religion</div>
+                  <div className="label">Start Date</div>
                   <div className="value">
                     {" "}
+                    {InvalidDateToDefault(
+                      selected_record?.est_start_at,
+                      <em>To be decided</em>
+                    )}
+                  </div>
+                </div>
+                <div className="info-group-column">
+                  <div className="label">Start Time</div>
+                  <div className="value">
+                    {InvalidTimeToDefault(
+                      selected_record?.est_start_at,
+                      <em>To be decided</em>
+                    )}
+                  </div>
+                </div>
+                <div className="info-group-column">
+                  <div className="label">Consult Cost</div>
+                  <div className="value">
+                    <Chip
+                      label={
+                        <>
+                          {selected_record.is_charity === "y" ? (
+                            <em>Not applicable</em>
+                          ) : (
+                            <>
+                              &#8369;
+                              {HelpNumber.NumberToMoney(
+                                selected_record?.consult_cost
+                              )}
+                            </>
+                          )}
+                        </>
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="info-group-column">
+                  <div className="label">Patient No.</div>
+                  <div className="value">
                     {StringEmptyToDefault(
-                      selected_record?.rel_desc,
-                      <em>Not specified</em>
+                      selected_record?.hospital_no,
+                      <em>To be decided</em>
                     )}
                   </div>
                 </div>

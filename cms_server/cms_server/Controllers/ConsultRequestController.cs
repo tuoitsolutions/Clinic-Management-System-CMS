@@ -72,7 +72,6 @@ namespace cms_server.Controllers
         }
 
 
-
         [Authorize]
         [HttpPost]
         public IActionResult GetAssignResidentOnlineConsult(SingleValuePayload payload)
@@ -127,16 +126,31 @@ namespace cms_server.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult SetConsultDeptSched(ConsultRequestEntity payload)
+        public IActionResult TransferConsultDept(ConsultRequestEntity payload)
         {
-            return Ok(consult_req_repo.SetConsultDeptSched(payload, User.Identity.Name));
+            return Ok(consult_req_repo.TransferConsultDept(payload, User.Identity.Name));
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult SetEstSchedule(ConsultRequestEntity payload)
+        {
+            return Ok(consult_req_repo.SetEstSchedule(payload, User.Identity.Name));
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult ChangeCharityTag(ConsultRequestEntity payload)
+        {
+            payload.user_pk = User.Identity.Name;
+            return Ok(consult_req_repo.ChangeCharityTag(payload));
         }
 
         [Authorize]
         [HttpPost]
         public IActionResult SendConsultLink(SingleValuePayload payload)
         {
-            return Ok(consult_req_repo.SendConsultLink(payload.value, User.Identity.Name));
+            return Ok(consult_req_repo.SendConsultLink(payload.value));
         }
 
         [HttpPost]
@@ -156,11 +170,9 @@ namespace cms_server.Controllers
         [HttpPost]
         public IActionResult EndConsult(ConsultRequestEntity payload)
         {
-            string user_type = UseClaims.GetUserType((ClaimsIdentity)User.Identity);
             payload.last_updated_by = User.Identity.Name;
             return Ok(consult_req_repo.EndConsult(payload));
         }
-
 
         [HttpPost]
         public IActionResult TakeOverConsult(ConsultRequestEntity payload)

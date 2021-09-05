@@ -348,7 +348,7 @@ export const AdminDialogUpdate: FC<IAdminDialogUpdate> = memo((props) => {
               variant="contained"
               type="submit"
             >
-              Save Unit
+              Update Administrator
             </Button>
             <Button
               variant="contained"

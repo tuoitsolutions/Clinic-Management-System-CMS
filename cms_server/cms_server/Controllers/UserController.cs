@@ -143,5 +143,13 @@ namespace DeliveryRoomWatcher.Controllers
             return Ok(user_repo.GetUserResidentPic(username));
         }
 
+        [Authorize]
+        [HttpPost]
+        public IActionResult GetUserPhoto()
+        {
+            var username = User.Identity.Name;
+            return Ok(user_repo.GetUserPhoto(username));
+        }
+
     }
 }

@@ -142,7 +142,7 @@ const GrabPayPayment: FC<IGrabPayPayment> = memo(({ selected_consult_req }) => {
           <div>
             <Grid container spacing={6}>
               <Grid item xs={12}>
-                <div className="cntr-title">
+                <div className="ctnr-title">
                   <div className="sub">
                     The requestor's basic details is automatically loaded as the
                     billing information. You can change it as desired.

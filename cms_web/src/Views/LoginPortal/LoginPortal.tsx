@@ -179,7 +179,7 @@ export const LoginPortal: FC<ILoginPortal> = memo(() => {
                   </div> */}
 
                   <PrivacyPolicy />
-                  <div className="buttons">
+                  <div className="login-btn">
                     <LoadingButton
                       type="submit"
                       className="submit-btn"

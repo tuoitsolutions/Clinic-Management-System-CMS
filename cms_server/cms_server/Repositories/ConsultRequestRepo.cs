@@ -1,4 +1,5 @@
 ﻿using claim_form_server.Repositories;
+using cms_server.EmailTemplates;
 using cms_server.Entities;
 using cms_server.Hooks;
 using cms_server.Models;
@@ -24,6 +25,9 @@ namespace cms_server.Repositories
     {
         UserRepo user_repo = new UserRepo();
         DefValRepo def_val_repo = new DefValRepo();
+        PaymentLinkEmail pay_link_email = new PaymentLinkEmail();
+        OnlineConsultLinkEmail online_consult_link_email = new OnlineConsultLinkEmail();
+        CharityTagEmail charity_tag_email = new CharityTagEmail();
         public ResponseModel InsertConsultRequest(ConsultRequestEntity payload)
         {
             try
@@ -212,33 +216,7 @@ namespace cms_server.Repositories
                         {
                             payload.hash_key = con.QuerySingle<string>($@"SELECT MD5('{payload.consult_req_pk}')", null, transaction: tran);
 
-                            string brand_name = def_val_repo.GetHospitalName().data.ToString();
-                            string brand_initial = def_val_repo.GetHospitalInitial().data.ToString();
-
-                            string email_body = $@"<div style='font-family: Verdana;'>
-                                                      <div style='text-align: center; '>
-                                                          <h3 style='color: red'>Your Out-Patient Telemedicine ePayLink is now ready for visiting!</h3>
-                                                       </div>
-                                                      <h4>Peace be with you,</h4>
-                                                         <p>
-                                                             The ePayLink for your online consultation request with code <b>{payload.consult_req_pk}</b> is now available. 
-                                                             To access it,  <a href='{DefaultConfig._clientBaseUrl}consultation-payment/{payload.hash_key}' target='__blank' >kindly visit this link</a>
-                                                             then enter the 6 (six) digit OTP that was sent to your mobile number (<b>{payload.mob_no}</b>). 
-                                                         </p> 
-                                                        <div>
-                                                        <br />
-                                                        <br />
-                                                        <small>
-                                                            <em>
-                                                             This is a system generated message, do not reply.
-                                                            </em>
-                                                        </small>
-                                                        </div>
-                                                  </div>";
-
-                            // payload.email = "mrmontiveles@gmail.com";
-
-                            ResponseModel email_response = UseEmail.SendEmail(brand_name, payload.email, email_body, $"{brand_initial}-ePayLink");
+                            ResponseModel email_response = pay_link_email.CreatePaymentLinkEmail(payload);
 
                             if (!email_response.success)
                             {
@@ -320,12 +298,12 @@ namespace cms_server.Repositories
                         //string otp_code = UseOtp.create();
                         string otp_code = "111111";
 
-                        string full_body = $@"This is {def_val_repo.GetHospitalName().data}. Dear {selected_row.last_name}, {selected_row.first_name}, your Consultation Request Payment Link OTP is: {otp_code}. This is only valid within 24 hours.";
+                        string sms_body = $@"Greetings from {def_val_repo.GetHospitalName().data}, your Out-Patient Telemedicine ePayLink OTP is {otp_code}. This is only valid within 24 hours.";
 
                         int message_affected_rows = con.Execute($@"INSERT INTO messageout SET
                                                                 messageto='{selected_row.mob_no}',
-                                                                messagetext=@full_body;"
-                                                       , new { full_body }, transaction: tran);
+                                                                messagetext=@sms_body;"
+                                                       , new { sms_body }, transaction: tran);
 
                         if (message_affected_rows > 0)
                         {
@@ -344,26 +322,19 @@ namespace cms_server.Repositories
                             };
 
                             int insert_otp_affected_rows = con.Execute(
-                                        "INSERT INTO OTP set user_pk=@user_pk, mob_no=@mob_no, consult_req_pk=@consult_req_pk, otp_code=@otp_code;",
+                                        "INSERT INTO `otp` set user_pk=@user_pk, mob_no=@mob_no, consult_req_pk=@consult_req_pk, otp_code=@otp_code;",
                                        otp_payload, transaction: tran);
 
                             if (insert_otp_affected_rows > 0)
                             {
-
-
-                                string brand_name = def_val_repo.GetHospitalName().data.ToString();
-
-                                string email_message = $@"This is {brand_name}. Dear {selected_row.email},  kindly pay your Consultation Request at " + DefaultConfig._clientBaseUrl + "consultation-payment/" + selected_row.hash_key +
-                                                                                                        " .Please do not share this link to prevent outside sources from accessing your data.";
-                                ResponseModel email_response = UseEmail.SendEmail(brand_name, selected_row.email, email_message, "Online Consultation Payment Page");
-
+                                ResponseModel email_response = pay_link_email.CreatePaymentLinkEmail(selected_row);
 
                                 if (email_response.success)
                                 {
                                     tran.Commit();
                                     return new ResponseModel
                                     {
-                                        message = $"The consultation request of '{selected_row.last_name}, {selected_row.first_name}' has been sent successfully!",
+                                        message = $"The payment link of the consultation request {selected_row.consult_req_pk} has been emailed successfully!",
                                         success = true
                                     };
                                 }
@@ -865,7 +836,7 @@ namespace cms_server.Repositories
                       SELECT cr.*,MD5(cr.consult_req_pk) hash_key
                       ,r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc
                       ,psg.`citymundesc`,psg.`provincedesc`,psg.`barangaydesc`,psg.`regiondesc`,psg.`completeaddress` psgcaddress
-                      ,CONCAT(d.dept_code,'-',d.dept_name) AS `assign_dept_desc`
+                      ,dept_name AS `assign_dept_desc`
                       ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
                       ,calc_age(birth_date) AS age FROM `consult_request` cr
                       LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
@@ -888,7 +859,7 @@ namespace cms_server.Repositories
                       SELECT cr.*,MD5(cr.consult_req_pk) hash_key
                       ,r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc
                       ,psg.`citymundesc`,psg.`provincedesc`,psg.`barangaydesc`,psg.`regiondesc`,psg.`completeaddress` psgcaddress
-                      ,CONCAT(d.dept_code,'-',d.dept_name) AS `assign_dept_desc`
+                      ,d.dept_name AS `assign_dept_desc`
                       ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
                       ,calc_age(birth_date) AS age FROM `consult_request` cr
                       LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
@@ -1078,6 +1049,15 @@ namespace cms_server.Repositories
                     }
                     else
                     {
+
+                        if (selected_row.sts_pk.Equals("fa"))
+                        {
+                            return new ResponseModel
+                            {
+                                success = false,
+                                message = "Your online consultation is still subject for approval. Thank you for patience."
+                            };
+                        }
                         return new ResponseModel
                         {
                             success = false,
@@ -1417,7 +1397,169 @@ namespace cms_server.Repositories
             }
         }
 
-        public ResponseModel SetConsultDeptSched(ConsultRequestEntity payload, string user_pk)
+        public ResponseModel TransferConsultDept(ConsultRequestEntity payload, string user_pk)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                UserEntity user_info = con.QuerySingle<UserEntity>(
+                   $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                   , new { user_pk }
+                   , transaction: tran);
+
+                ConsultRequestEntity selected_row = con.QuerySingle<ConsultRequestEntity>(
+                                                  $@"SELECT * FROM (
+                                                   SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgcaddress
+                                                   FROM `consult_request` cr
+                                                   LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                                   LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                                   LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                                   LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
+                                                   WHERE consult_req_pk=@consult_req_pk limit 1 ;",
+                                                  new { payload.consult_req_pk }, transaction: tran);
+
+                var arr_sts = new List<string>() { "fa", "pd" };
+                if (!arr_sts.Any(selected_row.sts_pk.Contains))
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "The department and/or resident of this consultation could not be changed!"
+                    };
+                }
+
+
+                int update_consult = 0;
+
+
+                if (payload.is_send_consult_link)
+                {
+                    if (String.IsNullOrEmpty(selected_row.consult_link_pass) || String.IsNullOrEmpty(selected_row.consult_link_hash))
+                    {
+                        string consult_link_pass = UseOtp.create();
+                        string consult_link_hash = UseHash.Sha256(consult_link_pass);
+                        selected_row.consult_link_pass = consult_link_pass;
+                        selected_row.consult_link_hash = consult_link_hash;
+                        payload.consult_link_pass = consult_link_pass;
+                        payload.consult_link_hash = consult_link_hash;
+                    }
+                    else
+                    {
+                        payload.consult_link_pass = selected_row.consult_link_pass;
+                        payload.consult_link_hash = selected_row.consult_link_hash;
+                    }
+
+                    update_consult = con.Execute($@"
+                        UPDATE `consult_request` SET
+                        assign_dept_pk=@assign_dept_pk,
+                        assign_res_pk=@assign_res_pk,
+                        assign_dept_at=NOW(),
+                        consult_link_pass=@consult_link_pass,
+                        consult_link_hash=@consult_link_hash,
+                        consult_link_sent_count=(consult_link_sent_count+1)
+                        WHERE consult_req_pk = @consult_req_pk;"
+                        , payload,
+                        transaction: tran);
+                }
+                else
+                {
+                    update_consult = con.Execute($@"
+                         UPDATE `consult_request` SET 
+                         assign_dept_pk=@assign_dept_pk,
+                         assign_res_pk=@assign_res_pk,
+                         assign_dept_at=NOW()
+                         WHERE consult_req_pk=@consult_req_pk;"
+                        , payload
+                        , transaction: tran);
+                }
+
+                if (update_consult > 0)
+                {
+                    DepartmentEntity dept_info = con.QuerySingle<DepartmentEntity>(
+                   $@"SELECT * FROM `department` where `dept_pk`=@dept_pk;"
+                   , new { dept_pk = payload.assign_dept_pk }, transaction: tran);
+
+                    LogModel log_payload = new LogModel
+                    {
+                        activity = $"the consultation request {selected_row.consult_req_pk} has been assigned to {dept_info.dept_code} - {dept_info.dept_name}!",
+                        encoded_by = user_pk,
+                        ref_pk = selected_row.consult_req_pk,
+                        ref_table = "consult_request",
+                    };
+
+                    int insert_logs_affected_rows = con.Execute(
+                            $@"INSERT into `logs` set
+                             ref_pk=@ref_pk,
+                             ref_table=@ref_table,
+                             activity=@activity,
+                             encoded_at = NOW(),
+                             encoded_by=@encoded_by;
+                            ", log_payload, transaction: tran);
+
+                    if (insert_logs_affected_rows > 0)
+                    {
+                        //check if the department should be changed
+                        if (!payload.assign_dept_pk.Equals(selected_row.assign_dept_pk))
+                        {
+                            ConsultReqTranLogEntity tran_log = new ConsultReqTranLogEntity
+                            {
+                                consult_req_pk = selected_row.consult_req_pk,
+                                dept_pk_from = selected_row.assign_dept_pk,
+                                dept_pk_to = payload.assign_dept_pk,
+                                encoded_by = user_pk,
+                            };
+
+                            con.Execute(
+                              $@"INSERT into `consult_req_dept_tran_log` set
+                             consult_req_pk=@consult_req_pk,
+                             dept_pk_from=@dept_pk_from,
+                             dept_pk_to=@dept_pk_to,
+                             encoded_at = NOW(),
+                             encoded_by=@encoded_by;
+                            ", tran_log, transaction: tran);
+                        }
+
+                        if (payload.is_send_consult_link)
+                        {
+                            ResponseModel email_response = online_consult_link_email.CreateOnlineConsultLinkEmail(selected_row);
+
+                            if (!email_response.success)
+                            {
+                                return email_response;
+                            }
+                        }
+
+                        tran.Commit();
+                        return new ResponseModel
+                        {
+                            message = $"The consultation request {selected_row.consult_req_pk} has been assigned to {dept_info.dept_code} - {dept_info.dept_name}!",
+                            success = true
+                        };
+                    }
+                }
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The proccess has been terminated. Unidentified internal server has occured."
+                };
+
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = err.Message
+                };
+            }
+        }
+
+        public ResponseModel SetEstSchedule(ConsultRequestEntity payload, string user_pk)
         {
             try
             {
@@ -1434,30 +1576,43 @@ namespace cms_server.Repositories
                                                    LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
                                                    WHERE consult_req_pk=@consult_req_pk limit 1 ;",
                                                   new { payload.consult_req_pk }, transaction: tran);
-                // { "fa", "pd" }
+
                 var arr_sts = new List<string>() { "fa", "pd" };
                 if (!arr_sts.Any(selected_row.sts_pk.Contains))
                 {
                     return new ResponseModel
                     {
                         success = false,
-                        message = "The department and/or resident of this consultation can no longer changed!"
+                        message = "The schedule date and time of this consultation can no longer changed!"
                     };
                 }
+
+
                 int update_consult = 0;
-                string consult_link_pass = "111111";
-                string consult_link_hash = UseHash.Sha256(consult_link_pass);
 
                 if (payload.is_send_consult_link)
                 {
+                    if (String.IsNullOrEmpty(selected_row.consult_link_pass) || String.IsNullOrEmpty(selected_row.consult_link_hash))
+                    {
+                        string consult_link_pass = UseOtp.create();
+                        string consult_link_hash = UseHash.Sha256(consult_link_pass);
+                        selected_row.consult_link_pass = consult_link_pass;
+                        selected_row.consult_link_hash = consult_link_hash;
+                        payload.consult_link_pass = consult_link_pass;
+                        payload.consult_link_hash = consult_link_hash;
+                    }
+                    else
+                    {
+                        payload.consult_link_pass = selected_row.consult_link_pass;
+                        payload.consult_link_hash = selected_row.consult_link_hash;
+                    }
+
+
                     update_consult = con.Execute($@"
                         UPDATE `consult_request` SET
-                        assign_dept_pk=@assign_dept_pk,
-                        assign_res_pk=@assign_res_pk,
                         est_start_at=@est_start_at,
-                        assign_dept_at=NOW(),
-                        consult_link_pass='{consult_link_pass}',
-                        consult_link_hash='{consult_link_hash}',
+                        consult_link_pass=@consult_link_pass,
+                        consult_link_hash=@consult_link_hash,
                         consult_link_sent_count=(consult_link_sent_count+1)
                         WHERE consult_req_pk = @consult_req_pk;"
                         , payload,
@@ -1467,30 +1622,22 @@ namespace cms_server.Repositories
                 {
                     update_consult = con.Execute($@"
                          UPDATE `consult_request` SET 
-                         assign_dept_pk=@assign_dept_pk,
-                         assign_res_pk=@assign_res_pk,
-                         est_start_at=@est_start_at,
-                         assign_dept_at=NOW()
+                         est_start_at=@est_start_at
                          WHERE consult_req_pk=@consult_req_pk;"
                         , payload
                         , transaction: tran);
                 }
 
-
                 if (update_consult > 0)
                 {
-                    DepartmentEntity dept_info = con.QuerySingle<DepartmentEntity>(
-                   $@"SELECT * FROM `department` where `dept_pk`=@dept_pk;"
-                   , new { dept_pk = payload.assign_dept_pk }, transaction: tran);
 
                     LogModel log_payload = new LogModel
                     {
-                        activity = $"the consultation request {selected_row.consult_req_pk} has been assigned to {dept_info.dept_code} - {dept_info.dept_name}!",
+                        activity = $"the consultation request with code {selected_row.consult_req_pk} has been rescheduled to {selected_row.est_start_at?.ToString("MMM. dd, yyyy hh:mm tt")}!",
                         encoded_by = user_pk,
                         ref_pk = selected_row.consult_req_pk,
                         ref_table = "consult_request"
                     };
-
 
                     int insert_logs_affected_rows = con.Execute(
                             $@"INSERT into `logs` set
@@ -1503,31 +1650,10 @@ namespace cms_server.Repositories
 
                     if (insert_logs_affected_rows > 0)
                     {
+
                         if (payload.is_send_consult_link)
                         {
-                            string brand_name = def_val_repo.GetHospitalName().data.ToString();
-
-                            string msg_body = $@"This is {brand_name}. Dear {selected_row.last_name}, {selected_row.first_name}. Your online consultation will start {(payload.est_start_at == null ? "soon" : "at " + payload.est_start_at?.ToString("MMM. dd, yyyy hh:mm tt"))}.
-                                                 You can attend at {DefaultConfig._clientBaseUrl}online-consultation/{selected_row.hash_key} using the password {consult_link_pass}.";
-
-
-
-                            int message_sent = con.Execute($@"INSERT INTO messageout SET
-                                                              messageto='{selected_row.mob_no}',
-                                                              messagetext=@messagetext,
-                                                              encoded_by='{user_pk}';",
-                                                              new { messageto = selected_row.mob_no, messagetext = msg_body }, transaction: tran);
-
-                            if (message_sent < 1)
-                            {
-                                return new ResponseModel
-                                {
-                                    success = false,
-                                    message = "An error has occured when trying to send the message. Please try again!"
-                                };
-                            }
-
-                            ResponseModel email_response = UseEmail.SendEmail(brand_name, selected_row.email, msg_body, "Online Consultation Link");
+                            ResponseModel email_response = online_consult_link_email.CreateOnlineConsultLinkEmail(selected_row);
 
                             if (!email_response.success)
                             {
@@ -1538,7 +1664,7 @@ namespace cms_server.Repositories
                         tran.Commit();
                         return new ResponseModel
                         {
-                            message = $"The consultation request {selected_row.consult_req_pk} has been assigned to {dept_info.dept_code} - {dept_info.dept_name}!",
+                            message = $"The consultation request with code {selected_row.consult_req_pk} has been rescheduled to {selected_row.est_start_at?.ToString("MMM. dd, yyyy hh:mm tt")}!",
                             success = true
                         };
 
@@ -1563,7 +1689,137 @@ namespace cms_server.Repositories
             }
         }
 
-        public ResponseModel SendConsultLink(string consult_req_pk, string user_pk)
+        public ResponseModel ChangeCharityTag(ConsultRequestEntity payload)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+                ConsultRequestEntity selected_row = con.QuerySingle<ConsultRequestEntity>(
+                                                  $@"SELECT * FROM (
+                                                   SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgcaddress
+                                                   FROM `consult_request` cr
+                                                   LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                                   LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                                   LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                                   LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
+                                                   WHERE consult_req_pk=@consult_req_pk limit 1 ;",
+                                                  new { payload.consult_req_pk }, transaction: tran);
+
+                var arr_sts = new List<string>() { "fa", "pd" };
+                if (!arr_sts.Any(selected_row.sts_pk.Contains))
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "The consultation charity tag could not be changed!"
+                    };
+                }
+
+
+                int update_consult = 0;
+
+                if (payload.is_charity.Equals("y"))
+                {
+                    if (String.IsNullOrEmpty(selected_row.consult_link_pass) || String.IsNullOrEmpty(selected_row.consult_link_hash))
+                    {
+                        string consult_link_pass = UseOtp.create();
+                        string consult_link_hash = UseHash.Sha256(consult_link_pass);
+                        selected_row.consult_link_pass = consult_link_pass;
+                        selected_row.consult_link_hash = consult_link_hash;
+                        payload.consult_link_pass = consult_link_pass;
+                        payload.consult_link_hash = consult_link_hash;
+                    }
+                    else
+                    {
+                        payload.consult_link_pass = selected_row.consult_link_pass;
+                        payload.consult_link_hash = selected_row.consult_link_hash;
+                    }
+                    update_consult = con.Execute($@"
+                         UPDATE `consult_request` SET 
+                         is_charity='y',
+                         sts_pk='pd',
+                         consult_link_pass=@consult_link_pass,
+                         consult_link_hash=@consult_link_hash,
+                         consult_link_sent_count=(consult_link_sent_count+1)
+                         WHERE consult_req_pk=@consult_req_pk;"
+                        , payload
+                        , transaction: tran);
+                }
+                else
+                {
+                    update_consult = con.Execute($@"
+                         UPDATE `consult_request` SET 
+                         is_charity='n'
+                         WHERE consult_req_pk=@consult_req_pk;"
+                        , payload
+                        , transaction: tran);
+                }
+
+
+                if (update_consult > 0)
+                {
+
+                    LogModel log_payload = new LogModel
+                    {
+                        activity = $"the consultation request with code {selected_row.consult_req_pk} charity tag has been set to {(payload.is_charity.Equals("y") ? "Charity" : "Non Charity")}!",
+                        encoded_by = payload.user_pk,
+                        ref_pk = selected_row.consult_req_pk,
+                        ref_table = "consult_request"
+                    };
+
+                    int insert_logs_affected_rows = con.Execute(
+                            $@"INSERT into `logs` set
+                             ref_pk=@ref_pk,
+                             ref_table=@ref_table,
+                             activity=@activity,
+                             encoded_at = NOW(),
+                             encoded_by=@encoded_by;
+                            ", log_payload, transaction: tran);
+
+                    if (insert_logs_affected_rows > 0)
+                    {
+
+                        if (payload.is_charity.Equals("y"))
+                        {
+                            ResponseModel email_response = charity_tag_email.SendCharityEmail(selected_row);
+
+                            if (!email_response.success)
+                            {
+                                return email_response;
+                            }
+                        }
+
+                        tran.Commit();
+                        return new ResponseModel
+                        {
+                            message = $"The consultation request with code {selected_row.consult_req_pk} charity tag has been set to {(payload.is_charity.Equals("y") ? "Charity" : "Non Charity")}!",
+                            success = true
+                        };
+                    }
+                }
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The proccess has been terminated. Unidentified internal server has occured."
+                };
+
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = err.Message
+                };
+            }
+        }
+
+
+        public ResponseModel SendConsultLink(string consult_req_pk)
         {
             try
             {
@@ -1580,47 +1836,37 @@ namespace cms_server.Repositories
                                                    LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
                                                    WHERE consult_req_pk=@consult_req_pk limit 1 ;",
                                                   new { consult_req_pk }, transaction: tran);
-                var arr_sts = new List<string>() { "fa", "pd" };
+                var arr_sts = new List<string>() { "fa", "pd", "s" };
                 if (!arr_sts.Any(selected_row.sts_pk.Contains))
                 {
                     return new ResponseModel
                     {
                         success = false,
-                        message = "The online consultation link can no longer sent!"
+                        message = "The online consultation link could not be sent!"
                     };
                 }
-                string consult_link_pass = "111111";
-                string consult_link_hash = UseHash.Sha256(consult_link_pass);
+
+                if (String.IsNullOrEmpty(selected_row.consult_link_pass) || String.IsNullOrEmpty(selected_row.consult_link_hash))
+                {
+                    string consult_link_pass = UseOtp.create();
+                    string consult_link_hash = UseHash.Sha256(consult_link_pass);
+                    selected_row.consult_link_pass = consult_link_pass;
+                    selected_row.consult_link_hash = consult_link_hash;
+                }
+
 
                 int update_consult = con.Execute($@"
-                        UPDATE `consult_request` SET 
+                        UPDATE `consult_request` SET
+                        consult_link_pass=@consult_link_pass,
+                        consult_link_hash=@consult_link_hash,
                         consult_link_sent_count=(consult_link_sent_count+1)
                         WHERE consult_req_pk = @consult_req_pk;"
-                       , new { consult_req_pk },
+                       , selected_row,
                        transaction: tran);
 
                 if (update_consult > 0)
                 {
-                    string brand_name = def_val_repo.GetHospitalName().data.ToString();
-                    string msg_body = $@"This is {brand_name}. Dear {selected_row.last_name}, {selected_row.first_name}. Your online consultation will start {(selected_row.est_start_at == null ? "soon" : "at " + selected_row.est_start_at?.ToString("MMM. dd, yyyy hh:mm tt"))}.
-                                                 You can attend at {DefaultConfig._clientBaseUrl}online-consultation/{selected_row.hash_key} using the password {consult_link_pass}.";
-
-                    int message_sent = con.Execute($@"INSERT INTO messageout SET
-                                                              messageto='{selected_row.mob_no}',
-                                                              messagetext=@messagetext,
-                                                              encoded_by='{user_pk}';",
-                                                      new { messageto = selected_row.mob_no, messagetext = msg_body }, transaction: tran);
-
-                    if (message_sent < 1)
-                    {
-                        return new ResponseModel
-                        {
-                            success = false,
-                            message = "An error has occured when trying to send the message. Please try again!"
-                        };
-                    }
-
-                    ResponseModel email_response = UseEmail.SendEmail(brand_name, selected_row.email, msg_body, "Online Consultation Link");
+                    ResponseModel email_response = online_consult_link_email.CreateOnlineConsultLinkEmail(selected_row);
 
                     if (!email_response.success)
                     {
@@ -1630,7 +1876,7 @@ namespace cms_server.Repositories
                     tran.Commit();
                     return new ResponseModel
                     {
-                        message = $"The online consultation link has been sent to the requester.",
+                        message = $"The online consultation link of the consultation request with code {selected_row.consult_req_pk} has been emailed successfully!",
                         success = true
                     };
                 }
@@ -1689,6 +1935,8 @@ namespace cms_server.Repositories
                     success = true,
                     data = pdf_file
                 };
+
+
             }
             catch (Exception err)
             {
@@ -1916,14 +2164,33 @@ namespace cms_server.Repositories
                                                    WHERE consult_req_pk=@consult_req_pk limit 1 ;",
                                              new { payload.consult_req_pk }, transaction: tran);
 
+
+
+                if (String.IsNullOrEmpty(selected_row.consult_link_hash) || selected_row?.consult_link_sent_count <= 0 || String.IsNullOrEmpty(selected_row.consult_link_hash))
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "You must send the Out-Patient Telemedicine eConsultRoom Link to the patient in order to start this consultation!"
+                    };
+                }
+
                 string user_res_pk = con.QuerySingle<string>(
-                                           $@"SELECT get_user_res_pk(@user_pk)",
-                                           new { user_pk = payload.last_updated_by }, transaction: tran);
+                                        $@"SELECT get_user_res_pk(@user_pk)",
+                                        new { user_pk = payload.last_updated_by }, transaction: tran);
 
-
-                if (selected_row?.assign_res_pk == user_res_pk && user_res_pk != null && selected_row.assign_res_pk != null)
+                if (selected_row?.assign_res_pk == user_res_pk && !String.IsNullOrEmpty(user_res_pk) && !String.IsNullOrEmpty(selected_row.assign_res_pk))
                 {
                     int patient_success = 0;
+
+                    if (String.IsNullOrEmpty(selected_row.consult_link_pass) || String.IsNullOrEmpty(selected_row.consult_link_hash))
+                    {
+                        string consult_link_pass = UseOtp.create();
+                        string consult_link_hash = UseHash.Sha256(consult_link_pass);
+                        selected_row.consult_link_pass = consult_link_pass;
+                        selected_row.consult_link_hash = consult_link_hash;
+                    }
+
 
                     int update_consult = con.Execute($@"
                         UPDATE `consult_request` SET
@@ -1982,7 +2249,6 @@ namespace cms_server.Repositories
                         email=@email,
                         mob_no=@mob_no,
                         line1=@line1,
-                        line2=@line2,
                         brgy_pk=@brgy_pk,
                         citymun_pk=@citymun_pk,
                         prov_pk=@prov_pk,
@@ -1999,7 +2265,7 @@ namespace cms_server.Repositories
                     {
                         LogModel log_payload = new LogModel
                         {
-                            activity = $"the consultation {selected_row.consult_req_pk} has been started",
+                            activity = $"the consultation with code {selected_row.consult_req_pk} has started.",
                             encoded_by = payload.last_updated_by,
                             ref_pk = selected_row.consult_req_pk,
                             ref_table = "consult_request"
@@ -2020,7 +2286,7 @@ namespace cms_server.Repositories
                             return new ResponseModel
                             {
                                 success = true,
-                                message = "The consultation has been started. The online consultation link has been sent to the patient. "
+                                message = $"The consultation with code {selected_row.consult_req_pk} has started and the eConsultRoom was created. You can now enter the room by calling the patient."
                             };
                         }
                         else

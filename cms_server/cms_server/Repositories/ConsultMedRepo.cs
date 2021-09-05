@@ -248,7 +248,7 @@ namespace cms_server.Repositories
             }
         }
 
-        public ResponseModel PreviewMedPrescrip(string consult_req_pk)
+        public ResponseModel PreviewMedPrescrip(string consult_req_pk, string user_pk)
         {
             try
             {
@@ -261,8 +261,6 @@ namespace cms_server.Repositories
                                                      ,r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc
                                                      ,psg.`citymundesc`,psg.`provincedesc`,psg.`barangaydesc`,psg.`regiondesc`,psg.`completeaddress` psgcaddress
                                                      ,CONCAT(d.dept_code,'-',d.dept_name) AS `assign_dept_desc`
-                                                     ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
-                                                     ,hr.esignature_dest AS esignature
                                                      ,calc_age(birth_date) AS age
                                                      FROM `consult_request` cr
                                                      LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
@@ -275,36 +273,62 @@ namespace cms_server.Repositories
                                                      WHERE consult_req_pk=@consult_req_pk LIMIT 1 ;",
                                                   new { consult_req_pk }, transaction: tran);
 
-                string brand_logo = def_val_repo.GetHospitalLogo().data.ToString();
-                string brand_name = def_val_repo.GetHospitalName().data.ToString();
-                string brand_email = def_val_repo.GetHospitalName().data.ToString();
-                string brand_phone = def_val_repo.GetHospitalPhone().data.ToString();
-                string brand_address = def_val_repo.GetHospitalAddress().data.ToString();
 
-                List<ConsultMedEntity> prescrip_meds = con.Query<ConsultMedEntity>(
-                                                  $@"SELECT * FROM `consult_req_med` WHERE 
-                                                     is_active ='y' AND `consult_req_pk` = @consult_req_pk;",
-                                                  new { consult_req_pk }, transaction: tran).ToList();
 
-                string soa_qr = UseQr.CreateConsultSoaQr(selected_row.hash_key, brand_logo);
+                string user_res_pk = con.QuerySingle<string>(
+                                        $@"SELECT get_user_res_pk(@user_pk)",
+                                        new { user_pk }, transaction: tran);
 
-                string resident_esignature_img = "";
-                byte[] img_byte_arr = UseFtp.DownloadFtp(DefaultConfig.ftp_ip + selected_row.esignature, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
-                if (img_byte_arr != null)
+                if (selected_row?.assign_res_pk == user_res_pk && !String.IsNullOrEmpty(user_res_pk) && !String.IsNullOrEmpty(selected_row.assign_res_pk))
                 {
-                    resident_esignature_img = "data:image/png;base64," + Convert.ToBase64String(img_byte_arr);
+
+                    string brand_logo = def_val_repo.GetHospitalLogo().data.ToString();
+                    string brand_name = def_val_repo.GetHospitalName().data.ToString();
+                    string brand_email = def_val_repo.GetHospitalName().data.ToString();
+                    string brand_phone = def_val_repo.GetHospitalPhone().data.ToString();
+                    string brand_address = def_val_repo.GetHospitalAddress().data.ToString();
+
+                    selected_row.assigned_resident_info = con.QuerySingleOrDefault<HospResidentEntity>(
+                                                  $@"SELECT r.*,
+                                                     CONCAT(r.`first_name`,`concat_nullable_string`(r.`middle_name`,' '),' ',r.`last_name`,`concat_nullable_string`(r.`suffix`,' '),`concat_nullable_string`(r.`doc_title`,', ')) res_name
+                                                     FROM `hosp_resident` r WHERE r.res_pk = @res_pk;",
+                                                  new { res_pk = selected_row.assign_res_pk }, transaction: tran);
+
+                    List<ConsultMedEntity> prescrip_meds = con.Query<ConsultMedEntity>(
+                                                      $@"SELECT * FROM `consult_req_med` WHERE 
+                                                     is_active ='y' AND `consult_req_pk` = @consult_req_pk;",
+                                                      new { consult_req_pk }, transaction: tran).ToList();
+
+                    string soa_qr = UseQr.CreateConsultSoaQr(selected_row.hash_key, brand_logo);
+
+                    string resident_esignature_img = "";
+                    byte[] img_byte_arr = UseFtp.DownloadFtp(DefaultConfig.ftp_ip + selected_row.assigned_resident_info.esignature_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                    if (img_byte_arr != null)
+                    {
+                        resident_esignature_img = "data:image/png;base64," + Convert.ToBase64String(img_byte_arr);
+                    }
+
+                    byte[] soa_pdf = MedPrescrip.GenerateSoaPdf(brand_name, brand_logo, brand_address, brand_phone, brand_email, selected_row, soa_qr, prescrip_meds, resident_esignature_img);
+
+                    string pdf_file = Convert.ToBase64String(soa_pdf);
+
+                    tran.Commit();
+                    return new ResponseModel
+                    {
+                        success = true,
+                        data = pdf_file
+                    };
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "Only the resident that is assigned to this consultation is allowed to perform this action."
+                    };
                 }
 
-                byte[] soa_pdf = MedPrescrip.GenerateSoaPdf(brand_name, brand_logo, brand_address, brand_phone, brand_email, selected_row, soa_qr, prescrip_meds, resident_esignature_img);
 
-                string pdf_file = Convert.ToBase64String(soa_pdf);
-
-                tran.Commit();
-                return new ResponseModel
-                {
-                    success = true,
-                    data = pdf_file
-                };
             }
             catch (Exception err)
             {
@@ -336,25 +360,32 @@ namespace cms_server.Repositories
                                                    WHERE consult_req_pk=@consult_req_pk limit 1 ;",
                                                   new { payload.consult_req_pk }, transaction: tran);
 
-                int update_consult_res = con.Execute($@"
+
+                string user_res_pk = con.QuerySingle<string>(
+                                     $@"SELECT get_user_res_pk(@user_pk)",
+                                     new { user_pk }, transaction: tran);
+
+                if (selected_row?.assign_res_pk == user_res_pk && !String.IsNullOrEmpty(user_res_pk) && !String.IsNullOrEmpty(selected_row.assign_res_pk))
+                {
+                    int update_consult_res = con.Execute($@"
                                         UPDATE `consult_request` SET 
                                         med_pres_sent = (med_pres_sent + 1)
                                         WHERE consult_req_pk=@consult_req_pk;
                             ", new { selected_row.consult_req_pk }, transaction: tran);
 
-                if (update_consult_res > 0)
-                {
-                    LogModel log_payload = new LogModel
+                    if (update_consult_res > 0)
                     {
-                        activity = $"the consultation {selected_row.consult_req_pk} Medical Prescription has been emailed to {selected_row.email}.",
-                        encoded_by = user_pk,
-                        ref_pk = selected_row.consult_req_pk,
-                        ref_table = "consult_request"
-                    };
+                        LogModel log_payload = new LogModel
+                        {
+                            activity = $"the consultation {selected_row.consult_req_pk} Medical Prescription has been emailed to {selected_row.email}.",
+                            encoded_by = user_pk,
+                            ref_pk = selected_row.consult_req_pk,
+                            ref_table = "consult_request"
+                        };
 
 
-                    int insert_logs_affected_rows = con.Execute(
-                            $@"INSERT into logs set
+                        int insert_logs_affected_rows = con.Execute(
+                                $@"INSERT into logs set
                              ref_pk=@ref_pk,
                              ref_table=@ref_table,
                              activity=@activity,
@@ -362,33 +393,42 @@ namespace cms_server.Repositories
                              encoded_by=@encoded_by;
                             ", log_payload, transaction: tran);
 
-                    if (insert_logs_affected_rows > 0)
-                    {
-                        string brand_name = def_val_repo.GetHospitalName().data.ToString();
-                        string brand_initial = def_val_repo.GetHospitalInitial().data.ToString();
-
-                        byte[] pdf = Convert.FromBase64String(payload.attach_file);
-
-                        string email_message = $"Greetings {selected_row.first_name} from {brand_name}. This is the Medical Prescription of your consultation {selected_row.consult_req_pk}.";
-
-                        ResponseModel email_response = UseEmail.SendEmailAttachment(brand_name,
-                            selected_row.email,
-                            email_message,
-                            $"{brand_initial} Medical Prescription",
-                            $"Medical-Prescription-{selected_row.consult_req_pk}",
-                           pdf);
-                        if (!email_response.success)
+                        if (insert_logs_affected_rows > 0)
                         {
-                            return email_response;
-                        }
+                            string brand_name = def_val_repo.GetHospitalName().data.ToString();
+                            string brand_initial = def_val_repo.GetHospitalInitial().data.ToString();
 
-                        tran.Commit();
+                            byte[] pdf = Convert.FromBase64String(payload.attach_file);
+
+                            string email_message = $"Greetings {selected_row.first_name} from {brand_name}. This is the Medical Prescription of your consultation {selected_row.consult_req_pk}.";
+
+                            ResponseModel email_response = UseEmail.SendEmailAttachment(brand_name,
+                                selected_row.email,
+                                email_message,
+                                $"{brand_initial} Medical Prescription",
+                                $"Medical-Prescription-{selected_row.consult_req_pk}",
+                               pdf);
+                            if (!email_response.success)
+                            {
+                                return email_response;
+                            }
+
+                            tran.Commit();
+                            return new ResponseModel
+                            {
+                                message = $"The consultation {selected_row.consult_req_pk} Medical Prescription has been emailed to {selected_row.email}.",
+                                success = true
+                            };
+
+                        }
+                    }
+                    else
+                    {
                         return new ResponseModel
                         {
-                            message = $"The consultation {selected_row.consult_req_pk} Medical Prescription has been emailed to {selected_row.email}.",
-                            success = true
+                            success = false,
+                            message = "No affected rows in the process."
                         };
-
                     }
                 }
                 else
@@ -396,7 +436,7 @@ namespace cms_server.Repositories
                     return new ResponseModel
                     {
                         success = false,
-                        message = "No affected rows in the process."
+                        message = "Only the resident that is assigned to this consultation is allowed to perform this action."
                     };
                 }
 
