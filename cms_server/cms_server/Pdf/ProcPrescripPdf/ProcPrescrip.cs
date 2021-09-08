@@ -1,8 +1,10 @@
 ﻿using cms_server.Entities;
 using cms_server.Hooks;
 using SelectPdf;
+using Spire.Pdf;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 
 namespace cms_server.Pdf
@@ -14,6 +16,7 @@ namespace cms_server.Pdf
             List<ConsultProcEntity> proc_prescrip, string resident_esignature_img
             )
         {
+
 
             Byte[] res = null;
             MemoryStream ms = null;
@@ -78,7 +81,7 @@ namespace cms_server.Pdf
                     $@"
                         <html>
                             <head>
-                                <style>{css_instance}</style>
+                                <style>{css_instance} </style>
                             </head>
                             <body>
                                 <div class='request-info-ctnr'>
@@ -156,7 +159,7 @@ namespace cms_server.Pdf
                                 
                                 <div class='divider'> </div>
                                 
-                                <table style='margin-top: 10pt'>
+                                <table style='margin-top: 10pt' >
                                     <thead style='display: table-header-group;'>
                                         <tr>
                                             <td>
@@ -185,23 +188,23 @@ namespace cms_server.Pdf
                                              </div>                  
                                              <div class='name'>
                                                  <div>{consult_request.assigned_resident_info?.res_name}</div>
-                                                 <div>{consult_request.assigned_resident_info?.license_no}</div>
+                                                 <div><small>Lic. No. {consult_request.assigned_resident_info?.license_no}</small></div>
                                              </div>             
                                          </div>
                                     </div>
                                 </div>
-
                             </body>
                         </html>
                      ";
 
-                string html_footer = "This is an eletronically signed document | Page: {page_number} of {total_pages} | Issued At: " + DateTime.Now.ToString("MMM, dd, yyyy hh:mm tt");
+                string html_footer = "This is an electronically signed document | Page: {page_number} of {total_pages} | Issued At: " + DateTime.Now.ToString("MMM, dd, yyyy hh:mm tt");
 
-                PdfDocument doc = UsePdf.CreateStandardPdfDocument(html_header, html_body, html_footer);
-
+                var doc = UsePdf.CreateStandardPdfDocument(html_header, html_body, html_footer);
                 doc.Save(ms);
                 res = ms.ToArray();
+
             }
+
             return res;
         }
 

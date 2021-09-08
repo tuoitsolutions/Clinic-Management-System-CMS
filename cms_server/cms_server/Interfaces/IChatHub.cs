@@ -9,7 +9,7 @@ namespace cms_server.Interfaces
 {
     public interface IChatHub
     {
-        Task GetConsultMessage(ConsultReqChatEntity message);
+        Task GetConsultMessage();
         Task Connected();
         Task Disconnected();
     }

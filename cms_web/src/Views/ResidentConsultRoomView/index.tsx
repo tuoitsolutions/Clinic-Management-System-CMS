@@ -1,12 +1,4 @@
-import {
-  Button,
-  Container,
-  Grid,
-  IconButton,
-  TextField,
-  useTheme,
-} from "@material-ui/core";
-import SendRoundedIcon from "@material-ui/icons/SendRounded";
+import { Button, Container, Grid, useTheme } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import React, {
@@ -17,18 +9,14 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Jutsu } from "react-jutsu";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import BodyLoader from "../../Component/BodyLoader";
-import CustomAvatar from "../../Component/CustomAvatar";
+import CustomTab from "../../Component/CustomTabs";
+import PreviewPDF from "../../Component/PreviewPDF";
 import { getAccessToken, SERVER_URL } from "../../Helpers/AppConfig";
-import {
-  DateSqlToNow,
-  InvalidDateTimeToDefault,
-} from "../../Hooks/UseDateParser";
 import { StringEmptyToDefault } from "../../Hooks/UseStringFormatter";
-import {
+import PageActions, {
   closePageLoading,
   setGeneralPrompt,
   setPageLinksAction,
@@ -37,40 +25,67 @@ import {
 } from "../../Services/Actions/PageActions";
 import ChatConsultApi from "../../Services/Api/ChatConsultApi";
 import ConsultRequestApi from "../../Services/Api/ConsultRequestApi";
+import ConsultRequestFileApi from "../../Services/Api/ConsultRequestFileApi";
 import ConsultReqChatEntity from "../../Services/Entities/ConsultChatEntity";
 import ConsultRequestEntity from "../../Services/Entities/ConsultRequestEntity";
+import ConsultRequestFileEntity from "../../Services/Entities/ConsultRequestFileEntity";
 import { RootStore } from "../../Services/Store";
-import { VideoChatUi } from "../../Styles/GlobalStyles";
+import TabOnlineConsultChat from "./TabOnlineConsultChat";
+import TabOnlineConsultSharedFiles from "./TabOnlineConsultSharedFiles";
+import TabResidentVideoCall from "./TabResidentVideoCall";
+import WriteDiagnosisDialog from "./WriteDiagnosisDialog";
 
 interface IResidentConsultRoom {}
 
 const ResidentConsultRoom: FC<IResidentConsultRoom> = memo(() => {
   const { hash_key } = useParams<any>();
-  const theme = useTheme();
   const user_type = useSelector(
     (store: RootStore) => store.UserReducer.user?.user_type
   );
   const user = useSelector((store: RootStore) => store.UserReducer.user);
   const dispatch = useDispatch();
-  const chat_form_ref = useRef<HTMLFormElement | null>();
 
   const [selected_record, set_selected_record] =
     useState<ConsultRequestEntity | null>(null);
 
+  const [reload_all_data, set_reload_all_data] = useState(0);
   const [loading_initial_data, set_loading_initial_data] = useState(false);
   const [error_message, set_error_message] = useState("");
 
   const [connection, set_connection] = useState(null);
-  const message_textfield_ref = useRef<any>(null);
 
-  const [chat_messages, set_chat_messages] = useState<
-    Array<ConsultReqChatEntity>
-  >([]);
-  const [message_body, set_message_body] = useState("");
+  const [selected_consult_file, set_selected_consult_file] =
+    useState<ConsultRequestFileEntity | null>(null);
 
-  const handleSetMessageBody = useCallback((e) => {
-    set_message_body(e.target.value);
-  }, []);
+  const [open_diagnosis_dialog, set_open_diagnosis_dialog] = useState(null);
+
+  const handleSetSelectedFile = useCallback(
+    async (file_pk?: number) => {
+      if (!!hash_key) {
+        dispatch(
+          PageActions.showPageLoading({
+            loading_message: "Preparing the file, thank you for your patience.",
+            show: true,
+          })
+        );
+        const selected_consult_file_response =
+          await ConsultRequestFileApi.GetConsultReqFileByPk(file_pk);
+        dispatch(PageActions.closePageLoading());
+
+        if (selected_consult_file_response.success) {
+          set_selected_consult_file(selected_consult_file_response.data);
+        } else {
+          dispatch(
+            setPageSnackbar(
+              selected_consult_file_response.message.toString(),
+              "error"
+            )
+          );
+        }
+      }
+    },
+    [dispatch, hash_key]
+  );
 
   const handleReloadSelectedConsult = useCallback(async () => {
     if (!!hash_key) {
@@ -88,33 +103,6 @@ const ResidentConsultRoom: FC<IResidentConsultRoom> = memo(() => {
       }
     }
   }, [hash_key]);
-
-  const handleSubmitMessage = useCallback(async () => {
-    const connection_id: string = connection.connectionId;
-
-    if (!!connection_id) {
-      const payload: ConsultReqChatEntity = {
-        msg_body: message_body,
-        consult_req_pk: selected_record.consult_req_pk,
-        user_type: "hosp_resident",
-        sender_name: user?.full_name,
-        connection_id: connection_id,
-      };
-
-      const res = await ChatConsultApi.InsertConsultChat(payload);
-
-      dispatch(
-        setPageSnackbar(
-          res?.message?.toString(),
-          res.success ? "success" : "error"
-        )
-      );
-
-      if (res.success) {
-        set_message_body("");
-      }
-    }
-  }, [connection, dispatch, message_body, selected_record, user]);
 
   const handleEndConsultation = useCallback(async () => {
     if (!!selected_record?.consult_req_pk) {
@@ -151,35 +139,33 @@ const ResidentConsultRoom: FC<IResidentConsultRoom> = memo(() => {
   }, [dispatch, handleReloadSelectedConsult, selected_record]);
 
   useEffect(() => {
-    const newConnection = new HubConnectionBuilder()
+    const signalr_con = new HubConnectionBuilder()
       .withUrl(`${SERVER_URL}api/hubs/chat`, {
         accessTokenFactory: () => getAccessToken(),
       })
       .configureLogging(LogLevel.None)
       .build();
 
-    set_connection(newConnection);
+    set_connection(signalr_con);
   }, []);
 
   useEffect(() => {
-    if (!!connection && !!selected_record?.consult_req_pk) {
+    if (!!connection && !!selected_record) {
       connection
         .start()
         .then((result) => {
-          console.log(`result`, result);
           connection.on("GetConsultMessage", async () => {
             const res = await ChatConsultApi.GetConsultChat(
               selected_record.consult_req_pk
             );
             if (res.success) {
-              set_chat_messages(res.data);
+              set_reload_all_data((r) => r + 1);
             } else {
               dispatch(setPageSnackbar(res?.message?.toString(), "error"));
             }
           });
 
           connection.on("connected", async () => {
-            console.log(`connected`);
             const connection_id: string = connection.connectionId;
             if (!!connection_id) {
               const payload: ConsultReqChatEntity = {
@@ -205,33 +191,6 @@ const ResidentConsultRoom: FC<IResidentConsultRoom> = memo(() => {
         .catch((e) => console.error("Connection failed: ", e));
     }
   }, [connection, dispatch, selected_record]);
-
-  useEffect(() => {
-    let mounted = true;
-    const fetch_initial_data = async () => {
-      const res = await ChatConsultApi.GetConsultChat(
-        selected_record.consult_req_pk
-      );
-      if (res.success) {
-        set_chat_messages(res.data);
-      } else {
-        dispatch(setPageSnackbar(res?.message?.toString(), "error"));
-      }
-    };
-
-    mounted && !!selected_record?.consult_req_pk && fetch_initial_data();
-
-    return () => {
-      mounted = false;
-    };
-  }, [dispatch, selected_record]);
-
-  useEffect(() => {
-    const connection_id: string = connection?.connectionId;
-    if (!!chat_messages && !!connection_id && message_textfield_ref?.current) {
-      message_textfield_ref?.current.scrollIntoView(false);
-    }
-  }, [chat_messages, connection]);
 
   useEffect(() => {
     let mounted = true;
@@ -310,6 +269,17 @@ const ResidentConsultRoom: FC<IResidentConsultRoom> = memo(() => {
                         variant="contained"
                         color="primary"
                         onClick={() => {
+                          set_open_diagnosis_dialog(true);
+                        }}
+                      >
+                        Write Diagnosis
+                      </Button>
+                    </Grid>
+                    <Grid item>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => {
                           handleEndConsultation();
                         }}
                       >
@@ -319,228 +289,83 @@ const ResidentConsultRoom: FC<IResidentConsultRoom> = memo(() => {
                   </Grid>
                 </Grid>
                 <Grid item xs={12}>
-                  <VideoChatUi theme={theme}>
-                    {!!!!selected_record?.consult_link_hash && (
-                      <div className="container-video">
-                        <div className="video">
-                          <Jutsu
-                            roomName={
-                              selected_record.hash_key +
-                              selected_record.consult_link_hash
-                            }
-                            displayName={user?.full_name}
-                            subject={selected_record.consult_req_pk}
-                            containerStyles={{
-                              height: `100%`,
-                              width: `100%`,
-                              border: `none`,
-                            }}
-                            loadingComponent={<BodyLoader />}
-                            errorComponent={
-                              <Alert severity="error">
-                                The video could not be loaded.
-                              </Alert>
-                            }
-                            configOverwrite={{
-                              enableWelcomePage: false,
-                              prejoinPageEnabled: false,
-                              disableLogCollector: true,
-                              defaultLogLevel: "error",
-                              startWithVideoMuted: true,
-                              startWithAudioMuted: true,
-                              disableDeepLinking: true,
-                            }}
-                            onJitsi={(e) => {
-                              console.log(`jitsi details -> `, e);
-                            }}
-                            loggerConfigOverwrite={{
-                              disableLogCollector: false,
-                            }}
-                            interfaceConfigOverwrite={{
-                              disableLogCollector: false,
-                              defaultLogLevel: "error",
-                              prejoinPageEnabled: false,
-                              DISPLAY_WELCOME_FOOTER: false,
-                              GENERATE_ROOMNAMES_ON_WELCOME_PAGE: false,
-                              HIDE_INVITE_MORE_HEADER: true,
-                              HIDE_DEEP_LINKING_LOGO: true,
-                              SHOW_JITSI_WATERMARK: false,
-                              SHOW_WATERMARK_FOR_GUESTS: false,
-                              // JITSI_WATERMARK_LINK: "",
-                              TOOLBAR_BUTTONS: [
-                                "microphone",
-                                "camera",
-                                "desktop",
-                                "fullscreen",
-                                "fodeviceselection",
-                                "hangup",
-                                "profile",
-                                "etherpad",
-                                "settings",
-                                "raisehand",
-                                "stats",
-                                "shortcuts",
-                                "tileview",
-                                "videobackgroundblur",
-                                "mute-everyone",
-                              ],
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} md={8} lg={9}>
+                      {!!selected_record?.consult_link_hash && (
+                        <TabResidentVideoCall consult_info={selected_record} />
+                      )}
+                    </Grid>
+                    <Grid item xs={12} md={4} lg={3}>
+                      <div
+                        className="tab-container"
+                        style={{
+                          backgroundColor: `#fff`,
+                          borderRadius: 10,
+                          boxShadow: `0 0 20px rgba(0,0,0,.05)`,
+                          paddingTop: `.5em`,
+                        }}
+                      >
+                        <CustomTab
+                          height={`70vh`}
+                          tabs={[
+                            {
+                              title: "Chat",
+                              RenderComponent: (
+                                <>
+                                  <TabOnlineConsultChat
+                                    consult_info={selected_record}
+                                    handleSetSelectedFile={
+                                      handleSetSelectedFile
+                                    }
+                                    reload_file={reload_all_data}
+                                    connection={connection}
+                                  />
+                                </>
+                              ),
+                            },
+                            {
+                              title: "Shared Files",
+                              RenderComponent: (
+                                <TabOnlineConsultSharedFiles
+                                  consult_info={selected_record}
+                                  handleSetSelectedFile={handleSetSelectedFile}
+                                  reload_file={reload_all_data}
+                                />
+                              ),
+                            },
+                          ]}
+                        />
+
+                        {open_diagnosis_dialog && !!selected_record && (
+                          <WriteDiagnosisDialog
+                            open_dialog={open_diagnosis_dialog}
+                            handleClose={() => set_open_diagnosis_dialog(false)}
+                            consult_info={selected_record}
+                            successCallback={() => {
+                              handleReloadSelectedConsult();
                             }}
                           />
-                        </div>
-                        <div className="consult-info">
-                          <Grid container spacing={1}>
-                            <Grid item xs={12} md={4}>
-                              <div className="info-group-column">
-                                <div className="label">Patient Name</div>
-                                <div className="value">
-                                  {selected_record?.prefix}{" "}
-                                  {selected_record?.first_name}{" "}
-                                  {selected_record?.middle_name}{" "}
-                                  {selected_record?.last_name}{" "}
-                                  {selected_record?.suffix}
-                                </div>
-                              </div>
-                            </Grid>
+                        )}
 
-                            <Grid item xs={12} md={4}>
-                              <div className="info-group-column">
-                                <div className="label">Started On: </div>
-                                <div className="value">
-                                  {InvalidDateTimeToDefault(
-                                    selected_record?.consult_at,
-                                    "-"
-                                  )}
-                                </div>
-                              </div>
-                            </Grid>
-
-                            {/* <Grid item xs={12} md={4}>
-                              <div className="info-group-column">
-                                <div className="label">Est. Start Date: </div>
-                                <div className="value">
-                                  {InvalidDateToDefault(
-                                    selected_record?.est_start_at,
-                                    "-"
-                                  )}
-                                </div>
-                              </div>
-                            </Grid>
-
-                            <Grid item xs={12} md={4}>
-                              <div className="info-group-column">
-                                <div className="label">Est. Start Time: </div>
-                                <div className="value">
-                                  {InvalidTimeToDefault(
-                                    selected_record?.est_start_at,
-                                    "-"
-                                  )}
-                                </div>
-                              </div>
-                            </Grid> */}
-                            <Grid item xs={12}>
-                              <div className="info-group-column">
-                                <div className="label">Chief Complaint</div>
-                                <div className="value">
-                                  {StringEmptyToDefault(
-                                    selected_record?.chief_complaint,
-                                    <em>Not indicated</em>
-                                  )}
-                                </div>
-                              </div>
-                            </Grid>
-                            <Grid item xs={12}>
-                              <div className="info-group-column">
-                                <div className="label">Symptoms</div>
-                                <div className="value">
-                                  {StringEmptyToDefault(
-                                    selected_record?.symptoms,
-                                    <em>Not indicated</em>
-                                  )}
-                                </div>
-                              </div>
-                            </Grid>
-                          </Grid>
-                        </div>
+                        {!!selected_consult_file?.file_dest && (
+                          <>
+                            <PreviewPDF
+                              file={selected_consult_file?.file_dest}
+                              doc_title={StringEmptyToDefault(
+                                selected_consult_file?.file_name +
+                                  selected_consult_file?.file_ext,
+                                selected_consult_file?.file_dest
+                              )}
+                              handleClose={() => {
+                                set_selected_consult_file(null);
+                              }}
+                              actions={<></>}
+                            />
+                          </>
+                        )}
                       </div>
-                    )}
-                    <div className="container-chat">
-                      <>
-                        <div className="cntr-title">
-                          <div className="main">Chat</div>
-                          <div className="sub">
-                            You can communicate with each other here.
-                          </div>
-                        </div>
-
-                        <div className="sent-msg-ctnr" id="msg-ctnr">
-                          {chat_messages.map((msg, i) => (
-                            <div className="sent-msg-item" key={i}>
-                              <CustomAvatar
-                                className="img"
-                                src=""
-                                alt={msg?.sender_name?.charAt(0)}
-                                spacing={4}
-                              />
-                              <div className="name-msg">
-                                <div className="name">{msg.sender_name}</div>
-                                <div className="message">{msg.msg_body}</div>
-                              </div>
-                              <div className="time">
-                                {DateSqlToNow(msg.sent_at, "-")}
-                              </div>
-                            </div>
-                          ))}
-                          <div ref={message_textfield_ref} />
-                        </div>
-
-                        <form
-                          id="hook-form"
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            handleSubmitMessage();
-                          }}
-                          className="write-msg-ctnr"
-                          ref={chat_form_ref}
-                        >
-                          <TextField
-                            value={message_body}
-                            onChange={handleSetMessageBody}
-                            fullWidth
-                            variant="outlined"
-                            placeholder="Write your message here..."
-                            multiline
-                            rowsMax={2}
-                            rows={2}
-                            className="write-btn"
-                            onKeyDown={(
-                              event: React.KeyboardEvent<HTMLDivElement>
-                            ): void => {
-                              if (event.key === "Enter" && !event.shiftKey) {
-                                if (chat_form_ref.current) {
-                                  handleSubmitMessage();
-                                }
-                              }
-                            }}
-                            InputProps={{
-                              style: {
-                                border: `none`,
-                              },
-                            }}
-                          />
-                          <IconButton
-                            form="hook-form"
-                            type="submit"
-                            style={{
-                              backgroundColor: `#785ada7d`,
-                              color: `#fff`,
-                            }}
-                          >
-                            <SendRoundedIcon />
-                          </IconButton>
-                        </form>
-                      </>
-                    </div>
-                  </VideoChatUi>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
             )}

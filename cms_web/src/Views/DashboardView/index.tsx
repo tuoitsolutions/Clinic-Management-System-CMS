@@ -75,9 +75,9 @@ const DashboardView: FC<IDashboardView> = memo(() => {
             <ContainerConsultSumDept />
           </Grid>
 
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <ContainerCharityGraph />
-          </Grid>
+          </Grid> */}
         </Grid>
       </DashboardUi>
     </>

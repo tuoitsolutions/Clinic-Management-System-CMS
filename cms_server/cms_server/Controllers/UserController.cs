@@ -3,6 +3,7 @@ using claim_form_server.Payloads;
 using DeliveryRoomWatcher.Models.Common;
 using DeliveryRoomWatcher.Providers;
 using DeliveryRoomWatcher.Repositories;
+using hrms_server.Payloads;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -135,12 +136,19 @@ namespace DeliveryRoomWatcher.Controllers
             var username = User.Identity.Name;
             return Ok(user_repo.GetUserResidentDtls(username));
         }
-        [Authorize]
+
         [HttpPost]
         public IActionResult GetUserResidentPic()
         {
             var username = User.Identity.Name;
             return Ok(user_repo.GetUserResidentPic(username));
+        }
+
+
+        [HttpPost]
+        public IActionResult GetResidentPicByUserPk(SingleValuePayload payload)
+        {
+            return Ok(user_repo.GetResidentPicByUserPk(payload.value));
         }
 
         [Authorize]

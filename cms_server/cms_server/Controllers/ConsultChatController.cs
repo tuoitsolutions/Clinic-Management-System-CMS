@@ -27,7 +27,7 @@ namespace cms_server.Controllers
         public async Task<IActionResult> JoinConsultChat(ChatModel payload)
         {
             await _chatHub.Groups.AddToGroupAsync(payload.connection_id, payload.consult_req_pk);
-            //await _chatHub.Clients.Group(payload.consult_req_pk).GetConsultMessage(payload);
+            //await _chatHub.Clients.Group(payload.consult_req_pk).GetConsultMessage();
             return Ok();
         }
 
@@ -39,10 +39,11 @@ namespace cms_server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> InsertConsultChat(ConsultReqChatEntity payload)
+        public async Task<IActionResult> InsertConsultChat([FromForm] ConsultReqChatEntity payload)
         {
-            await _chatHub.Clients.Group(payload.consult_req_pk).GetConsultMessage(payload);
-            return Ok(chat_repo.InsertConsultChat(payload, User.Identity.Name));
+            var response = chat_repo.InsertConsultChat(payload, User.Identity.Name);
+            await _chatHub.Clients.Group(payload.consult_req_pk).GetConsultMessage();
+            return Ok(response);
         }
 
         [HttpPost]

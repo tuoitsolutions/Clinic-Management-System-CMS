@@ -60,7 +60,16 @@ C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_serve
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\obj\Debug\netcoreapp3.1\cms_server.csprojAssemblyReference.cache
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Debug\netcoreapp3.1\Select.Html.dep
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Debug\netcoreapp3.1\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Debug\netcoreapp3.1\Select.HtmlToPdf.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Debug\netcoreapp3.1\SkiaSharp.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Debug\netcoreapp3.1\Spire.License.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Debug\netcoreapp3.1\Spire.Pdf.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Debug\netcoreapp3.1\runtimes\osx\native\libSkiaSharp.dylib
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Debug\netcoreapp3.1\runtimes\tizen-armel\native\libSkiaSharp.so
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Debug\netcoreapp3.1\runtimes\tizen-x86\native\libSkiaSharp.so
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Debug\netcoreapp3.1\runtimes\win-x64\native\libSkiaSharp.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\libSkiaSharp.dll
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\obj\Debug\netcoreapp3.1\cms_server.csproj.CoreCompileInputs.cache
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\obj\Debug\netcoreapp3.1\cms_server.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\obj\Debug\netcoreapp3.1\cms_server.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Debug\netcoreapp3.1\Select.HtmlToPdf.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Debug\netcoreapp3.1\itextsharp.dll

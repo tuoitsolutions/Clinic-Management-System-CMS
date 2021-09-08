@@ -43,7 +43,6 @@ const form_schema = yup.object({
         }
       }
     ),
-  // is_active: yup.string().required().nullable().label("Active Status"),
 });
 
 const DialogConsultAddFile: FC<IDialogConsultAddFile> = memo((props) => {

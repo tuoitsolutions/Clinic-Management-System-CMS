@@ -38,6 +38,12 @@ namespace cms_server.Controllers
             return Ok(consult_req_file_repo.UpdateConsultFile(payload));
         }
 
+        [HttpPost]
+        public IActionResult GetAllFilesForConsult(SingleValuePayload payload)
+        {
+            return Ok(consult_req_file_repo.GetAllFilesForConsult(payload.value));
+        }
+
 
     }
 }

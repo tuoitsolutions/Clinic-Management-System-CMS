@@ -9,9 +9,15 @@ using ddt_server.Models;
 using DeliveryRoomWatcher.Config;
 using DeliveryRoomWatcher.Hooks;
 using DeliveryRoomWatcher.Models.Common;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using Microsoft.Extensions.Hosting.Internal;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using static cms_server.Payloads.ConsultProcPayloads;
 
@@ -245,6 +251,7 @@ namespace cms_server.Repositories
             }
         }
 
+
         public ResponseModel PreviewProcPrescrip(string consult_req_pk, string user_pk)
         {
             try
@@ -293,10 +300,7 @@ namespace cms_server.Repositories
                                                      is_active ='y' AND `consult_req_pk` = @consult_req_pk;",
                                                       new { consult_req_pk }, transaction: tran).ToList();
 
-
-
                     string soa_qr = UseQr.CreateConsultSoaQr(selected_row.hash_key, brand_logo);
-
 
                     string resident_esignature_img = "";
                     byte[] img_byte_arr = UseFtp.DownloadFtp(DefaultConfig.ftp_ip + selected_row.assigned_resident_info.esignature_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
@@ -306,8 +310,7 @@ namespace cms_server.Repositories
                     }
 
                     byte[] soa_pdf = ProcPrescrip.GenerateSoaPdf(brand_name, brand_logo, brand_address, brand_phone, brand_email, selected_row, soa_qr, prescrip_proc, resident_esignature_img);
-
-                    string pdf_file = Convert.ToBase64String(soa_pdf);
+                    string pdf_file = UsePdf.AttachWatermarkImage(brand_logo, 0.05f, soa_pdf);
 
                     tran.Commit();
                     return new ResponseModel
@@ -339,6 +342,7 @@ namespace cms_server.Repositories
                 };
             }
         }
+
 
         public ResponseModel EmailProcPrescrip(ConsultProcEntity payload, string user_pk)
         {

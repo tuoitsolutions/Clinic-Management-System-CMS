@@ -146,124 +146,6 @@ export const StyledTableProfile = styled.div`
   }
 `;
 
-export const ChatBoxUi = styled.div`
-  min-height: 100%;
-  height: 100%;
-  width: 100%;
-  align-items: start;
-  align-content: start;
-  grid-auto-rows: auto calc(100% - 160px) auto;
-  overflow-y: hidden;
-
-  .cntr-title {
-    max-height: 50px;
-    min-height: 50px;
-    height: 50px;
-  }
-
-  .sent-msg-ctnr {
-    height: auto-fill;
-    overflow-y: auto;
-    max-height: 100%;
-    max-height: -webkit-calc(100% - 160px);
-    max-height: -moz-calc(100% - 160px);
-    max-height: calc(100% - 160px);
-    min-height: 100%;
-    min-height: -webkit-calc(100% - 160px);
-    min-height: -moz-calc(100% - 160px);
-    min-height: calc(100% - 160px);
-    background-color: #fff;
-
-    .sent-msg-item {
-      display: grid;
-      padding: 0.7em;
-      grid-template-areas: "img body" "img time";
-      justify-content: start;
-      justify-items: start;
-      justify-content: start;
-
-      .img {
-        grid-area: img;
-        margin-right: 0.5em;
-        align-self: end;
-      }
-
-      .name-msg {
-        grid-area: body;
-
-        position: relative;
-        background: #fff;
-        border-radius: 20px;
-        /* border: 0.01em solid rgba(0, 0, 0, 0.1); */
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        padding: 0.5em 1em;
-        border-bottom-left-radius: 0;
-        /* &:after {
-            content: "";
-            position: absolute;
-            left: 1px;
-            top: 90%;
-            width: 0;
-            height: 0;
-            border: 15px solid transparent;
-            border-right-color: #fafafa;
-            border-left: 0;
-            border-bottom: 0;
-            margin-top: -7.5px;
-            margin-left: -15px;
-          } */
-
-        .name {
-          align-self: center;
-          font-weight: 600;
-          font-size: 0.7em;
-          text-transform: capitalize;
-          opacity: 0.7;
-        }
-        .message {
-          padding-bottom: 0.3em;
-          font-size: 0.75em;
-
-          margin-top: 0.5em;
-          align-self: start;
-          font-weight: 400;
-        }
-      }
-
-      .time {
-        grid-area: time;
-        font-size: 0.67em;
-        justify-self: end;
-        align-self: center;
-        text-align: center;
-        margin-top: 0.5em;
-        padding: 0 0.3em;
-      }
-    }
-  }
-
-  .write-msg-ctnr {
-    align-self: end;
-    max-height: 100px;
-    min-height: 100px;
-    height: 100px;
-    display: grid;
-    align-self: center;
-    align-items: center;
-    align-content: center;
-    grid-auto-columns: 1fr auto;
-    grid-gap: 0.5em;
-    grid-auto-flow: column;
-
-    .MuiInputBase-root {
-      border-radius: 30px !important;
-      border-bottom: none !important;
-      border: none !important;
-      background-color: #fafafa;
-    }
-  }
-`;
-
 export const PageContainerUi = styled.div`
   display: grid;
   align-items: center;
@@ -313,21 +195,21 @@ export const PageContainerUi = styled.div`
 export const VideoChatUi = styled.div`
   display: grid;
   max-width: 100%;
-  grid-gap: 1.5em;
-  min-height: 600px;
-  height: 80vh;
+  grid-gap: 2em;
+  min-height: 650px;
+  /* height: 70vh; */
 
   /* xs up */
   @media all and (min-width: ${(props) =>
       props.theme.breakpoints.values.xs}px) {
-    grid-template-areas: "video" "chat";
+    grid-template-areas: "video" "tab";
     grid-auto-columns: 1fr 1fr;
   }
 
   /* md up */
   @media all and (min-width: ${(props) =>
       props.theme.breakpoints.values.md}px) {
-    grid-template-areas: "video chat";
+    grid-template-areas: "video tab";
     grid-auto-columns: 1fr 300px;
   }
 
@@ -352,129 +234,10 @@ export const VideoChatUi = styled.div`
     }
   }
 
-  .container-chat {
-    grid-area: chat;
-    min-height: 600px;
-    height: 600px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-
-    width: 100%;
-    padding: 0.5em;
-    background-color: #fff;
-    border-radius: 5px !important;
-    align-items: start;
-    align-content: start;
-    grid-auto-rows: auto calc(100% - 160px) auto;
-    height: 100%;
-    overflow-y: hidden;
-
-    .cntr-title {
-      max-height: 50px;
-      min-height: 50px;
-      height: 50px;
-    }
-
-    .sent-msg-ctnr {
-      height: auto-fill;
-      overflow-y: auto;
-      max-height: 100%;
-      max-height: -webkit-calc(100% - 150px);
-      max-height: -moz-calc(100% - 150px);
-      max-height: calc(100% - 150px);
-      min-height: 100%;
-      min-height: -webkit-calc(100% - 150px);
-      min-height: -moz-calc(100% - 150px);
-      min-height: calc(100% - 150px);
-      background-color: #fff;
-
-      .sent-msg-item {
-        display: grid;
-        padding: 0.7em;
-        grid-template-areas: "img body" "img time";
-        justify-content: start;
-        justify-items: start;
-        justify-content: start;
-
-        .img {
-          grid-area: img;
-          margin-right: 0.5em;
-          align-self: end;
-        }
-
-        .name-msg {
-          grid-area: body;
-
-          position: relative;
-          background: #fff;
-          border-radius: 20px;
-          /* border: 0.01em solid rgba(0, 0, 0, 0.1); */
-          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-          padding: 0.5em 1em;
-          border-bottom-left-radius: 0;
-          /* &:after {
-            content: "";
-            position: absolute;
-            left: 1px;
-            top: 90%;
-            width: 0;
-            height: 0;
-            border: 15px solid transparent;
-            border-right-color: #fafafa;
-            border-left: 0;
-            border-bottom: 0;
-            margin-top: -7.5px;
-            margin-left: -15px;
-          } */
-
-          .name {
-            align-self: center;
-            font-weight: 600;
-            font-size: 0.7em;
-            text-transform: capitalize;
-            opacity: 0.7;
-          }
-          .message {
-            padding-bottom: 0.3em;
-            font-size: 0.75em;
-
-            margin-top: 0.5em;
-            align-self: start;
-            font-weight: 400;
-          }
-        }
-
-        .time {
-          grid-area: time;
-          font-size: 0.67em;
-          justify-self: end;
-          align-self: center;
-          text-align: center;
-          margin-top: 0.5em;
-          padding: 0 0.3em;
-        }
-      }
-    }
-
-    .write-msg-ctnr {
-      align-self: end;
-      max-height: 100px;
-      min-height: 100px;
-      height: 100px;
-      display: grid;
-      align-self: center;
-      align-items: center;
-      align-content: center;
-      grid-auto-columns: 1fr auto;
-      grid-gap: 0.5em;
-      grid-auto-flow: column;
-
-      .MuiInputBase-root {
-        border-radius: 30px !important;
-        border-bottom: none !important;
-        border: none !important;
-        background-color: #fafafa;
-      }
-    }
+  .container-tab {
+    grid-area: tab;
+    display: grid;
+    grid-auto-flow: auto 1fr;
   }
 `;
 

@@ -191,7 +191,7 @@ namespace cms_server.Pdf
                                              </div>                  
                                              <div class='name'>
                                                  <div>{consult_request.assigned_resident_info?.res_name}</div>
-                                                 <div>{consult_request.assigned_resident_info?.license_no}</div>
+                                                 <div><small>Lic. No. {consult_request.assigned_resident_info?.license_no}</small></div>
                                              </div>             
                                          </div>
                                     </div>
@@ -201,21 +201,12 @@ namespace cms_server.Pdf
                         </html>
                      ";
 
-                string html_footer = "This is an eletronically signed document | Page: {page_number} of {total_pages} | Issued At: " + DateTime.Now.ToString("MMM, dd, yyyy hh:mm tt");
+                string html_footer = "This is an electronically signed document | Page: {page_number} of {total_pages} | Issued At: " + DateTime.Now.ToString("MMM, dd, yyyy hh:mm tt");
 
                 PdfDocument doc = UsePdf.CreateStandardPdfDocument(html_header, html_body, html_footer);
 
                 PdfTemplate template = doc.AddTemplate(doc.Pages[0].ClientRectangle);
 
-                //string filePath = "MyImage.jpg";
-                //File.WriteAllBytes(filePath, Convert.FromBase64String(brand_logo));
-
-                //PdfImageElement img = new PdfImageElement(
-                //    doc.Pages[0].ClientRectangle.Width - 300,
-                //    doc.Pages[0].ClientRectangle.Height - 150, filePath);
-                //img.Transparency = 50;
-                //template.Background = true;
-                //template.Add(img);
 
                 doc.Save(ms);
                 res = ms.ToArray();

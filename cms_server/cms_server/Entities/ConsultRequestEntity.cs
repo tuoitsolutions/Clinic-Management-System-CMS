@@ -26,6 +26,9 @@ namespace cms_server.Entities
         public string mob_no { get; set; }
         public string chief_complaint { get; set; }
         public string symptoms { get; set; }
+        public string diagnosis { get; set; }
+        public string is_advice_admit { get; set; }
+        public DateTime? is_advice_admit_at { get; set; }
         public string notes { get; set; }
         public string line1 { get; set; }
         public string is_charity { get; set; }

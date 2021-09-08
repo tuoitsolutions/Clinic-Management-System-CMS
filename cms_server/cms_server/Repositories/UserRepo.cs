@@ -226,7 +226,7 @@ namespace DeliveryRoomWatcher.Repositories
                         byte[] img_byte_arr = UseFtp.DownloadFtp(DefaultConfig.ftp_ip + resident.pic_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
                         if (img_byte_arr != null)
                         {
-                            resident.pic_dest = Convert.ToBase64String(img_byte_arr);
+                            resident.pic_dest = "data:image/png;base64," + Convert.ToBase64String(img_byte_arr);
                         }
                         else
                         {
@@ -326,6 +326,46 @@ namespace DeliveryRoomWatcher.Repositories
                         message = "We could not retrieve the user's photo!"
                     };
                 }
+            }
+            catch (Exception e)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Details: " + e.Message.ToString()
+                };
+            }
+        }
+
+
+        public ResponseModel GetResidentPicByUserPk(string res_user_pk)
+        {
+            using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+            con.Open();
+            using var tran = con.BeginTransaction();
+            try
+            {
+                HospResidentEntity resident = con.QuerySingle<HospResidentEntity>($@"
+                                       SELECT pic_dest FROM `hosp_resident`  WHERE user_pk=@res_user_pk LIMIT 1;"
+                                   , new { res_user_pk }
+                                   , transaction: tran);
+
+                byte[] img_byte_arr = UseFtp.DownloadFtp(DefaultConfig.ftp_ip + resident.pic_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                if (img_byte_arr != null)
+                {
+                    resident.pic_dest = "data:image/png;base64," + Convert.ToBase64String(img_byte_arr);
+                }
+                else
+                {
+                    resident.pic_dest = null;
+                }
+
+                tran.Commit();
+                return new ResponseModel
+                {
+                    success = true,
+                    data = resident.pic_dest
+                };
             }
             catch (Exception e)
             {

@@ -1,5 +1,7 @@
 import React, { FC, memo, useState } from "react";
+import { useDispatch } from "react-redux";
 import ButtonPopper from "../../../Component/ButtonPopper";
+import ConsultRequestActions from "../../../Services/Actions/ConsultRequestActions";
 import ConsultRequestEntity from "../../../Services/Entities/ConsultRequestEntity";
 import DialogChangeConsultCost from "./DialogChangeConsultCost";
 import DialogConsultSetEstSched from "./DialogConsultSetEstSched";
@@ -13,19 +15,7 @@ interface IConsultActionActions {
 
 const ConsultActionActions: FC<IConsultActionActions> = memo(
   ({ consult_info, handleReloadRecord }) => {
-    const [open_tranfers_dept_dialog, set_open_tranfers_dept_dialog] =
-      useState(false);
-
-    const [open_set_est_sched_dialog, set_open_set_est_sched_dialog] =
-      useState(false);
-
-    const [
-      open_change_consult_cost_dialog,
-      set_open_change_consult_cost_dialog,
-    ] = useState(false);
-
-    const [open_sync_consult_dialog, set_open_sync_consult_dialog] =
-      useState(false);
+    const dispatch = useDispatch();
 
     return (
       <>
@@ -34,40 +24,45 @@ const ConsultActionActions: FC<IConsultActionActions> = memo(
           variant="contained"
           buttonColor="primary"
           buttons={[
+            // {
+            //   text: `Adjust Consultation Cost`,
+            //   disabled: consult_info?.sts_pk !== "fa",
+            //   handleClick: () => {
+            //     dispatch(ConsultRequestActions.SetOpenAdjustCostDialog(true));
+            //   },
+            // },
             {
-              text: `Adjust Consultation Cost`,
-              disabled: consult_info?.sts_pk !== "fa",
-              handleClick: () => {
-                set_open_change_consult_cost_dialog(true);
-              },
-            },
-            {
+              disabled:
+                consult_info?.sts_pk !== "pd" &&
+                consult_info.sts_pk !== "fa" &&
+                consult_info.sts_pk !== "s" &&
+                consult_info.sts_pk !== "e",
               text: `Sync Consult Records`,
               handleClick: () => {
-                set_open_sync_consult_dialog(true);
+                dispatch(ConsultRequestActions.SetOpenSyncPatDialog(true));
               },
             },
             {
-              text: `Set Department and Resident`,
+              disabled:
+                consult_info?.sts_pk !== "pd" && consult_info.sts_pk !== "fa",
+              text: `Transfer to Other Department`,
               handleClick: () => {
-                set_open_tranfers_dept_dialog(true);
+                dispatch(ConsultRequestActions.SetOpenTransferDeptDialog(true));
               },
             },
             {
+              disabled:
+                consult_info?.sts_pk !== "pd" && consult_info.sts_pk !== "fa",
               text: `Set Estimated Start Schedule`,
               handleClick: () => {
-                set_open_set_est_sched_dialog(true);
+                dispatch(ConsultRequestActions.SetOpenSchedDialog(true));
               },
             },
           ]}
         />
 
-        {!!consult_info?.consult_req_pk && open_change_consult_cost_dialog && (
+        {!!consult_info?.consult_req_pk && (
           <DialogChangeConsultCost
-            open={open_change_consult_cost_dialog}
-            handleCloseDialog={() => {
-              set_open_change_consult_cost_dialog(false);
-            }}
             successCallback={() => {
               handleReloadRecord();
             }}
@@ -75,12 +70,8 @@ const ConsultActionActions: FC<IConsultActionActions> = memo(
           />
         )}
 
-        {!!consult_info?.consult_req_pk && open_tranfers_dept_dialog && (
+        {!!consult_info?.consult_req_pk && (
           <DialogConsultTransferDept
-            open={open_tranfers_dept_dialog}
-            handleCloseDialog={() => {
-              set_open_tranfers_dept_dialog(false);
-            }}
             successCallback={() => {
               handleReloadRecord();
             }}
@@ -88,12 +79,8 @@ const ConsultActionActions: FC<IConsultActionActions> = memo(
           />
         )}
 
-        {open_set_est_sched_dialog && (
+        {!!consult_info && (
           <DialogConsultSetEstSched
-            open={open_set_est_sched_dialog}
-            handleCloseDialog={() => {
-              set_open_set_est_sched_dialog(false);
-            }}
             successCallback={() => {
               handleReloadRecord();
             }}
@@ -101,12 +88,8 @@ const ConsultActionActions: FC<IConsultActionActions> = memo(
           />
         )}
 
-        {!!consult_info?.consult_req_pk && open_sync_consult_dialog && (
+        {!!consult_info?.consult_req_pk && (
           <DialogMapConsultPatient
-            open={open_sync_consult_dialog}
-            handleCloseDialog={() => {
-              set_open_sync_consult_dialog(false);
-            }}
             successCallback={() => {
               handleReloadRecord();
             }}

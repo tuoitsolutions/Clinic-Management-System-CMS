@@ -242,3 +242,10 @@ tbody tr {
             font-size: 12pt;
             font-weight: 900;
         }
+
+
+.break {
+    display: block;
+    clear: both;
+    page-break-after: always;
+}

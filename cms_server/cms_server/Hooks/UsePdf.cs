@@ -1,10 +1,15 @@
-﻿using SelectPdf;
+﻿using iTextSharp.text.pdf;
+using SelectPdf;
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 
 namespace cms_server.Hooks
 {
     public class UsePdf
     {
-        public static PdfDocument CreateStandardPdfDocument(string html_header, string html_body, string html_footer)
+        public static SelectPdf.PdfDocument CreateStandardPdfDocument(string html_header, string html_body, string html_footer)
         {
             HtmlToPdf converter = new HtmlToPdf();
             converter.Options.PdfPageSize = PdfPageSize.A4;
@@ -41,10 +46,31 @@ namespace cms_server.Hooks
             converter.Header.Add(header_sec);
             converter.Footer.Add(pdf_page_numbers);
 
-            PdfDocument doc = converter.ConvertHtmlString(html_body);
-
-            return doc;
-
+            return converter.ConvertHtmlString(html_body);
         }
+
+
+        public static string AttachWatermarkImage(string base64_image, float watermark_opacity, byte[] pdf)
+        {
+            Bitmap watermark_bitmap = UseImage.BlurBase64Image(base64_image, watermark_opacity);
+            MemoryStream pdf_stream;
+            using (pdf_stream = new MemoryStream(10 * 1024))
+            {
+                using var reader = new PdfReader(pdf);
+                using var stamper = new PdfStamper(reader, pdf_stream);
+                int times = reader.NumberOfPages;
+                for (int i = 1; i <= times; i++)
+                {
+                    var dc = stamper.GetOverContent(i);
+                    using Bitmap b = new Bitmap(watermark_bitmap);
+                    iTextSharp.text.Image savedImage = iTextSharp.text.Image.GetInstance(b, ImageFormat.Png);
+                    savedImage.SetAbsolutePosition(0, 0); // set the position to bottom left corner of pdf
+                    savedImage.ScaleAbsolute(iTextSharp.text.PageSize.A4.Width, iTextSharp.text.PageSize.A4.Height);
+                    dc.AddImage(savedImage);
+                }
+            }
+            return Convert.ToBase64String(pdf_stream.ToArray());
+        }
+
     }
 }

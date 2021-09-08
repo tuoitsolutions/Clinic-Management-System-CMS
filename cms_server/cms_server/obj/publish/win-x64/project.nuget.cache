@@ -1,13 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "9X0GFVZ8efbr7k6eec1tgL0BCmw7he4dhd4EFNEW+i4WirLSAJF+mnOB8v80q1giSoN6PyoD26PzJaxSrtn2lg==",
+  "dgSpecHash": "OieIaiYKlv+ISzwWQBjOVaLVXLfRNpUUlxXGBxTxdNlnrGuhdJn2uIcLUWESUs+2PiAGEKvFC3vi1cjKIf2TZg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Public\\Software Development\\Clinic Management System (cms_v2)\\cms_server\\cms_server\\cms_server.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\mrmon\\.nuget\\packages\\bouncycastle\\1.8.6.1\\bouncycastle.1.8.6.1.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\bouncycastle.netcore\\1.8.3\\bouncycastle.netcore.1.8.3.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\dapper\\2.0.78\\dapper.2.0.78.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\fluentftp\\34.0.2\\fluentftp.34.0.2.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\google.protobuf\\3.11.4\\google.protobuf.3.11.4.nupkg.sha512",
+    "C:\\Users\\mrmon\\.nuget\\packages\\itextsharp\\5.5.13.2\\itextsharp.5.5.13.2.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\k4os.compression.lz4\\1.1.11\\k4os.compression.lz4.1.1.11.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\k4os.compression.lz4.streams\\1.1.11\\k4os.compression.lz4.streams.1.1.11.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\k4os.hash.xxhash\\1.0.6\\k4os.hash.xxhash.1.0.6.nupkg.sha512",
@@ -90,6 +92,8 @@
     "C:\\Users\\mrmon\\.nuget\\packages\\runtime.win.system.net.sockets\\4.3.0\\runtime.win.system.net.sockets.4.3.0.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\runtime.win.system.runtime.extensions\\4.3.0\\runtime.win.system.runtime.extensions.4.3.0.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\select.htmltopdf.netcore\\21.1.0\\select.htmltopdf.netcore.21.1.0.nupkg.sha512",
+    "C:\\Users\\mrmon\\.nuget\\packages\\skiasharp\\1.68.0\\skiasharp.1.68.0.nupkg.sha512",
+    "C:\\Users\\mrmon\\.nuget\\packages\\spire.pdf\\7.9.2\\spire.pdf.7.9.2.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\ssh.net\\2016.1.0\\ssh.net.2016.1.0.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\sshnet.security.cryptography\\1.2.0\\sshnet.security.cryptography.1.2.0.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\swashbuckle.aspnetcore\\5.6.3\\swashbuckle.aspnetcore.5.6.3.nupkg.sha512",
@@ -178,5 +182,26 @@
     "C:\\Users\\mrmon\\.nuget\\packages\\system.xml.xpath.xmldocument\\4.0.1\\system.xml.xpath.xmldocument.4.0.1.nupkg.sha512",
     "C:\\Users\\mrmon\\.nuget\\packages\\typemerger\\2.1.0\\typemerger.2.1.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'BouncyCastle 1.8.6.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.",
+      "libraryId": "BouncyCastle",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v3.1"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'iTextSharp 5.5.13.2' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.1'. This package may not be fully compatible with your project.",
+      "libraryId": "iTextSharp",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v3.1"
+      ]
+    }
+  ]
 }

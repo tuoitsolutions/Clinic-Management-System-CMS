@@ -56,7 +56,8 @@ export const SingleCheckboxHookForm: FC<SingleCheckboxHookFormProps> = memo(
                       name={props.name}
                       checked={
                         typeof ctrlProps.value !== "undefined" &&
-                        ctrlProps.value !== false
+                        ctrlProps.value !== false &&
+                        !!ctrlProps.value
                       }
                       size={props.size}
                       onChange={(e) => {

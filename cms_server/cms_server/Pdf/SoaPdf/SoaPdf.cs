@@ -17,7 +17,7 @@ namespace cms_server.Pdf
             using (ms = new MemoryStream())
             {
                 string dir = Directory.GetCurrentDirectory();
-                var path = dir + "\\Pdf\\SoaPdf\\SoaPdf.css";
+                var path = dir + "\\Pdf\\pdf.css";
 
                 string css_instance = File.ReadAllText(path);
 
@@ -145,6 +145,7 @@ namespace cms_server.Pdf
 
                 string html_footer = "Page: {page_number} of {total_pages} " +
                    "| Issued At: " + DateTime.Now.ToString("MMM, dd, yyyy hh:mm tt");
+
 
 
                 PdfDocument doc = UsePdf.CreateStandardPdfDocument(html_header, html_body, html_footer);

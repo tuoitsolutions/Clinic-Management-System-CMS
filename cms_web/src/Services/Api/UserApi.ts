@@ -26,8 +26,15 @@ const GetUserResidentPic = async (): Promise<ResponseModel> => {
 
 const GetUserPhoto = async (): Promise<ResponseModel> => {
   const response = await PostFetch(BASE + "GetUserPhoto", null);
+  return response;
+};
 
-  console.log(`response`, response);
+const GetResidentPicByUserPk = async (
+  user_res_pk?: string
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetResidentPicByUserPk", {
+    value: user_res_pk,
+  });
   return response;
 };
 
@@ -37,4 +44,5 @@ export default {
   GetUserResidentDtls,
   GetUserResidentPic,
   GetUserPhoto,
+  GetResidentPicByUserPk,
 };

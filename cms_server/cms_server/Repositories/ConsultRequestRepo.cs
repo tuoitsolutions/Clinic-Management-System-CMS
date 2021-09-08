@@ -880,7 +880,9 @@ namespace cms_server.Repositories
                         return new ResponseModel
                         {
                             success = false,
-                            message = $@"The consultation that you are trying to manage cannot be found: it could be that you are not allowed to manage this request or it does not exist.",
+                            message = $@"You are not allowed to manage this consultation:
+                                         1.) The consultation is not assigned to your department.
+                                         2.) The consultation no longer exists.",
                         };
                     }
                 }
@@ -1026,6 +1028,7 @@ namespace cms_server.Repositories
 
                 List<ConsultRequestEntity> table_data = con.Query<ConsultRequestEntity>($@"SELECT * FROM (
                           SELECT cr.`consult_req_pk`,MD5(cr.`consult_req_pk`) hash_key,cr.consult_link_hash,cr.sts_pk, cr.prefix,cr.`first_name`,cr.`middle_name`,cr.`last_name`,cr.`suffix`,cr.`symptoms`,cr.`chief_complaint`,cr.`consult_at`,cr.`est_start_at`
+                          ,cr.is_advice_admit,cr.is_advice_admit_at,cr.diagnosis
                           ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
                           FROM `consult_request` cr
                           LEFT JOIN `hosp_resident` hr ON hr.`res_pk` = cr.`assign_res_pk`
@@ -1455,7 +1458,6 @@ namespace cms_server.Repositories
                     update_consult = con.Execute($@"
                         UPDATE `consult_request` SET
                         assign_dept_pk=@assign_dept_pk,
-                        assign_res_pk=@assign_res_pk,
                         assign_dept_at=NOW(),
                         consult_link_pass=@consult_link_pass,
                         consult_link_hash=@consult_link_hash,
@@ -1469,7 +1471,6 @@ namespace cms_server.Repositories
                     update_consult = con.Execute($@"
                          UPDATE `consult_request` SET 
                          assign_dept_pk=@assign_dept_pk,
-                         assign_res_pk=@assign_res_pk,
                          assign_dept_at=NOW()
                          WHERE consult_req_pk=@consult_req_pk;"
                         , payload
@@ -1576,6 +1577,8 @@ namespace cms_server.Repositories
                                                    LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
                                                    WHERE consult_req_pk=@consult_req_pk limit 1 ;",
                                                   new { payload.consult_req_pk }, transaction: tran);
+
+                selected_row.est_start_at = payload.est_start_at;
 
                 var arr_sts = new List<string>() { "fa", "pd" };
                 if (!arr_sts.Any(selected_row.sts_pk.Contains))
@@ -1688,6 +1691,7 @@ namespace cms_server.Repositories
                 };
             }
         }
+
 
         public ResponseModel ChangeCharityTag(ConsultRequestEntity payload)
         {
@@ -1818,6 +1822,122 @@ namespace cms_server.Repositories
             }
         }
 
+        public ResponseModel SavePatientDiagnosis(ConsultRequestEntity payload, string user_pk)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+
+                UserEntity user_info = con.QuerySingle<UserEntity>(
+                   $@"SELECT full_name,user_type,username,user_pk FROM `users` WHERE user_pk=@user_pk;"
+                   , new { user_pk }
+                   , transaction: tran);
+
+                ConsultRequestEntity selected_row = con.QuerySingle<ConsultRequestEntity>(
+                                                  $@"SELECT * FROM (
+                                                   SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgcaddress
+                                                   FROM `consult_request` cr
+                                                   LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                                   LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                                   LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                                   LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
+                                                   WHERE consult_req_pk=@consult_req_pk limit 1 ;",
+                                                  new { payload.consult_req_pk }, transaction: tran);
+
+                var arr_sts = new List<string>() { "s", "e" };
+                if (!arr_sts.Any(selected_row.sts_pk.Contains))
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "Only the consultation that is currently tagged as Started or Ended are allowed in writing the patient's diagnosis."
+                    };
+                }
+
+                string user_res_pk = con.QuerySingle<string>(
+                                       $@"SELECT get_user_res_pk(@user_pk)",
+                                       new { user_pk }, transaction: tran);
+
+                if (!String.IsNullOrEmpty(user_res_pk) && !String.IsNullOrEmpty(selected_row.assign_dept_pk))
+                {
+                    int update_consult = con.Execute($@"
+                         UPDATE `consult_request` SET 
+                         diagnosis=@diagnosis,
+                         is_advice_admit=@is_advice_admit,
+                         is_advice_admit_at=(IF(is_advice_admit = 'y', NOW(), NULL))
+                         WHERE consult_req_pk=@consult_req_pk;"
+                 , payload
+                 , transaction: tran);
+
+                    if (update_consult > 0)
+                    {
+                        LogModel log_payload = new LogModel
+                        {
+                            activity = $"The consultation diagnosis and advicing for admission of the consultation with code {selected_row.consult_req_pk} has been updated!",
+                            encoded_by = user_pk,
+                            ref_pk = selected_row.consult_req_pk,
+                            ref_table = "consult_request",
+                        };
+
+                        int insert_logs_affected_rows = con.Execute(
+                                $@"INSERT into `logs` set
+                             ref_pk=@ref_pk,
+                             ref_table=@ref_table,
+                             activity=@activity,
+                             encoded_at = NOW(),
+                             encoded_by=@encoded_by;
+                            ", log_payload, transaction: tran);
+
+                        if (insert_logs_affected_rows > 0)
+                        {
+                            tran.Commit();
+                            return new ResponseModel
+                            {
+                                message = $"The consultation diagnosis and advicing for admission status of the consultation with code {selected_row.consult_req_pk} has been updated!",
+                                success = true
+                            };
+                        }
+                        else
+                        {
+                            return new ResponseModel
+                            {
+                                success = false,
+                                message = "Unable to audit your action, please try again later."
+                            };
+                        }
+                    }
+                    else
+                    {
+                        return new ResponseModel
+                        {
+                            success = false,
+                            message = "Unable to save the changes of the consulation, please try again later."
+                        };
+                    }
+
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "Only the assigned resident are allowed to write the patient's diagnosis."
+                    };
+                }
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = err.Message
+                };
+            }
+        }
+
 
         public ResponseModel SendConsultLink(string consult_req_pk)
         {
@@ -1927,13 +2047,14 @@ namespace cms_server.Repositories
 
                 byte[] soa_pdf = SoaPdf.GenerateSoaPdf(brand_name, brand_logo, brand_address, brand_phone, brand_email, selected_row, soa_qr);
 
-                string pdf_file = Convert.ToBase64String(soa_pdf);
+
+                string watermarked_pdf = UsePdf.AttachWatermarkImage(brand_logo, 0.05f, soa_pdf);
 
                 tran.Commit();
                 return new ResponseModel
                 {
                     success = true,
-                    data = pdf_file
+                    data = watermarked_pdf
                 };
 
 
@@ -2049,6 +2170,179 @@ namespace cms_server.Repositories
                 };
             }
         }
+
+        public ResponseModel PreviewMedCert(string consult_req_pk)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+                ConsultRequestEntity selected_row = con.QuerySingle<ConsultRequestEntity>(
+                                                  $@"SELECT * FROM (
+                                                      SELECT cr.*,MD5(cr.consult_req_pk) hash_key
+                                                      ,r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc
+                                                      ,psg.`citymundesc`,psg.`provincedesc`,psg.`barangaydesc`,psg.`regiondesc`,psg.`completeaddress` psgcaddress
+                                                      ,dept_name AS `assign_dept_desc`
+                                                      ,CONCAT( hr.`last_name`,', ',hr.`first_name`,IF(hr.`suffix` IS NULL, '',CONCAT(' ',hr.`suffix`))) AS `assign_res_desc`
+                                                      ,calc_age(birth_date) AS age FROM `consult_request` cr
+                                                      LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                                      LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                                      LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                                      LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`
+                                                      LEFT JOIN `department` d ON d.`dept_pk` = cr.`assign_dept_pk`
+                                                      LEFT JOIN `hosp_resident` hr ON hr.`res_pk` = cr.`assign_res_pk`
+                                                      ) AS tmp
+                                                      WHERE consult_req_pk=@consult_req_pk LIMIT 1 ;",
+                                                  new { consult_req_pk }, transaction: tran);
+
+                string brand_logo = def_val_repo.GetHospitalLogo().data.ToString();
+                string brand_name = def_val_repo.GetHospitalName().data.ToString();
+                string brand_email = def_val_repo.GetHospitalName().data.ToString();
+                string brand_phone = def_val_repo.GetHospitalPhone().data.ToString();
+                string brand_address = def_val_repo.GetHospitalAddress().data.ToString();
+
+                selected_row.assigned_resident_info = con.QuerySingleOrDefault<HospResidentEntity>(
+                                                 $@"SELECT r.*,
+                                                     CONCAT(r.`first_name`,`concat_nullable_string`(r.`middle_name`,' '),' ',r.`last_name`,`concat_nullable_string`(r.`suffix`,' '),`concat_nullable_string`(r.`doc_title`,', ')) res_name
+                                                     FROM `hosp_resident` r WHERE r.res_pk = @res_pk;",
+                                                 new { res_pk = selected_row.assign_res_pk }, transaction: tran);
+
+                string resident_esignature_img = "";
+                byte[] img_byte_arr = UseFtp.DownloadFtp(DefaultConfig.ftp_ip + selected_row.assigned_resident_info.esignature_dest, DefaultConfig.ftp_user, DefaultConfig.ftp_pass);
+                if (img_byte_arr != null)
+                {
+                    resident_esignature_img = "data:image/png;base64," + Convert.ToBase64String(img_byte_arr);
+                }
+
+
+                string soa_qr = UseQr.CreateConsultSoaQr(selected_row.hash_key, brand_logo);
+
+                byte[] soa_pdf = MedCertPdf.CreatePdf(brand_name, brand_logo, brand_address, brand_phone, brand_email, selected_row, soa_qr, resident_esignature_img);
+
+                string watermarked_pdf = UsePdf.AttachWatermarkImage(brand_logo, 0.05f, soa_pdf);
+
+                tran.Commit();
+                return new ResponseModel
+                {
+                    success = true,
+                    data = watermarked_pdf
+                };
+
+
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = err.Message
+                };
+            }
+        }
+
+        public ResponseModel EmailMedCert(ConsultRequestEntity payload, string user_pk)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+                ConsultRequestEntity selected_row = con.QuerySingle<ConsultRequestEntity>(
+                                                  $@"SELECT * FROM (
+                                                   SELECT cr.*,md5(cr.consult_req_pk) hash_key, r.`description` rel_desc, n.`nationality` nat_desc, cs.`csdesc` cs_desc, psg.`completeaddress` psgcaddress
+                                                   FROM `consult_request` cr
+                                                   LEFT JOIN `religion` r ON cr.`rel_pk` = r.`rel_pk`
+                                                   LEFT JOIN `nationality` n ON n.`nat_pk` = cr.`nat_pk`
+                                                   LEFT JOIN `civilstatus` cs ON cs.`cskey` = cr.`cs_pk`
+                                                   LEFT JOIN `psgcaddress` psg ON psg.`barangaycode` =cr.`brgy_pk`) AS tmp
+                                                   WHERE consult_req_pk=@consult_req_pk limit 1 ;",
+                                                  new { payload.consult_req_pk }, transaction: tran);
+
+                int update_consult_res = con.Execute($@"
+                                        UPDATE `consult_request` SET 
+                                        med_cert_sent_count = (med_cert_sent_count + 1)
+                                        WHERE consult_req_pk=@consult_req_pk;
+                            ", new { selected_row.consult_req_pk }, transaction: tran);
+
+                if (update_consult_res > 0)
+                {
+                    LogModel log_payload = new LogModel
+                    {
+                        activity = $"the consultation request {selected_row.consult_req_pk} Medical Certificate has been emailed to {selected_row.email}.",
+                        encoded_by = user_pk,
+                        ref_pk = selected_row.consult_req_pk,
+                        ref_table = "consult_request"
+                    };
+
+
+                    int insert_logs_affected_rows = con.Execute(
+                            $@"INSERT into `logs` set
+                             ref_pk=@ref_pk,
+                             ref_table=@ref_table,
+                             activity=@activity,
+                             encoded_at = NOW(),
+                             encoded_by=@encoded_by;
+                            ", log_payload, transaction: tran);
+
+                    if (insert_logs_affected_rows > 0)
+                    {
+                        string brand_name = def_val_repo.GetHospitalName().data.ToString();
+                        string brand_initial = def_val_repo.GetHospitalInitial().data.ToString();
+
+                        byte[] soa_pdf = Convert.FromBase64String(payload.attach_base64_soa);
+
+                        string email_message = $"Greetings {selected_row.first_name} from {brand_name}. This is the Medical Certificate of your consultation request {selected_row.consult_req_pk}.";
+
+                        ResponseModel email_response = UseEmail.SendEmailAttachment(brand_name,
+                            selected_row.email,
+                            email_message,
+                            $"{brand_initial} Online Consultation Medical Certificate",
+                            $"Medical-Certificate-{selected_row.consult_req_pk}",
+                           soa_pdf);
+                        if (!email_response.success)
+                        {
+                            return email_response;
+                        }
+
+                        tran.Commit();
+                        return new ResponseModel
+                        {
+                            message = $"The consultation request {selected_row.consult_req_pk} Medical Certificate has been emailed to {selected_row.email}.",
+                            success = true
+                        };
+
+                    }
+                }
+                else
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "No affected rows in the process."
+                    };
+                }
+
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The proccess has been terminated. Unidentified internal server has occured."
+                };
+
+            }
+            catch (Exception err)
+            {
+
+                return new ResponseModel
+                {
+                    success = false,
+                    message = err.Message
+                };
+            }
+        }
+
 
         public ResponseModel ChangeConsultationCost(ConsultRequestEntity payload, string user_pk)
         {
@@ -2179,7 +2473,26 @@ namespace cms_server.Repositories
                                         $@"SELECT get_user_res_pk(@user_pk)",
                                         new { user_pk = payload.last_updated_by }, transaction: tran);
 
-                if (selected_row?.assign_res_pk == user_res_pk && !String.IsNullOrEmpty(user_res_pk) && !String.IsNullOrEmpty(selected_row.assign_res_pk))
+                if (new List<string>() { "fa", "x" }.Any(selected_row.sts_pk.Contains))
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "You cannot start this consultation because it is not yet marked as PAID. Kindly follow up the payment of the patient."
+                    };
+                }
+
+                if (new List<string>() { "e" }.Any(selected_row.sts_pk.Contains))
+                {
+                    return new ResponseModel
+                    {
+                        success = false,
+                        message = "You cannot start this consultation because it has already been marked as ENDED/FINISHED!"
+                    };
+                }
+
+
+                if (!String.IsNullOrEmpty(user_res_pk) && !String.IsNullOrEmpty(selected_row.assign_dept_pk))
                 {
                     int patient_success = 0;
 
@@ -2190,14 +2503,6 @@ namespace cms_server.Repositories
                         selected_row.consult_link_pass = consult_link_pass;
                         selected_row.consult_link_hash = consult_link_hash;
                     }
-
-
-                    int update_consult = con.Execute($@"
-                        UPDATE `consult_request` SET
-                        sts_pk='s',
-                        consult_at=NOW()
-                        WHERE consult_req_pk = @consult_req_pk;
-                        ", payload, transaction: tran);
 
                     if (selected_row.hospital_no != null)
                     {
@@ -2261,6 +2566,16 @@ namespace cms_server.Repositories
                         ", payload, transaction: tran);
                     }
 
+
+                    int update_consult = con.Execute($@"
+                        UPDATE `consult_request` SET
+                        sts_pk='s',
+                        hospital_no=@hospital_no,
+                        assign_res_pk='{user_res_pk}',
+                        consult_at=NOW()
+                        WHERE consult_req_pk = @consult_req_pk;
+                        ", payload, transaction: tran);
+
                     if (update_consult > 0 && patient_success > 0)
                     {
                         LogModel log_payload = new LogModel
@@ -2309,7 +2624,7 @@ namespace cms_server.Repositories
                     return new ResponseModel
                     {
                         success = false,
-                        message = "The assigned resident is the only user allowed to start this consultation!"
+                        message = "You are not allowed to start this consultation. Kindly review your user access."
                     };
                 }
 

@@ -20,6 +20,9 @@ interface ConsultRequestEntity {
   email?: string;
   mob_no?: string;
   chief_complaint?: string;
+  diagnosis?: string;
+  is_advice_admit?: "y" | "n";
+  is_advice_admit_at?: Date | string;
   symptoms?: string;
   notes?: string;
   line1?: string;

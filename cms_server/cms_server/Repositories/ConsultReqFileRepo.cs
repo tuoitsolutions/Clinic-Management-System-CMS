@@ -297,5 +297,32 @@ namespace cms_server.Repositories
             }
         }
 
+        public ResponseModel GetAllFilesForConsult(string consult_req_pk)
+        {
+            try
+            {
+                using var con = new MySqlConnection(DatabaseConfig.GetConnection());
+                con.Open();
+                using var tran = con.BeginTransaction();
+                List<ConsultRequestFileEntity> table_data = con.Query<ConsultRequestFileEntity>($@"
+                                       SELECT * FROM `consult_request_file` where consult_req_pk=@consult_req_pk ORDER BY encoded_at DESC;
+                            ", new { consult_req_pk }, transaction: tran).ToList();
+
+                return new ResponseModel
+                {
+                    success = true,
+                    data = table_data
+                };
+            }
+            catch (Exception err)
+            {
+                return new ResponseModel
+                {
+                    success = false,
+                    message = "The process has been terminated. Error Message: " + err.Message
+                };
+            }
+        }
+
     }
 }

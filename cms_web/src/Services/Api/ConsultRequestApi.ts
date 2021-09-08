@@ -126,6 +126,21 @@ const EmailConsultRequestSoa = async (
   return response;
 };
 
+const PreviewMedCert = async (
+  consult_req_pk: string
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "PreviewMedCert", {
+    value: consult_req_pk,
+  });
+  return response;
+};
+const EmailMedCert = async (
+  payload: ConsultRequestEntity
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "EmailMedCert", payload);
+  return response;
+};
+
 const TransferConsultDept = async (
   payload: ConsultRequestEntity
 ): Promise<ResponseModel> => {
@@ -143,6 +158,13 @@ const ChangeCharityTag = async (
   payload: ConsultRequestEntity
 ): Promise<ResponseModel> => {
   const response = await PostFetch(BASE + "ChangeCharityTag", payload);
+  return response;
+};
+
+const SavePatientDiagnosis = async (
+  payload: ConsultRequestEntity
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "SavePatientDiagnosis", payload);
   return response;
 };
 
@@ -318,4 +340,7 @@ export default {
   GetAssignResidentOnlineConsult,
   GetPublicOnlineConsult,
   GetPaymentConsultInfo,
+  SavePatientDiagnosis,
+  PreviewMedCert,
+  EmailMedCert,
 };

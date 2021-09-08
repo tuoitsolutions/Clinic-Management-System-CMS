@@ -45,7 +45,8 @@ import ConsultRequestApi from "../../Services/Api/ConsultRequestApi";
 import ConsultReqChatEntity from "../../Services/Entities/ConsultChatEntity";
 import ConsultRequestEntity from "../../Services/Entities/ConsultRequestEntity";
 import { RootStore } from "../../Services/Store";
-import { ChatBoxUi, PageContainerUi } from "../../Styles/GlobalStyles";
+import ChatBoxUi from "../../Styles/ChatBoxUi";
+import { PageContainerUi } from "../../Styles/GlobalStyles";
 import { StyledOnlineConsultLink } from "./styles";
 
 interface IOnlineConsultLinkView {}
@@ -134,30 +135,26 @@ const OnlineConsultLinkView: FC<IOnlineConsultLinkView> = memo(() => {
   const [loading_auth_hash_key, set_loading_auth_hash_key] = useState(false);
 
   const handleSubmitMessage = useCallback(async () => {
-    const connection_id: string = connection.connectionId;
-
-    if (!!connection_id && !!selected_consult_req) {
-      const payload: ConsultReqChatEntity = {
-        msg_body: message_body,
-        consult_req_pk: selected_consult_req.consult_req_pk,
-        user_type: "patient",
-        sender_name: `${selected_consult_req.last_name}, ${selected_consult_req?.first_name}`,
-        connection_id: connection_id,
-      };
-
-      const res = await ChatConsultApi.InsertConsultChat(payload);
-
-      dispatch(
-        setPageSnackbar(
-          res?.message?.toString(),
-          res.success ? "success" : "error"
-        )
-      );
-
-      if (res.success) {
-        set_message_body("");
-      }
-    }
+    // const connection_id: string = connection.connectionId;
+    // if (!!connection_id && !!selected_consult_req) {
+    //   const payload: ConsultReqChatEntity = {
+    //     msg_body: message_body,
+    //     consult_req_pk: selected_consult_req.consult_req_pk,
+    //     user_type: "patient",
+    //     sender_name: `${selected_consult_req.last_name}, ${selected_consult_req?.first_name}`,
+    //     connection_id: connection_id,
+    //   };
+    //   const res = await ChatConsultApi.InsertConsultChat(payload);
+    //   dispatch(
+    //     setPageSnackbar(
+    //       res?.message?.toString(),
+    //       res.success ? "success" : "error"
+    //     )
+    //   );
+    //   if (res.success) {
+    //     set_message_body("");
+    //   }
+    // }
   }, [connection, dispatch, message_body, selected_consult_req]);
 
   useEffect(() => {
@@ -174,7 +171,7 @@ const OnlineConsultLinkView: FC<IOnlineConsultLinkView> = memo(() => {
       connection
         .start()
         .then((result) => {
-          // dispatch(setAdminSocketCon(connection));
+          console.group(`started`);
           connection.on("GetConsultMessage", async () => {
             const res = await ChatConsultApi.GetConsultChat(
               selected_consult_req.consult_req_pk
@@ -185,7 +182,6 @@ const OnlineConsultLinkView: FC<IOnlineConsultLinkView> = memo(() => {
           });
 
           connection.on("connected", async () => {
-            console.log(`connected`);
             const connection_id: string = connection.connectionId;
             if (!!connection_id) {
               const payload: ConsultReqChatEntity = {
@@ -331,7 +327,7 @@ const OnlineConsultLinkView: FC<IOnlineConsultLinkView> = memo(() => {
                   <>
                     <Container maxWidth="sm">
                       <div className="panel-container">
-                        <div className="cntr-title">
+                        <div className="ctnr-title">
                           <div className="main">
                             Online Consultation Link Authentication
                           </div>
@@ -357,7 +353,13 @@ const OnlineConsultLinkView: FC<IOnlineConsultLinkView> = memo(() => {
                                 borderRadius: 10,
                               }}
                             >
-                              <Grid container spacing={5}>
+                              <Grid container spacing={3}>
+                                <Grid item xs={12}>
+                                  <Alert severity="info">
+                                    The password is in the eConsultLink that was
+                                    sent to your email address.
+                                  </Alert>{" "}
+                                </Grid>
                                 <Grid item xs={12}>
                                   <TextFieldHookForm
                                     name="consult_link_pass"
@@ -414,7 +416,7 @@ const OnlineConsultLinkView: FC<IOnlineConsultLinkView> = memo(() => {
                     <Grid item xs={12}>
                       <div className="content-ctnr">
                         <div className="video-ctnr">
-                          <div className="vid">
+                          {/* <div className="vid">
                             <iframe
                               title="iframe-video"
                               allow="camera; microphone; fullscreen; display-capture"
@@ -428,7 +430,7 @@ const OnlineConsultLinkView: FC<IOnlineConsultLinkView> = memo(() => {
                               } ${selected_consult_req?.last_name}"`}
                               style={{ height: `100%`, width: `100%` }}
                             ></iframe>
-                          </div>
+                          </div> */}
                           <div className="info ">
                             <Grid container spacing={1}>
                               <Grid item xs={12} md={4}>
@@ -640,7 +642,7 @@ const OnlineConsultLinkView: FC<IOnlineConsultLinkView> = memo(() => {
                     <>
                       <Container maxWidth="sm">
                         <div className="panel-container">
-                          <div className="cntr-title">
+                          <div className="ctnr-title">
                             <div className="main">
                               Online Consultation Link Authentication
                             </div>
@@ -772,7 +774,7 @@ const OnlineConsultLinkView: FC<IOnlineConsultLinkView> = memo(() => {
                       {!!connection?.connectionId && (
                         <div className="chat-ctnr">
                           <ChatBoxUi theme={theme}>
-                            <div className="cntr-title">
+                            <div className="ctnr-title">
                               <div className="main">Chat</div>
                               <div className="sub">
                                 You can communicate with each other here.

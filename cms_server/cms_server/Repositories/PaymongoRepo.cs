@@ -1,4 +1,5 @@
-﻿using cms_server.Entities;
+﻿using cms_server.EmailTemplates;
+using cms_server.Entities;
 using cms_server.Hooks;
 using Dapper;
 using ddt_server.Config;
@@ -21,6 +22,7 @@ namespace cms_server.Repositories
 {
     public class PaymongoRepo
     {
+        OnlineConsultLinkEmail online_consult_link_email = new OnlineConsultLinkEmail();
 
         public async Task<ResponseModel> EWalletCreateSourceAsync(PaymongoEwalletPayload payload)
         {
@@ -31,13 +33,12 @@ namespace cms_server.Repositories
                 using var tran = con.BeginTransaction();
                 try
                 {
-                    ConsultRequestEntity selected_consult_req = con.QuerySingle<ConsultRequestEntity>(
-                        $@"SELECT * FROM `consult_request` where consult_req_pk = @consult_req_pk;"
+                    ConsultRequestEntity consult_info = con.QuerySingle<ConsultRequestEntity>(
+                        $@"SELECT *,md5(consult_req_pk) hash_key FROM `consult_request` where consult_req_pk = @consult_req_pk;"
                         , new { payload.consult_req_pk }, transaction: tran);
-
-                    if (selected_consult_req != null)
+                    if (consult_info != null)
                     {
-                        if (selected_consult_req.pay_at != null || selected_consult_req.paymongo_paid_at != null || !selected_consult_req.sts_pk.Equals("fa"))
+                        if (consult_info.pay_at != null || consult_info.paymongo_paid_at != null || !consult_info.sts_pk.Equals("fa"))
                         {
                             return new ResponseModel
                             {
@@ -65,42 +66,38 @@ namespace cms_server.Repositories
 
                         if (paymongo_response.errors == null && paymongo_response.data.id != null)
                         {
-                            int paymongo_source_id_saved = con.Execute($@"
-                                     UPDATE `consult_request` SET paymongo_src_id=@paymongo_src_id,paymongo_src_id_enc_at=NOW() WHERE consult_req_pk = @consult_req_pk; 
-                                    ",
-                            new { paymongo_src_id = paymongo_response.data.id, payload.consult_req_pk }, transaction: tran);
+
 
                             if (paymongo_response.data.attributes.redirect.checkout_url != null)
                             {
-                                if (paymongo_source_id_saved > 0)
-                                {
-                                    BillPaymongoEntity bill_paymong_payload = new BillPaymongoEntity
-                                    {
-                                        consult_req_pk = payload.consult_req_pk,
-                                        id = paymongo_response.data.id,
-                                        event_type = "source.create",
-                                        source_type = paymongo_response.data.type,
-                                        amount = paymongo_response.data.attributes.amount,
-                                        city = paymongo_response.data.attributes.billing.address.city,
-                                        country = paymongo_response.data.attributes.billing.address.country,
-                                        line1 = paymongo_response.data.attributes.billing.address.line1,
-                                        line2 = paymongo_response.data.attributes.billing.address.line2,
-                                        postal_code = paymongo_response.data.attributes.billing.address.postal_code,
-                                        state = paymongo_response.data.attributes.billing.address.state,
-                                        email = paymongo_response.data.attributes.billing.email,
-                                        phone = paymongo_response.data.attributes.billing.phone,
-                                        currency = paymongo_response.data.attributes.currency,
-                                        livemode = paymongo_response.data.attributes.livemode,
-                                        checkout_url = paymongo_response.data.attributes.redirect.checkout_url,
-                                        failed_url = paymongo_response.data.attributes.redirect.failed,
-                                        success_url = paymongo_response.data.attributes.redirect.success,
-                                        status = paymongo_response.data.attributes.status,
-                                        type = paymongo_response.data.attributes.type,
-                                        created_at = paymongo_response.data.attributes.created_at,
-                                        updated_at = paymongo_response.data.attributes.updated_at,
-                                    };
 
-                                    int saved_bill_paymongo = con.Execute($@"
+                                BillPaymongoEntity bill_paymong_payload = new BillPaymongoEntity
+                                {
+                                    consult_req_pk = payload.consult_req_pk,
+                                    id = paymongo_response.data.id,
+                                    event_type = "source.create",
+                                    source_type = paymongo_response.data.type,
+                                    amount = paymongo_response.data.attributes.amount,
+                                    city = paymongo_response.data.attributes.billing.address.city,
+                                    country = paymongo_response.data.attributes.billing.address.country,
+                                    line1 = paymongo_response.data.attributes.billing.address.line1,
+                                    line2 = paymongo_response.data.attributes.billing.address.line2,
+                                    postal_code = paymongo_response.data.attributes.billing.address.postal_code,
+                                    state = paymongo_response.data.attributes.billing.address.state,
+                                    email = paymongo_response.data.attributes.billing.email,
+                                    phone = paymongo_response.data.attributes.billing.phone,
+                                    currency = paymongo_response.data.attributes.currency,
+                                    livemode = paymongo_response.data.attributes.livemode,
+                                    checkout_url = paymongo_response.data.attributes.redirect.checkout_url,
+                                    failed_url = paymongo_response.data.attributes.redirect.failed,
+                                    success_url = paymongo_response.data.attributes.redirect.success,
+                                    status = paymongo_response.data.attributes.status,
+                                    type = paymongo_response.data.attributes.type,
+                                    created_at = paymongo_response.data.attributes.created_at,
+                                    updated_at = paymongo_response.data.attributes.updated_at,
+                                };
+
+                                int saved_bill_paymongo = con.Execute($@"
                                      INSERT INTO `bill_paymongo` SET 
                                      consult_req_pk=@consult_req_pk,
                                      id=@id,
@@ -125,10 +122,41 @@ namespace cms_server.Repositories
                                      created_at=@created_at,
                                      updated_at=@updated_at;
                                     ",
-                                      bill_paymong_payload, transaction: tran);
+                                  bill_paymong_payload, transaction: tran);
 
-                                    if (saved_bill_paymongo > 0)
+                                if (saved_bill_paymongo > 0)
+                                {
+                                    if (String.IsNullOrEmpty(consult_info.consult_link_pass) || String.IsNullOrEmpty(consult_info.consult_link_hash))
                                     {
+                                        string consult_link_pass = UseOtp.create();
+                                        string consult_link_hash = UseHash.Sha256(consult_link_pass);
+                                        consult_info.consult_link_pass = consult_link_pass;
+                                        consult_info.consult_link_hash = consult_link_hash;
+                                    }
+
+                                    consult_info.paymongo_src_id = paymongo_response.data.id;
+
+                                    int update_consult = con.Execute($@"
+                                            UPDATE `consult_request` SET
+                                            sts_pk='pd',
+                                            paymongo_src_id=@paymongo_src_id,
+                                            paymongo_src_id_enc_at=NOW(),
+                                            consult_link_pass=@consult_link_pass,
+                                            consult_link_hash=@consult_link_hash,
+                                            consult_link_sent_count=(consult_link_sent_count+1)
+                                            WHERE consult_req_pk = @consult_req_pk;"
+                                      , consult_info,
+                                      transaction: tran);
+
+                                    if (update_consult > 0)
+                                    {
+                                        ResponseModel email_response = online_consult_link_email.CreateOnlineConsultLinkEmail(consult_info);
+
+                                        if (!email_response.success)
+                                        {
+                                            return email_response;
+                                        }
+
                                         tran.Commit();
                                         return new ResponseModel
                                         {
@@ -137,23 +165,16 @@ namespace cms_server.Repositories
                                             data = paymongo_response.data.attributes.redirect.checkout_url
                                         };
                                     }
-                                    else
-                                    {
-                                        return new ResponseModel
-                                        {
-                                            success = false,
-                                            message = "The server is not able to save the billing information! Please try again later."
-                                        };
-                                    }
                                 }
                                 else
                                 {
                                     return new ResponseModel
                                     {
                                         success = false,
-                                        message = "The server was unable to save the payment source! Please try again later."
+                                        message = "The server is not able to save the billing information! Please try again later."
                                     };
                                 }
+
                             }
                             else
                             {
@@ -510,13 +531,13 @@ namespace cms_server.Repositories
                 using var tran = con.BeginTransaction();
                 try
                 {
-                    ConsultRequestEntity selected_consult_req = con.QuerySingle<ConsultRequestEntity>(
-                        $@"SELECT * FROM `consult_request` where consult_req_pk = @consult_req_pk;"
+                    ConsultRequestEntity consult_info = con.QuerySingle<ConsultRequestEntity>(
+                        $@"SELECT *,md5(consult_req_pk) hash_key FROM `consult_request` where consult_req_pk = @consult_req_pk;"
                         , new { payload.consult_req_pk }, transaction: tran);
 
-                    if (selected_consult_req != null)
+                    if (consult_info != null)
                     {
-                        if (selected_consult_req.pay_at != null || selected_consult_req.paymongo_paid_at != null || !selected_consult_req.sts_pk.Equals("fa"))
+                        if (consult_info.pay_at != null || consult_info.paymongo_paid_at != null || !consult_info.sts_pk.Equals("fa"))
                         {
                             return new ResponseModel
                             {
@@ -549,45 +570,39 @@ namespace cms_server.Repositories
 
                         if (paymongo_response.errors == null && paymongo_response.data.id != null)
                         {
-                            int paymongo_source_id_saved = con.Execute($@"
-                                     UPDATE `consult_request` SET paymongo_src_id=@paymongo_src_id,paymongo_src_id_enc_at=NOW() WHERE consult_req_pk = @consult_req_pk; 
-                                    ",
-                            new { paymongo_src_id = paymongo_response.data.id, payload.consult_req_pk }, transaction: tran);
+
+
 
                             if (paymongo_response.data.attributes.client_key != null)
                             {
-                                if (paymongo_source_id_saved > 0)
+                                BillPaymongoEntity bill_paymong_payload = new BillPaymongoEntity
                                 {
-                                    BillPaymongoEntity bill_paymong_payload = new BillPaymongoEntity
-                                    {
-                                        consult_req_pk = payload?.consult_req_pk,
-                                        id = paymongo_response?.data?.id,
-                                        event_type = "source.create",
-                                        source_type = paymongo_response?.data?.type,
-                                        amount = paymongo_response?.data?.attributes?.amount,
-                                        city = paymongo_response?.data?.attributes?.billing?.address?.city,
-                                        country = paymongo_response?.data?.attributes?.billing?.address?.country,
-                                        line1 = paymongo_response?.data?.attributes?.billing?.address?.line1,
-                                        line2 = paymongo_response?.data?.attributes?.billing?.address?.line2,
-                                        postal_code = paymongo_response?.data?.attributes?.billing?.address?.postal_code,
-                                        state = paymongo_response?.data?.attributes?.billing?.address?.state,
-                                        email = paymongo_response?.data?.attributes?.billing?.email,
-                                        phone = paymongo_response?.data?.attributes?.billing?.phone,
-                                        currency = paymongo_response?.data?.attributes?.currency,
-                                        livemode = paymongo_response?.data?.attributes?.livemode,
-                                        checkout_url = paymongo_response?.data?.attributes?.redirect?.checkout_url,
-                                        failed_url = paymongo_response?.data?.attributes?.redirect?.failed,
-                                        success_url = paymongo_response?.data?.attributes?.redirect?.success,
-                                        status = paymongo_response?.data?.attributes?.status,
-                                        type = paymongo_response?.data?.attributes?.type,
-                                        created_at = paymongo_response?.data?.attributes?.created_at,
-                                        updated_at = paymongo_response?.data?.attributes?.updated_at,
-                                        client_key = paymongo_response?.data?.attributes?.client_key,
-                                    };
+                                    consult_req_pk = payload?.consult_req_pk,
+                                    id = paymongo_response?.data?.id,
+                                    event_type = "source.create",
+                                    source_type = paymongo_response?.data?.type,
+                                    amount = paymongo_response?.data?.attributes?.amount,
+                                    city = paymongo_response?.data?.attributes?.billing?.address?.city,
+                                    country = paymongo_response?.data?.attributes?.billing?.address?.country,
+                                    line1 = paymongo_response?.data?.attributes?.billing?.address?.line1,
+                                    line2 = paymongo_response?.data?.attributes?.billing?.address?.line2,
+                                    postal_code = paymongo_response?.data?.attributes?.billing?.address?.postal_code,
+                                    state = paymongo_response?.data?.attributes?.billing?.address?.state,
+                                    email = paymongo_response?.data?.attributes?.billing?.email,
+                                    phone = paymongo_response?.data?.attributes?.billing?.phone,
+                                    currency = paymongo_response?.data?.attributes?.currency,
+                                    livemode = paymongo_response?.data?.attributes?.livemode,
+                                    checkout_url = paymongo_response?.data?.attributes?.redirect?.checkout_url,
+                                    failed_url = paymongo_response?.data?.attributes?.redirect?.failed,
+                                    success_url = paymongo_response?.data?.attributes?.redirect?.success,
+                                    status = paymongo_response?.data?.attributes?.status,
+                                    type = paymongo_response?.data?.attributes?.type,
+                                    created_at = paymongo_response?.data?.attributes?.created_at,
+                                    updated_at = paymongo_response?.data?.attributes?.updated_at,
+                                    client_key = paymongo_response?.data?.attributes?.client_key,
+                                };
 
-
-
-                                    int saved_bill_paymongo = con.Execute($@"
+                                int saved_bill_paymongo = con.Execute($@"
                                          INSERT INTO `bill_paymongo` SET 
                                          consult_req_pk=@consult_req_pk,
                                          id=@id,
@@ -604,12 +619,43 @@ namespace cms_server.Repositories
                                          created_at=@created_at,
                                          updated_at=@updated_at;
                                         ",
-                                      bill_paymong_payload, transaction: tran);
+                                  bill_paymong_payload, transaction: tran);
 
-                                    if (saved_bill_paymongo > 0)
+                                if (saved_bill_paymongo > 0)
+                                {
+
+                                    if (String.IsNullOrEmpty(consult_info.consult_link_pass) || String.IsNullOrEmpty(consult_info.consult_link_hash))
                                     {
-                                        tran.Commit();
+                                        string consult_link_pass = UseOtp.create();
+                                        string consult_link_hash = UseHash.Sha256(consult_link_pass);
+                                        consult_info.consult_link_pass = consult_link_pass;
+                                        consult_info.consult_link_hash = consult_link_hash;
+                                    }
 
+                                    consult_info.paymongo_src_id = paymongo_response.data.id;
+
+                                    int update_consult = con.Execute($@"
+                                            UPDATE `consult_request` SET
+                                            sts_pk='pd',
+                                            paymongo_src_id=@paymongo_src_id,
+                                            paymongo_src_id_enc_at=NOW(),
+                                            consult_link_pass=@consult_link_pass,
+                                            consult_link_hash=@consult_link_hash,
+                                            consult_link_sent_count=(consult_link_sent_count+1)
+                                            WHERE consult_req_pk = @consult_req_pk;"
+                                      , consult_info,
+                                      transaction: tran);
+
+                                    if (update_consult > 0)
+                                    {
+                                        ResponseModel email_response = online_consult_link_email.CreateOnlineConsultLinkEmail(consult_info);
+
+                                        if (!email_response.success)
+                                        {
+                                            return email_response;
+                                        }
+
+                                        tran.Commit();
                                         paymongo_response.data.public_key = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{secret_key}:"));
                                         return new ResponseModel
                                         {
@@ -618,21 +664,13 @@ namespace cms_server.Repositories
                                             data = paymongo_response.data
                                         };
                                     }
-                                    else
-                                    {
-                                        return new ResponseModel
-                                        {
-                                            success = false,
-                                            message = "The server is not able to save the billing information! Please try again later."
-                                        };
-                                    }
                                 }
                                 else
                                 {
                                     return new ResponseModel
                                     {
                                         success = false,
-                                        message = "The server was unable to save the payment source! Please try again later."
+                                        message = "The server is not able to save the billing information! Please try again later."
                                     };
                                 }
                             }

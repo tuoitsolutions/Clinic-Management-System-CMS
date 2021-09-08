@@ -10,8 +10,8 @@ export const BodyLoader: FC<IBodyLoader> = memo(({ message }) => {
     <div
       style={{
         width: `100%`,
-        minHeight: `60vh`,
-        height: `60vh`,
+        // minHeight: `60vh`,
+        // height: `60vh`,
         display: `grid`,
         margin: `1em`,
         padding: `1em`,

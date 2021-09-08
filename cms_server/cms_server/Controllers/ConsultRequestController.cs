@@ -124,6 +124,22 @@ namespace cms_server.Controllers
             return Ok(consult_req_repo.EmailConsultRequestSoa(payload, User.Identity.Name));
         }
 
+        [HttpPost]
+        public IActionResult PreviewMedCert(SingleValuePayload payload)
+        {
+            return Ok(consult_req_repo.PreviewMedCert(payload.value));
+        }
+
+        [HttpPost]
+        public IActionResult EmailMedCert(ConsultRequestEntity payload)
+        {
+            return Ok(consult_req_repo.EmailMedCert(payload, User.Identity.Name));
+        }
+
+
+
+
+
         [Authorize]
         [HttpPost]
         public IActionResult TransferConsultDept(ConsultRequestEntity payload)
@@ -136,6 +152,13 @@ namespace cms_server.Controllers
         public IActionResult SetEstSchedule(ConsultRequestEntity payload)
         {
             return Ok(consult_req_repo.SetEstSchedule(payload, User.Identity.Name));
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult SavePatientDiagnosis(ConsultRequestEntity payload)
+        {
+            return Ok(consult_req_repo.SavePatientDiagnosis(payload, User.Identity.Name));
         }
 
         [Authorize]

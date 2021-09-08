@@ -21,6 +21,15 @@ const GetConsultReqFileByPk = async (
   return response;
 };
 
+const GetAllFilesForConsult = async (
+  consult_file_pk: string
+): Promise<ResponseModel> => {
+  const response = await PostFetch(BASE + "GetAllFilesForConsult", {
+    value: consult_file_pk,
+  });
+  return response;
+};
+
 const InsertConsultFile = async (payload: FormData): Promise<ResponseModel> => {
   const response = await FormDataPostFetch(BASE + "InsertConsultFile", payload);
   return response;
@@ -38,4 +47,5 @@ export default {
   GetConsultReqFileByPk,
   InsertConsultFile,
   UpdateConsultFile,
+  GetAllFilesForConsult,
 };

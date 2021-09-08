@@ -6,7 +6,7 @@ import PageSnackbar from "../Component/PageSnackbar";
 import PageSuccessPrompt from "../Component/PageSuccessPrompt";
 import ConsultRequestView from "../Views/ConsultRequestView";
 import LoginPortal from "../Views/LoginPortal/LoginPortal";
-import OnlineConsultLinkView from "../Views/OnlineConsulLinkView/OnlineConsulLinkView";
+import OnlineConsulLinkView from "../Views/OnlineConsulLinkView";
 import PaymentView from "../Views/PaymentView";
 import PaymentFeedback from "../Views/PaymentView/PaymentFeedback";
 import PrivacyPolicyView from "../Views/PrivacyPolicyView";
@@ -37,7 +37,7 @@ const Routes = memo(() => {
             path="/online-consultation/:hash_key"
             exact
             strict
-            component={OnlineConsultLinkView}
+            component={OnlineConsulLinkView}
           />
           <Layout>
             {/* <RefreshToksenPrompt /> */}

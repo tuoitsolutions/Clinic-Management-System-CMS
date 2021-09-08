@@ -3,7 +3,7 @@ import { Button, Grid } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import React, { FC, memo, useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
 import BodyLoader from "../../../Component/BodyLoader";
 import FormDialog from "../../../Component/FormDialog/FormDialog";
@@ -11,6 +11,7 @@ import AutocompleteHookForm from "../../../Component/HookForm/AutocompleteHookFo
 import DateFieldHookForm from "../../../Component/HookForm/DateFieldHookForm";
 import TextFieldHookForm from "../../../Component/HookForm/TextFieldHookForm";
 import MaskedPhoneNumber from "../../../Component/Mask/MaskedPhoneNumber";
+import ConsultRequestActions from "../../../Services/Actions/ConsultRequestActions";
 import {
   closePageLoading,
   setGeneralPrompt,
@@ -22,10 +23,9 @@ import HospPatientApi from "../../../Services/Api/HospPatientApi";
 import LibraryApi from "../../../Services/Api/LibraryApi";
 import ConsultRequestEntity from "../../../Services/Entities/ConsultRequestEntity";
 import HospPatientEntity from "../../../Services/Entities/HospPatientEntity";
+import { RootStore } from "../../../Services/Store";
 
 interface IDialogConsultSyncPat {
-  open: boolean;
-  handleCloseDialog: () => void;
   successCallback: () => void;
   selected_record: ConsultRequestEntity;
 }
@@ -87,10 +87,10 @@ const form_structure = {
     name: "line1",
     label: "Line 1",
   },
-  line2: {
-    name: "line2",
-    label: "Line 2",
-  },
+  // line2: {
+  //   name: "line2",
+  //   label: "Line 2",
+  // },
   brgy_pk: {
     name: "brgy_pk",
     label: "Barangay",
@@ -144,7 +144,7 @@ const form_schema = yup.object({
   email: yup.string().required().nullable().label(form_structure.email.label),
   mob_no: yup.string().required().nullable().label(form_structure.mob_no.label),
   line1: yup.string().required().nullable().label(form_structure.line1.label),
-  line2: yup.string().required().nullable().label(form_structure.line2.label),
+  // line2: yup.string().required().nullable().label(form_structure.line2.label),
   brgy_pk: yup
     .string()
     .required()
@@ -174,6 +174,10 @@ const form_schema = yup.object({
 
 const DialogConsultSyncPat: FC<IDialogConsultSyncPat> = memo((props) => {
   const dispatch = useDispatch();
+
+  const { open_sync_pat_dialog } = useSelector(
+    (store: RootStore) => store.ConsultRequestReducer
+  );
 
   const form_instance = useForm<any>({
     resolver: yupResolver(form_schema),
@@ -221,7 +225,7 @@ const DialogConsultSyncPat: FC<IDialogConsultSyncPat> = memo((props) => {
                 if (typeof props.successCallback === "function") {
                   props.successCallback();
                 }
-                props.handleCloseDialog();
+                dispatch(ConsultRequestActions.SetOpenSyncPatDialog(false));
               } else {
                 set_error_message(response.message.toString());
               }
@@ -391,385 +395,389 @@ const DialogConsultSyncPat: FC<IDialogConsultSyncPat> = memo((props) => {
   }, [dispatch, hospital_no]);
 
   return (
-    <>
-      <FormDialog
-        title="Sync this consultation to an existing patient record"
-        open={props.open}
-        handleClose={props.handleCloseDialog}
-        minWidth={750}
-        body={
-          !!error_message ? (
-            <>
-              <Alert severity="error">{error_message}</Alert>
-            </>
-          ) : loading_initial_data ? (
-            <>
-              <BodyLoader message="Fetching initial data, thank you for your patience." />
-            </>
-          ) : (
-            <div>
-              <FormProvider {...form_instance}>
-                <form
-                  onSubmit={form_instance.handleSubmit(handleSubmitForm)}
-                  noValidate
-                  id="form_instance"
-                >
-                  <div
-                    style={{
-                      display: `grid`,
-                      padding: `1.5em`,
-                      backgroundColor: `#fff`,
-                      borderRadius: 10,
-                    }}
+    open_sync_pat_dialog && (
+      <>
+        <FormDialog
+          title="Sync this consultation to an existing patient record"
+          open={open_sync_pat_dialog}
+          handleClose={() => {
+            dispatch(ConsultRequestActions.SetOpenSyncPatDialog(false));
+          }}
+          minWidth={750}
+          body={
+            !!error_message ? (
+              <>
+                <Alert severity="error">{error_message}</Alert>
+              </>
+            ) : loading_initial_data ? (
+              <>
+                <BodyLoader message="Fetching initial data, thank you for your patience." />
+              </>
+            ) : (
+              <div>
+                <FormProvider {...form_instance}>
+                  <form
+                    onSubmit={form_instance.handleSubmit(handleSubmitForm)}
+                    noValidate
+                    id="form_instance"
                   >
-                    <Grid container spacing={3}>
-                      <Grid item xs={12}>
-                        <AutocompleteHookForm
-                          name="hospital_no"
-                          label="Select the patient that you want to sync"
-                          fullWidth={true}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          options={hosp_pat_options}
-                        />
-                      </Grid>
+                    <div
+                      style={{
+                        display: `grid`,
+                        padding: `1.5em`,
+                        backgroundColor: `#fff`,
+                        borderRadius: 10,
+                      }}
+                    >
+                      <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                          <AutocompleteHookForm
+                            name="hospital_no"
+                            label="Select the patient that you want to sync"
+                            fullWidth={true}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            options={hosp_pat_options}
+                          />
+                        </Grid>
 
-                      <Grid item xs={12}>
-                        <div className="ctnr-title-container">
-                          <Grid
-                            container
-                            spacing={1}
-                            alignContent="center"
-                            alignItems="center"
-                          >
-                            <Grid item xs={12}>
-                              <div className="ctnr-title">
-                                <div className="main">Patient Details</div>
-                                <div className="sub">
-                                  You can edit the patient details before
-                                  syncronizing it.
+                        <Grid item xs={12}>
+                          <div className="ctnr-title-container">
+                            <Grid
+                              container
+                              spacing={1}
+                              alignContent="center"
+                              alignItems="center"
+                            >
+                              <Grid item xs={12}>
+                                <div className="ctnr-title">
+                                  <div className="main">Patient Details</div>
+                                  <div className="sub">
+                                    You can edit the patient details before
+                                    syncronizing it.
+                                  </div>
                                 </div>
-                              </div>
+                              </Grid>
                             </Grid>
-                          </Grid>
-                        </div>
-                      </Grid>
+                          </div>
+                        </Grid>
 
-                      <Grid item xs={12} md={2}>
-                        <TextFieldHookForm
-                          name={form_structure.prefix.name}
-                          label={form_structure.prefix.label}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          fullWidth
-                          placeholder={`Enter the ${form_structure.prefix.label}`}
-                        />
-                      </Grid>
+                        <Grid item xs={12} md={2}>
+                          <TextFieldHookForm
+                            name={form_structure.prefix.name}
+                            label={form_structure.prefix.label}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            fullWidth
+                            placeholder={`Enter the ${form_structure.prefix.label}`}
+                          />
+                        </Grid>
 
-                      <Grid item xs={12} md={5}>
-                        <TextFieldHookForm
-                          name={form_structure.first_name.name}
-                          label={form_structure.first_name.label}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          fullWidth
-                          required
-                          placeholder={`Enter the ${form_structure.first_name.label}`}
-                        />
-                      </Grid>
+                        <Grid item xs={12} md={5}>
+                          <TextFieldHookForm
+                            name={form_structure.first_name.name}
+                            label={form_structure.first_name.label}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            fullWidth
+                            required
+                            placeholder={`Enter the ${form_structure.first_name.label}`}
+                          />
+                        </Grid>
 
-                      <Grid item xs={12} md={5}>
-                        <TextFieldHookForm
-                          name={form_structure.middle_name.name}
-                          label={form_structure.middle_name.label}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          fullWidth
-                          placeholder={`Enter the ${form_structure.middle_name.label}`}
-                        />
-                      </Grid>
+                        <Grid item xs={12} md={5}>
+                          <TextFieldHookForm
+                            name={form_structure.middle_name.name}
+                            label={form_structure.middle_name.label}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            fullWidth
+                            placeholder={`Enter the ${form_structure.middle_name.label}`}
+                          />
+                        </Grid>
 
-                      <Grid item xs={12} md={5}>
-                        <TextFieldHookForm
-                          name={form_structure.last_name.name}
-                          label={form_structure.last_name.label}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          fullWidth
-                          required
-                          placeholder={`Enter the ${form_structure.last_name.label}`}
-                        />
-                      </Grid>
+                        <Grid item xs={12} md={5}>
+                          <TextFieldHookForm
+                            name={form_structure.last_name.name}
+                            label={form_structure.last_name.label}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            fullWidth
+                            required
+                            placeholder={`Enter the ${form_structure.last_name.label}`}
+                          />
+                        </Grid>
 
-                      <Grid item xs={12} md={2}>
-                        <TextFieldHookForm
-                          name={form_structure.suffix.name}
-                          label={form_structure.suffix.label}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          fullWidth
-                          required
-                          placeholder={`Enter the ${form_structure.suffix.label}`}
-                        />
-                      </Grid>
+                        <Grid item xs={12} md={2}>
+                          <TextFieldHookForm
+                            name={form_structure.suffix.name}
+                            label={form_structure.suffix.label}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            fullWidth
+                            required
+                            placeholder={`Enter the ${form_structure.suffix.label}`}
+                          />
+                        </Grid>
 
-                      <Grid item xs={5}>
-                        <DateFieldHookForm
-                          name={form_structure.birth_date.name}
-                          label={form_structure.birth_date.label}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          fullWidth
-                          required
-                          placeholder={`Enter the ${form_structure.birth_date.label}`}
-                          type="date"
-                          disableFuture
-                        />
-                      </Grid>
+                        <Grid item xs={5}>
+                          <DateFieldHookForm
+                            name={form_structure.birth_date.name}
+                            label={form_structure.birth_date.label}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            fullWidth
+                            required
+                            placeholder={`Enter the ${form_structure.birth_date.label}`}
+                            type="date"
+                            disableFuture
+                          />
+                        </Grid>
 
-                      <Grid item xs={12}>
-                        <TextFieldHookForm
-                          name={form_structure.birth_place.name}
-                          label={form_structure.birth_place.label}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          fullWidth
-                          placeholder={`Enter the ${form_structure.birth_place.label}`}
-                          disabled={loading_initial_data}
-                        />
-                      </Grid>
+                        <Grid item xs={12}>
+                          <TextFieldHookForm
+                            name={form_structure.birth_place.name}
+                            label={form_structure.birth_place.label}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            fullWidth
+                            placeholder={`Enter the ${form_structure.birth_place.label}`}
+                            disabled={loading_initial_data}
+                          />
+                        </Grid>
 
-                      <Grid item xs={4}>
-                        <AutocompleteHookForm
-                          name={form_structure.cs_pk.name}
-                          label={form_structure.cs_pk.label}
-                          fullWidth={true}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          options={[
-                            { label: "Annulled", id: "A" },
-                            { label: "Child", id: "C" },
-                            { label: "Divorced", id: "D" },
-                            { label: "Married", id: "M" },
-                            { label: "Widower", id: "R" },
-                            { label: "Single", id: "S" },
-                            { label: "Widow", id: "W" },
-                          ]}
-                          required
-                        />
-                      </Grid>
+                        <Grid item xs={4}>
+                          <AutocompleteHookForm
+                            name={form_structure.cs_pk.name}
+                            label={form_structure.cs_pk.label}
+                            fullWidth={true}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            options={[
+                              { label: "Annulled", id: "A" },
+                              { label: "Child", id: "C" },
+                              { label: "Divorced", id: "D" },
+                              { label: "Married", id: "M" },
+                              { label: "Widower", id: "R" },
+                              { label: "Single", id: "S" },
+                              { label: "Widow", id: "W" },
+                            ]}
+                            required
+                          />
+                        </Grid>
 
-                      <Grid item xs={4}>
-                        <AutocompleteHookForm
-                          name={form_structure.nat_pk.name}
-                          label={form_structure.nat_pk.label}
-                          fullWidth={true}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          options={nationality_options}
-                          disabled={loading_initial_data}
-                          required
-                        />
-                      </Grid>
+                        <Grid item xs={4}>
+                          <AutocompleteHookForm
+                            name={form_structure.nat_pk.name}
+                            label={form_structure.nat_pk.label}
+                            fullWidth={true}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            options={nationality_options}
+                            disabled={loading_initial_data}
+                            required
+                          />
+                        </Grid>
 
-                      <Grid item xs={4}>
-                        <AutocompleteHookForm
-                          name={form_structure.rel_pk.name}
-                          label={form_structure.rel_pk.label}
-                          fullWidth={true}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          options={religion_options}
-                          disabled={loading_initial_data}
-                          required
-                        />
-                      </Grid>
+                        <Grid item xs={4}>
+                          <AutocompleteHookForm
+                            name={form_structure.rel_pk.name}
+                            label={form_structure.rel_pk.label}
+                            fullWidth={true}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            options={religion_options}
+                            disabled={loading_initial_data}
+                            required
+                          />
+                        </Grid>
 
-                      <Grid item xs={4}>
-                        <TextFieldHookForm
-                          name={form_structure.email.name}
-                          label={form_structure.email.label}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          fullWidth
-                          required
-                          placeholder={`Enter the ${form_structure.email.label}`}
-                        />
-                      </Grid>
+                        <Grid item xs={4}>
+                          <TextFieldHookForm
+                            name={form_structure.email.name}
+                            label={form_structure.email.label}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            fullWidth
+                            required
+                            placeholder={`Enter the ${form_structure.email.label}`}
+                          />
+                        </Grid>
 
-                      <Grid item xs={4}>
-                        <TextFieldHookForm
-                          name={form_structure.mob_no.name}
-                          label={form_structure.mob_no.label}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          fullWidth
-                          required
-                          placeholder={`Enter the ${form_structure.mob_no.label}`}
-                          InputProps={{
-                            inputComponent: MaskedPhoneNumber,
-                          }}
-                        />
-                      </Grid>
+                        <Grid item xs={4}>
+                          <TextFieldHookForm
+                            name={form_structure.mob_no.name}
+                            label={form_structure.mob_no.label}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            fullWidth
+                            required
+                            placeholder={`Enter the ${form_structure.mob_no.label}`}
+                            InputProps={{
+                              inputComponent: MaskedPhoneNumber,
+                            }}
+                          />
+                        </Grid>
 
-                      <Grid item xs={6} md={2}>
-                        <TextFieldHookForm
-                          name="zip_code"
-                          label="Zip Code"
-                          fullWidth
-                          placeholder="Enter zip code"
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          required
-                        />
-                      </Grid>
+                        <Grid item xs={6} md={2}>
+                          <TextFieldHookForm
+                            name="zip_code"
+                            label="Zip Code"
+                            fullWidth
+                            placeholder="Enter zip code"
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            required
+                          />
+                        </Grid>
 
-                      <Grid item xs={6} md={4}>
-                        <AutocompleteHookForm
-                          name={form_structure.region_pk.name}
-                          label={form_structure.region_pk.label}
-                          options={region_options}
-                          defaultValue=""
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          placeholder="Enter region"
-                          required
-                          loading={loading_initial_data}
-                        />
-                      </Grid>
+                        <Grid item xs={6} md={4}>
+                          <AutocompleteHookForm
+                            name={form_structure.region_pk.name}
+                            label={form_structure.region_pk.label}
+                            options={region_options}
+                            defaultValue=""
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            placeholder="Enter region"
+                            required
+                            loading={loading_initial_data}
+                          />
+                        </Grid>
 
-                      <Grid item xs={12} md={4}>
-                        <AutocompleteHookForm
-                          name={form_structure.prov_pk.name}
-                          label={form_structure.prov_pk.label}
-                          options={province_options}
-                          loading={loading_province_options}
-                          defaultValue=""
-                          placeholder="Enter province"
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          required
-                          onChangeCallback={(val) => {
-                            form_instance.setValue("citymun_pk", "", {
-                              shouldDirty: true,
-                              shouldValidate: true,
-                            });
-                            form_instance.setValue("brgy_pk", "", {
-                              shouldDirty: true,
-                              shouldValidate: true,
-                            });
-                          }}
-                        />
-                      </Grid>
+                        <Grid item xs={12} md={4}>
+                          <AutocompleteHookForm
+                            name={form_structure.prov_pk.name}
+                            label={form_structure.prov_pk.label}
+                            options={province_options}
+                            loading={loading_province_options}
+                            defaultValue=""
+                            placeholder="Enter province"
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            required
+                            onChangeCallback={(val) => {
+                              form_instance.setValue("citymun_pk", "", {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                              });
+                              form_instance.setValue("brgy_pk", "", {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                              });
+                            }}
+                          />
+                        </Grid>
 
-                      <Grid item xs={12} md={4}>
-                        <AutocompleteHookForm
-                          name={form_structure.citymun_pk.name}
-                          label={form_structure.citymun_pk.label}
-                          defaultValue=""
-                          placeholder="Enter city/municipality"
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          required
-                          options={city_mun_options}
-                          loading={loading_city_mun_options}
-                          onChangeCallback={(val) => {
-                            form_instance.setValue("brgy_pk", "", {
-                              shouldDirty: true,
-                              shouldValidate: true,
-                            });
-                          }}
-                        />
-                      </Grid>
+                        <Grid item xs={12} md={4}>
+                          <AutocompleteHookForm
+                            name={form_structure.citymun_pk.name}
+                            label={form_structure.citymun_pk.label}
+                            defaultValue=""
+                            placeholder="Enter city/municipality"
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            required
+                            options={city_mun_options}
+                            loading={loading_city_mun_options}
+                            onChangeCallback={(val) => {
+                              form_instance.setValue("brgy_pk", "", {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                              });
+                            }}
+                          />
+                        </Grid>
 
-                      <Grid item xs={12} md={4}>
-                        <AutocompleteHookForm
-                          name={form_structure.brgy_pk.name}
-                          label={form_structure.brgy_pk.label}
-                          defaultValue=""
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          placeholder="Enter barangay"
-                          required
-                          options={barangay_options}
-                          loading={loading_brgy_options}
-                        />
-                      </Grid>
+                        <Grid item xs={12} md={4}>
+                          <AutocompleteHookForm
+                            name={form_structure.brgy_pk.name}
+                            label={form_structure.brgy_pk.label}
+                            defaultValue=""
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            placeholder="Enter barangay"
+                            required
+                            options={barangay_options}
+                            loading={loading_brgy_options}
+                          />
+                        </Grid>
 
-                      <Grid item xs={12} md={6}>
-                        <TextFieldHookForm
-                          name={form_structure.line1.name}
-                          label={form_structure.line1.label}
-                          placeholder={`Enter the ${form_structure.line1.label}`}
-                          fullWidth
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          required
-                        />
-                      </Grid>
+                        <Grid item xs={12} md={6}>
+                          <TextFieldHookForm
+                            name={form_structure.line1.name}
+                            label={form_structure.line1.label}
+                            placeholder={`Enter the ${form_structure.line1.label}`}
+                            fullWidth
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            required
+                          />
+                        </Grid>
 
-                      <Grid item xs={12} md={6}>
-                        <TextFieldHookForm
-                          name={form_structure.line2.name}
-                          label={form_structure.line2.label}
-                          placeholder={`Enter the ${form_structure.line2.label}`}
-                          fullWidth
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          required
-                        />
+                        {/* <Grid item xs={12} md={6}>
+                          <TextFieldHookForm
+                            name={form_structure.line2.name}
+                            label={form_structure.line2.label}
+                            placeholder={`Enter the ${form_structure.line2.label}`}
+                            fullWidth
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            required
+                          />
+                        </Grid> */}
                       </Grid>
-                    </Grid>
-                  </div>
-                </form>
-              </FormProvider>
-            </div>
-          )
-        }
-        actions={
-          <>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              form="form_instance"
-            >
-              Save Changes
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              type="reset"
-              onClick={async () => {
-                form_instance.reset(props.selected_record);
-              }}
-            >
-              Reset
-            </Button>
-          </>
-        }
-      />
-    </>
+                    </div>
+                  </form>
+                </FormProvider>
+              </div>
+            )
+          }
+          actions={
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                form="form_instance"
+              >
+                Save Changes
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                type="reset"
+                onClick={async () => {
+                  form_instance.reset(props.selected_record);
+                }}
+              >
+                Reset
+              </Button>
+            </>
+          }
+        />
+      </>
+    )
   );
 });
 

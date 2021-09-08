@@ -1,4 +1,4 @@
-import { PostFetch } from "../../Hooks/UseFetch";
+import { FormDataPostFetch, PostFetch } from "../../Hooks/UseFetch";
 import ConsultReqChatEntity from "../Entities/ConsultChatEntity";
 import ResponseModel from "../Models/ServerResponseModel";
 
@@ -18,10 +18,8 @@ const LeaveConsultChat = async (
   return response;
 };
 
-const InsertConsultChat = async (
-  payload: ConsultReqChatEntity
-): Promise<ResponseModel> => {
-  const response = await PostFetch(BASE + "InsertConsultChat", payload);
+const InsertConsultChat = async (payload: FormData): Promise<ResponseModel> => {
+  const response = await FormDataPostFetch(BASE + "InsertConsultChat", payload);
   return response;
 };
 const GetConsultChat = async (id: string): Promise<ResponseModel> => {

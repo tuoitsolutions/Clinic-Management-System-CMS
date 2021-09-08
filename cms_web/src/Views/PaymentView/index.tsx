@@ -172,7 +172,7 @@ export const PaymentView: FC<PaymentViewProps> = memo(() => {
 
                             <div className="tabs">
                               <CustomTab
-                                // height={500}
+                                height={`100%`}
                                 tabs={[
                                   {
                                     title: "Credit/Debit Card",

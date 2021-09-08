@@ -16,7 +16,6 @@ import { Form, Formik } from "formik";
 import React, { FC, memo, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BoxLoader from "../../Assets/loaders/BoxLoader";
-import CustomAvatar from "../../Component/CustomAvatar";
 import DataTableSearch from "../../Component/DataTableSearch";
 import DataTableSort from "../../Component/DataTableSort";
 import FormikCheckbox from "../../Component/Formik/FormikCheckbox";
@@ -27,7 +26,6 @@ import LinearLoadingProgress from "../../Component/LinearLoadingProgress";
 import PreviewPictureFtp from "../../Component/PreviewPictureFtp";
 import { InvalidDateTimeToDefault } from "../../Hooks/UseDateParser";
 import useFilter from "../../Hooks/useFilter";
-import { StringEmptyToDefault } from "../../Hooks/UseStringFormatter";
 import {
   closePageLoading,
   setGeneralPrompt,
@@ -36,8 +34,10 @@ import {
   showPageLoading,
 } from "../../Services/Actions/PageActions";
 import AdminApi from "../../Services/Api/AdminApi";
-import HospResidentApi from "../../Services/Api/HospResidentApi";
-import HosResidentApi from "../../Services/Api/HospResidentApi";
+import {
+  default as HospResidentApi,
+  default as HosResidentApi,
+} from "../../Services/Api/HospResidentApi";
 import HospResidentEntity, {
   HospResidentTableModel,
 } from "../../Services/Entities/HospResidentEntity";

@@ -32,6 +32,7 @@ const ConsultActionSend: FC<IConsultActionSend> = memo(
     const [preview_soa, set_preview_soa] = useState("");
     const [preview_med_presc, set_preview_med_presc] = useState("");
     const [preview_proc_presc, set_preview_proc_presc] = useState("");
+    const [preview_med_cert, set_preview_med_cert] = useState("");
 
     const [open_sms_compose_dialog, set_open_sms_compose_dialog] =
       useState(false);
@@ -106,6 +107,32 @@ const ConsultActionSend: FC<IConsultActionSend> = memo(
 
         if (response.success) {
           set_preview_proc_presc(response.data);
+        }
+        dispatch(
+          setPageSnackbar(
+            response?.message?.toString(),
+            response.success ? "success" : "error"
+          )
+        );
+      }
+    }, [dispatch, consult_info]);
+
+    const handlePreviewMedCert = useCallback(async () => {
+      if (!!consult_info?.consult_req_pk) {
+        dispatch(
+          showPageLoading({
+            show: true,
+            loading_message:
+              "Loading Medical Certificate, thank you for your patience",
+          })
+        );
+        const response = await ConsultRequestApi.PreviewMedCert(
+          consult_info?.consult_req_pk
+        );
+        dispatch(closePageLoading());
+
+        if (response.success) {
+          set_preview_med_cert(response.data);
         }
         dispatch(
           setPageSnackbar(
@@ -285,6 +312,41 @@ const ConsultActionSend: FC<IConsultActionSend> = memo(
       }
     }, [dispatch, handleReloadRecord, preview_proc_presc, consult_info]);
 
+    const handleEmailMedCert = useCallback(async () => {
+      if (!!preview_med_cert && !!consult_info?.consult_req_pk) {
+        dispatch(
+          setGeneralPrompt({
+            open: true,
+            custom_title: `Are you sure that you want to send the Medical Certificate to the requestor's email?`,
+            continue_callback: async () => {
+              dispatch(
+                showPageLoading({
+                  show: true,
+                  loading_message:
+                    "Emailing Medical Certificate, thank you for your patience",
+                })
+              );
+              const response = await ConsultRequestApi.EmailMedCert({
+                consult_req_pk: consult_info?.consult_req_pk,
+                attach_base64_soa: `${preview_med_cert}`,
+              });
+
+              dispatch(closePageLoading());
+              dispatch(
+                setPageSnackbar(
+                  response?.message?.toString(),
+                  response.success ? "success" : "error"
+                )
+              );
+              if (response.success) {
+                handleReloadRecord();
+              }
+            },
+          })
+        );
+      }
+    }, [preview_med_cert, consult_info, dispatch, handleReloadRecord]);
+
     return (
       <>
         <ButtonPopper
@@ -330,9 +392,14 @@ const ConsultActionSend: FC<IConsultActionSend> = memo(
               },
             },
             {
+              text: "Medical Certificate",
+              handleClick: () => {
+                handlePreviewMedCert();
+              },
+            },
+            {
               text: "SMS",
               handleClick: () => {
-                console.log(`..`);
                 set_open_sms_compose_dialog(true);
               },
             },
@@ -421,6 +488,35 @@ const ConsultActionSend: FC<IConsultActionSend> = memo(
                       className="btn-pdf-preview"
                       onClick={() => {
                         handleEmailProcPrescrip();
+                      }}
+                    >
+                      <EmailRoundedIcon />
+                    </IconButton>
+                  </Badge>
+                </Tooltip>
+              </>
+            }
+          />
+        )}
+
+        {!!preview_med_cert && (
+          <PreviewPDF
+            file={preview_med_cert}
+            doc_title={`OutPatient-Medical-Certificate-${consult_info?.consult_req_pk}.pdf`}
+            handleClose={() => {
+              set_preview_med_cert(null);
+            }}
+            actions={
+              <>
+                <Tooltip title="Email this medical certificate document to the patient.">
+                  <Badge
+                    badgeContent={consult_info?.proc_pres_sent}
+                    color="secondary"
+                  >
+                    <IconButton
+                      className="btn-pdf-preview"
+                      onClick={() => {
+                        handleEmailMedCert();
                       }}
                     >
                       <EmailRoundedIcon />

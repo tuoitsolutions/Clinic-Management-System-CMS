@@ -64,3 +64,12 @@ C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_serve
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\obj\Release\netcoreapp3.1\cms_server.pdb
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\obj\Release\netcoreapp3.1\cms_server.genruntimeconfig.cache
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\web.config
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\itextsharp.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\SkiaSharp.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\Spire.License.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\Spire.Pdf.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\runtimes\osx\native\libSkiaSharp.dylib
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\runtimes\tizen-armel\native\libSkiaSharp.so
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\runtimes\tizen-x86\native\libSkiaSharp.so
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\runtimes\win-x64\native\libSkiaSharp.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\runtimes\win-x86\native\libSkiaSharp.dll

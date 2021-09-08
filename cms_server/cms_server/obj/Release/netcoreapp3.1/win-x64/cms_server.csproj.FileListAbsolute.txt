@@ -59,3 +59,8 @@ C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_serve
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\obj\Release\netcoreapp3.1\win-x64\cms_server.pdb
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\obj\Release\netcoreapp3.1\win-x64\cms_server.genruntimeconfig.cache
 C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\web.config
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\itextsharp.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\SkiaSharp.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\Spire.License.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\Spire.Pdf.dll
+C:\Users\Public\Software Development\Clinic Management System (cms_v2)\cms_server\cms_server\bin\Release\netcoreapp3.1\win-x64\libSkiaSharp.dll

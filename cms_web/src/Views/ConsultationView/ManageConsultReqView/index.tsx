@@ -30,6 +30,7 @@ import ConsultActionStatus from "./ConsultActionStatus";
 import ContainerConsultChat from "./ContainerConsultChat";
 import ConsultProfilePic from "./ContainerConsultProfilePic";
 import DoctorNotesView from "./ContainerDoctorNotes";
+import ContainerPatProfile from "./ContainerPatProfile";
 import { PatientManageUi } from "./styles";
 import TabAllergyRecord from "./TabAllergyRecord";
 import TabDeptResident from "./TabFileRecord";
@@ -90,41 +91,41 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
     }
   }, [dispatch, params.hash_key]);
 
-  const handleChangeCharityTag = useCallback(async () => {
-    if (!!selected_record?.consult_req_pk) {
-      dispatch(
-        setGeneralPrompt({
-          open: true,
-          custom_title: `Are you sure that you want to tag this consultation as ${
-            selected_record?.is_charity === "y" ? "Non-charity" : "Charity"
-          }?`,
-          continue_callback: async () => {
-            dispatch(
-              showPageLoading({
-                show: true,
-                loading_message: "Saving changes, thank you for your patience",
-              })
-            );
-            const response = await ConsultRequestApi.ChangeCharityTag({
-              is_charity: selected_record?.is_charity === "y" ? "n" : "y",
-              consult_req_pk: selected_record.consult_req_pk,
-            });
+  // const handleChangeCharityTag = useCallback(async () => {
+  //   if (!!selected_record?.consult_req_pk) {
+  //     dispatch(
+  //       setGeneralPrompt({
+  //         open: true,
+  //         custom_title: `Are you sure that you want to tag this consultation as ${
+  //           selected_record?.is_charity === "y" ? "Non-charity" : "Charity"
+  //         }?`,
+  //         continue_callback: async () => {
+  //           dispatch(
+  //             showPageLoading({
+  //               show: true,
+  //               loading_message: "Saving changes, thank you for your patience",
+  //             })
+  //           );
+  //           const response = await ConsultRequestApi.ChangeCharityTag({
+  //             is_charity: selected_record?.is_charity === "y" ? "n" : "y",
+  //             consult_req_pk: selected_record.consult_req_pk,
+  //           });
 
-            dispatch(closePageLoading());
-            dispatch(
-              setPageSnackbar(
-                response?.message?.toString(),
-                response.success ? "success" : "error"
-              )
-            );
-            if (response.success) {
-              handleReloadRecord();
-            }
-          },
-        })
-      );
-    }
-  }, [dispatch, handleReloadRecord, selected_record]);
+  //           dispatch(closePageLoading());
+  //           dispatch(
+  //             setPageSnackbar(
+  //               response?.message?.toString(),
+  //               response.success ? "success" : "error"
+  //             )
+  //           );
+  //           if (response.success) {
+  //             handleReloadRecord();
+  //           }
+  //         },
+  //       })
+  //     );
+  //   }
+  // }, [dispatch, handleReloadRecord, selected_record]);
 
   const GenerateTabLinks = useCallback(() => {
     let LinkTabRoutes: Array<ILinkTab> = [];
@@ -148,13 +149,13 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
             <TabDeptResident consult_req_pk={selected_record?.consult_req_pk} />
           ),
         },
-        {
-          label: "Vital Signs",
-          link: `/request/${params.hash_key}/vital-sign`,
-          Component: (
-            <VitalSignRecord consult_req_pk={selected_record?.consult_req_pk} />
-          ),
-        },
+        // {
+        //   label: "Vital Signs",
+        //   link: `/request/${params.hash_key}/vital-sign`,
+        //   Component: (
+        //     <VitalSignRecord consult_req_pk={selected_record?.consult_req_pk} />
+        //   ),
+        // },
         {
           label: "Medications",
           link: `/request/${params.hash_key}/medication`,
@@ -195,8 +196,8 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
           ),
         },
         {
-          label: "Patient History",
-          link: `/request/${params.hash_key}/patient-history`,
+          label: "Consult History",
+          link: `/request/${params.hash_key}/consult-history`,
           Component: <TabPatHistoryRecord selected_row={selected_record} />,
         },
         {
@@ -227,13 +228,13 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
           ),
         },
 
-        {
-          label: "Vital Signs",
-          link: `/request/${params.hash_key}/vital-sign`,
-          Component: (
-            <VitalSignRecord consult_req_pk={selected_record?.consult_req_pk} />
-          ),
-        },
+        // {
+        //   label: "Vital Signs",
+        //   link: `/request/${params.hash_key}/vital-sign`,
+        //   Component: (
+        //     <VitalSignRecord consult_req_pk={selected_record?.consult_req_pk} />
+        //   ),
+        // },
         {
           label: "Medications",
           link: `/request/${params.hash_key}/medication`,
@@ -274,8 +275,8 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
           ),
         },
         {
-          label: "Patient History",
-          link: `/request/${params.hash_key}/patient-history`,
+          label: "Consult History",
+          link: `/request/${params.hash_key}/consult-history`,
           Component: <TabPatHistoryRecord selected_row={selected_record} />,
         },
         {
@@ -381,136 +382,10 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
               </Grid>
             </div>
             <div className="panel-container patient-profile">
-              <ConsultProfilePic />
-
-              <div className="patient-profile-title">
-                <div className="main">
-                  {selected_record?.prefix} {selected_record?.first_name}{" "}
-                  {selected_record?.middle_name} {selected_record?.last_name}{" "}
-                  {selected_record?.suffix}
-                </div>
-                <div className="sub">{selected_record?.consult_req_pk}</div>
-                <Chip
-                  label={selected_record?.status?.sts_desc}
-                  style={{
-                    color: selected_record?.status?.sts_color,
-                    backgroundColor: selected_record?.status?.sts_bg_color,
-                  }}
-                />
-              </div>
-
-              <div className="profile-actions">
-                <Grid container spacing={1}>
-                  <Grid item>
-                    <ContainerConsultChat selected_row={selected_record} />
-                  </Grid>
-                  <Grid item>
-                    <IconButton
-                      color="primary"
-                      onClick={() => {
-                        if (selected_record?.sts_pk === "s") {
-                          UseWindow.PopupWindowCenter({
-                            url: `/request/${params?.hash_key}/consult-room`,
-                            title: "consult-room",
-                            w: 1360,
-                            h: 768,
-                          });
-                        } else {
-                          dispatch(
-                            setPageSnackbar(
-                              "You cannot attend to this consultation. It could be that the consultation has not started yet or it has already ended.",
-                              "info"
-                            )
-                          );
-                        }
-                      }}
-                    >
-                      <DuoRoundedIcon />
-                    </IconButton>
-                  </Grid>
-                </Grid>
-              </div>
-              <div className="personal-info-ctnr">
-                <div className="info-group-column">
-                  <div className="label">Charity Patient</div>
-                  <div className="value">
-                    <Switch
-                      size="small"
-                      checked={selected_record?.is_charity === "y"}
-                      onChange={handleChangeCharityTag}
-                      color="primary"
-                    />
-                  </div>
-                </div>
-                <div className="info-group-column">
-                  <div className="label">Department</div>
-                  <div className="value">
-                    {StringEmptyToDefault(
-                      selected_record?.assign_dept_desc,
-                      <em>To be decided</em>
-                    )}
-                  </div>
-                </div>
-                <div className="info-group-column">
-                  <div className="label">Resident</div>
-                  <div className="value">
-                    {StringEmptyToDefault(
-                      selected_record?.assign_res_desc,
-                      <em>To be decided</em>
-                    )}
-                  </div>
-                </div>
-                <div className="info-group-column">
-                  <div className="label">Start Date</div>
-                  <div className="value">
-                    {" "}
-                    {InvalidDateToDefault(
-                      selected_record?.est_start_at,
-                      <em>To be decided</em>
-                    )}
-                  </div>
-                </div>
-                <div className="info-group-column">
-                  <div className="label">Start Time</div>
-                  <div className="value">
-                    {InvalidTimeToDefault(
-                      selected_record?.est_start_at,
-                      <em>To be decided</em>
-                    )}
-                  </div>
-                </div>
-                <div className="info-group-column">
-                  <div className="label">Consult Cost</div>
-                  <div className="value">
-                    <Chip
-                      label={
-                        <>
-                          {selected_record.is_charity === "y" ? (
-                            <em>Not applicable</em>
-                          ) : (
-                            <>
-                              &#8369;
-                              {HelpNumber.NumberToMoney(
-                                selected_record?.consult_cost
-                              )}
-                            </>
-                          )}
-                        </>
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="info-group-column">
-                  <div className="label">Patient No.</div>
-                  <div className="value">
-                    {StringEmptyToDefault(
-                      selected_record?.hospital_no,
-                      <em>To be decided</em>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <ContainerPatProfile
+                consult_info={selected_record}
+                successCallback={handleReloadRecord}
+              />
             </div>
             <div className="panel-container link-tabs">
               {!!selected_record?.consult_req_pk && !!user_type && (
@@ -518,7 +393,7 @@ const ManageConsultReqView: FC<IManageConsultReqView> = memo(() => {
               )}
             </div>
 
-            <DoctorNotesView />
+            {/* <DoctorNotesView /> */}
           </PatientManageUi>
         )
       )}

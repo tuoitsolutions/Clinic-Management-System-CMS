@@ -116,16 +116,21 @@ export const PatientManageUi = styled(Container)`
 
   @media all and (min-width: ${(props) =>
       props.theme.breakpoints.values.sm}px) {
-    grid-template-areas: "actions actions" "profile notes" "tabs tabs";
+    grid-template-areas: "actions actions" "profile profile" "tabs tabs";
     grid-auto-columns: 1fr;
-    grid-auto-columns: 300px 1fr;
+    grid-auto-columns: 350px 1fr;
   }
 
   @media all and (min-width: ${(props) =>
       props.theme.breakpoints.values.md}px) {
-    grid-template-areas: "actions actions" "profile tabs" "notes tabs";
-    grid-auto-columns: 300px 1fr;
+    /* grid-template-areas: "actions actions" "profile tabs" "notes tabs"; */
+    grid-template-areas: "actions actions" "profile tabs";
+    grid-auto-columns: 350px 1fr;
     grid-auto-rows: auto auto 1fr;
+
+    .patient-profile {
+      min-height: 75vh;
+    }
   }
 
   .actions {
@@ -138,6 +143,7 @@ export const PatientManageUi = styled(Container)`
     justify-items: center;
     align-content: start;
     align-items: start;
+
     /* grid-gap: 0.3em; */
     .patient-profile-title {
       padding: 0.5em 0.3em;
@@ -163,7 +169,7 @@ export const PatientManageUi = styled(Container)`
       display: grid;
       align-content: start;
       width: 100%;
-      /* grid-gap: 0.5em; */
+      grid-gap: 0.5em;
       .info-group-column {
         display: grid;
         padding: 5px 0;

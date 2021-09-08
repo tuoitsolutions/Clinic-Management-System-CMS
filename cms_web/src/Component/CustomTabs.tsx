@@ -1,5 +1,7 @@
 import {
   createStyles,
+  Fade,
+  Grow,
   Tab,
   Tabs,
   Theme,
@@ -8,13 +10,14 @@ import {
   withStyles,
 } from "@material-ui/core";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 interface ICustomTab {
   tabs: Array<ITabItems>;
-  height?: number;
+  height?: number | string;
+  getCurrectActiveTab?: (tab_index: number) => void;
 }
 
 interface ITabItems {
@@ -22,64 +25,84 @@ interface ITabItems {
   RenderComponent: any;
 }
 
-const CustomTab: React.FC<ICustomTab> = memo(({ tabs, height }) => {
-  const [activeTab, setActiveTab] = useState(0);
-  const history = useHistory();
-  const theme = useTheme();
-  const desktop = useMediaQuery(theme.breakpoints.up("md"));
+const CustomTab: React.FC<ICustomTab> = memo(
+  ({ tabs, height, getCurrectActiveTab }) => {
+    const [activeTab, setActiveTab] = useState(0);
+    const theme = useTheme();
+    const desktop = useMediaQuery(theme.breakpoints.up("md"));
 
-  const handleChangeTab = useCallback((prop: any, value: number) => {
-    setActiveTab(value);
-  }, []);
+    const handleChangeTab = useCallback((prop: any, value: number) => {
+      setActiveTab(value);
+    }, []);
 
-  return (
-    <StyledLinkTabs className="div">
-      <AntTabs
-        // orientation={desktop ? "vertical" : "horizontal"}
-        // variant={desktop ? "standard" : "scrollable"}
-        value={activeTab}
-        className="tabs"
-        indicatorColor="primary"
-        textColor="primary"
-        style={{
-          // borderRight: desktop ? `1px solid ${theme.palette.divider}` : "",
-          borderBottom: !desktop ? `1px solid ${theme.palette.divider}` : "",
-          height: "100%",
-        }}
-        onChange={handleChangeTab}
-      >
-        {tabs.map((value, index) => (
-          <AntTab
-            label={value.title}
-            key={index}
-            value={index}
-            onClick={() => {}}
-          ></AntTab>
-        ))}
-      </AntTabs>
+    useEffect(() => {
+      if (typeof getCurrectActiveTab === "function") {
+        getCurrectActiveTab(activeTab);
+      }
+    }, [activeTab, getCurrectActiveTab]);
 
-      {tabs.map(
-        (tab: any, index: number) =>
-          activeTab === index && (
-            <AnimatePresence key={index}>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="custom-tab-content"
-                style={{
-                  height: height,
-                  padding: `.5em`,
-                }}
-              >
-                {tab?.RenderComponent}
-              </motion.div>
-            </AnimatePresence>
-          )
-      )}
-    </StyledLinkTabs>
-  );
-});
+    return (
+      <StyledLinkTabs className="div">
+        <AntTabs
+          // orientation={desktop ? "vertical" : "horizontal"}
+          // variant={desktop ? "standard" : "scrollable"}
+          value={activeTab}
+          className="tabs"
+          indicatorColor="primary"
+          textColor="primary"
+          style={{
+            // borderRight: desktop ? `1px solid ${theme.palette.divider}` : "",
+            borderBottom: !desktop ? `1px solid ${theme.palette.divider}` : "",
+            height: "100%",
+          }}
+          onChange={handleChangeTab}
+        >
+          {tabs.map((value, index) => (
+            <AntTab
+              label={value.title}
+              key={index}
+              value={index}
+              onClick={() => {}}
+            ></AntTab>
+          ))}
+        </AntTabs>
+
+        <div className="custom-tab-container">
+          {tabs.map(
+            (tab: any, index: number) =>
+              // activeTab === index && (
+              // <Fade in={activeTab === index} timeout={500}>
+              //   <div
+              //     className="tab-item"
+              //     style={{
+              //       height: !!height ? height : `auto`,
+              //     }}
+              //   >
+              //     {tab?.RenderComponent}
+              //   </div>
+              // </Fade>
+              activeTab === index && (
+                <AnimatePresence key={index}>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="tab-item"
+                    style={{
+                      height: height,
+                      // padding: `.5em`,
+                    }}
+                  >
+                    {tab?.RenderComponent}
+                  </motion.div>
+                </AnimatePresence>
+              )
+          )}
+        </div>
+      </StyledLinkTabs>
+    );
+  }
+);
 
 export default CustomTab;
 
@@ -105,6 +128,18 @@ const StyledLinkTabs = styled.div`
     /* padding: 1em; */
     /* border: 0.01em solid rgb(0, 0, 0, 0.1); */
     border-radius: 7px;
+  }
+
+  .custom-tab-container {
+    display: grid;
+    grid-template-areas: "t";
+    align-content: start;
+    align-items: start;
+    max-width: 100%;
+    /* overflow-x: auto; */
+    .tab-item {
+      grid-area: t;
+    }
   }
 `;
 

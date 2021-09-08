@@ -2,12 +2,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Grid } from "@material-ui/core";
 import React, { FC, memo, useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
 import FormDialog from "../../../Component/FormDialog/FormDialog";
 import NumberHookForm from "../../../Component/HookForm/NumberHookForm";
 import MaskedOnlyNumbers from "../../../Component/Mask/MaskedOnlyNumbers";
 import HelpNumber from "../../../Helpers/HelpNumber";
+import ConsultRequestActions from "../../../Services/Actions/ConsultRequestActions";
 import {
   closePageLoading,
   setGeneralPrompt,
@@ -16,12 +17,11 @@ import {
 } from "../../../Services/Actions/PageActions";
 import ConsultRequestApi from "../../../Services/Api/ConsultRequestApi";
 import ConsultRequestEntity from "../../../Services/Entities/ConsultRequestEntity";
+import { RootStore } from "../../../Services/Store";
 
 interface IDialogChangeConsultCost {
-  open: boolean;
-  selected_consultation: ConsultRequestEntity;
-  handleCloseDialog: () => void;
   successCallback: () => void;
+  selected_consultation: ConsultRequestEntity;
 }
 
 const form_schema = yup.object({
@@ -30,6 +30,10 @@ const form_schema = yup.object({
 
 const DialogChangeConsultCost: FC<IDialogChangeConsultCost> = memo((props) => {
   const dispatch = useDispatch();
+
+  const { open_adjust_cost_dialog } = useSelector(
+    (store: RootStore) => store.ConsultRequestReducer
+  );
 
   const form_instance = useForm<any>({
     resolver: yupResolver(form_schema),
@@ -79,7 +83,8 @@ const DialogChangeConsultCost: FC<IDialogChangeConsultCost> = memo((props) => {
                 if (typeof props.successCallback === "function") {
                   props.successCallback();
                 }
-                props.handleCloseDialog();
+
+                dispatch(ConsultRequestActions.SetOpenAdjustCostDialog(false));
               }
             },
           })
@@ -90,73 +95,77 @@ const DialogChangeConsultCost: FC<IDialogChangeConsultCost> = memo((props) => {
   );
 
   return (
-    <>
-      <FormDialog
-        title="Change the Cost of the Consultation"
-        open={props.open}
-        handleClose={props.handleCloseDialog}
-        minWidth={400}
-        body={
-          <FormProvider {...form_instance}>
-            <form
-              onSubmit={form_instance.handleSubmit(handleSubmitForm)}
-              noValidate
-              id="form_instance"
-            >
-              <div
-                style={{
-                  display: `grid`,
-                  padding: `1.5em`,
-                  backgroundColor: `#fff`,
-                  borderRadius: 10,
+    open_adjust_cost_dialog && (
+      <>
+        <FormDialog
+          title="Change the Cost of the Consultation"
+          open={open_adjust_cost_dialog}
+          handleClose={() => {
+            dispatch(ConsultRequestActions.SetOpenAdjustCostDialog(false));
+          }}
+          minWidth={400}
+          body={
+            <FormProvider {...form_instance}>
+              <form
+                onSubmit={form_instance.handleSubmit(handleSubmitForm)}
+                noValidate
+                id="form_instance"
+              >
+                <div
+                  style={{
+                    display: `grid`,
+                    padding: `1.5em`,
+                    backgroundColor: `#fff`,
+                    borderRadius: 10,
+                  }}
+                >
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <NumberHookForm
+                        label="Consultation Cost (Php)"
+                        name="consult_cost"
+                        fullWidth
+                        type="text"
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        InputProps={{
+                          inputComponent: MaskedOnlyNumbers,
+                        }}
+                        required
+                        placeholder="0.00"
+                      />
+                    </Grid>
+                  </Grid>
+                </div>
+              </form>
+            </FormProvider>
+          }
+          actions={
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                form="form_instance"
+              >
+                Save Changes
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                type="reset"
+                onClick={async () => {
+                  form_instance.reset(props.selected_consultation);
                 }}
               >
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <NumberHookForm
-                      label="Consultation Cost (Php)"
-                      name="consult_cost"
-                      fullWidth
-                      type="text"
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      InputProps={{
-                        inputComponent: MaskedOnlyNumbers,
-                      }}
-                      required
-                      placeholder="0.00"
-                    />
-                  </Grid>
-                </Grid>
-              </div>
-            </form>
-          </FormProvider>
-        }
-        actions={
-          <>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              form="form_instance"
-            >
-              Save Changes
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              type="reset"
-              onClick={async () => {
-                form_instance.reset(props.selected_consultation);
-              }}
-            >
-              Reset
-            </Button>
-          </>
-        }
-      />
-    </>
+                Reset
+              </Button>
+            </>
+          }
+        />
+      </>
+    )
   );
 });
 

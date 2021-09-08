@@ -309,14 +309,13 @@ namespace cms_server.Repositories
                     }
 
                     byte[] soa_pdf = MedPrescrip.GenerateSoaPdf(brand_name, brand_logo, brand_address, brand_phone, brand_email, selected_row, soa_qr, prescrip_meds, resident_esignature_img);
-
-                    string pdf_file = Convert.ToBase64String(soa_pdf);
+                    string watermarked_pdf = UsePdf.AttachWatermarkImage(brand_logo, 0.05f, soa_pdf);
 
                     tran.Commit();
                     return new ResponseModel
                     {
                         success = true,
-                        data = pdf_file
+                        data = watermarked_pdf
                     };
                 }
                 else

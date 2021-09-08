@@ -78,6 +78,10 @@
               "target": "Package",
               "version": "[21.1.0, )"
             },
+            "Spire.PDF": {
+              "target": "Package",
+              "version": "[7.9.2, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[5.6.3, )"
@@ -105,6 +109,10 @@
             "TypeMerger": {
               "target": "Package",
               "version": "[2.1.0, )"
+            },
+            "iTextSharp": {
+              "target": "Package",
+              "version": "[5.5.13.2, )"
             }
           },
           "imports": [
